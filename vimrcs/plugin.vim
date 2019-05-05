@@ -16,6 +16,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'kien/ctrlp.vim'
 Plugin 'klen/python-mode'
 Plugin 'junegunn/fzf'
+Plugin 'wincent/command-t'
 
 call vundle#end()
 filetype plugin indent on
