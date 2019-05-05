@@ -1,4 +1,5 @@
-set -e
+set +e
+set -u
 
 if [ -d ~/.dotfiles ] ; then
 cd ~/.dotfiles
@@ -15,32 +16,31 @@ if [ ! -d ~/.vim/bundle ] ; then
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 fi
 
-# vim -E +VimEnter +PluginInstall +qall
-# if [ -d ~/.vim/bundle/youcompleteme ] ; then
-# echo 'Install youcompleteme'
-# cd ~/.vim/bundle/youcompleteme
-# python3 install.py --all
-# fi
+vim -E +PluginInstall +qall
+if [ -d ~/.vim/bundle/youcompleteme ] ; then
+echo 'Install youcompleteme'
+cd ~/.vim/bundle/youcompleteme
+python3 install.py --all
+fi
 
 echo "Installed Vim configuration successfully ^~^"
 
 if ! hash zsh; then
 sudo apt-get install -y zsh
 fi
-
-if [ -d ~/.oh-my-zsh ] ; then
+cd 
+if [ ! -d ~/.oh-my-zsh ] ; then
 echo 'Install Oh my zsh'
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 fi
 
-bash
 cd
 if [ ! -d ~/.dotfiles/fonts ] ; then
 git clone https://github.com/powerline/fonts.git ~/.dotfiles/fonts
 sh ~/.dotfiles/fonts/install.sh
 fi
 
-
+echo '-----------------'
 cd
 if [ ! -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ] ; then
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
