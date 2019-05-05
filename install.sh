@@ -10,10 +10,8 @@ set runtimepath+=~/.dotfiles
 source ~/.dotfiles/vimrcs/plugin.vim
 source ~/.dotfiles/vimrcs/basic.vim
 '> ~/.vimrc
-if [ -d ~/.vim/bundle ] ; then
-echo 'vim bundle exist'
-else #if needed #also: elif [new condition] 
-echo 'clone vim bundle'
+
+if [ ! -d ~/.vim/bundle ] ; then
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 fi
 
@@ -57,3 +55,4 @@ fi
 echo '
 source ~/.dotfiles/zshrcs/basic.zsh
 '> ~/.zshrc
+cd
