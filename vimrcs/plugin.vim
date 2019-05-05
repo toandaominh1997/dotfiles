@@ -15,7 +15,8 @@ Plugin 'dracula/vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
 Plugin 'kien/ctrlp.vim'
- 
+Plugin 'nvie/vim-flake8'
+
 call vundle#end()
 filetype plugin indent on
 syntax on
@@ -40,5 +41,3 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " Use these variables in your vimrc. Note that below are default arrow symbols
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
-
-map <C-b> ctrl-ww<CR>
