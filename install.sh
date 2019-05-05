@@ -24,3 +24,7 @@ cd ~/.vim/bundle/youcompleteme
 python3 install.py --all
 fi
 echo "Installed Vim configuration successfully ^~^"
+
+if ! hash zsh; then
+apt-get install zsh
+fi
