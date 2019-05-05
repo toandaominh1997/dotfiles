@@ -33,6 +33,7 @@ echo 'Install Oh my zsh'
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 fi
 
+bash
 cd
 if [ ! -d ~/.dotfiles/fonts ] ; then
 git clone https://github.com/powerline/fonts.git ~/.dotfiles/fonts
@@ -42,13 +43,11 @@ fi
 
 cd
 if [ ! -d ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ] ; then
-echo 'kaka'
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 fi
 
 cd
 if [ ! -d ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions ] ; then
-echo 'kaka'
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 fi
 
@@ -56,3 +55,4 @@ echo '
 source ~/.dotfiles/zshrcs/basic.zsh
 '> ~/.zshrc
 cd
+echo 'Complete!'
