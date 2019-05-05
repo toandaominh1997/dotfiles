@@ -17,7 +17,7 @@ echo 'clone vim bundle'
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
 fi
 
-vim +VimEnter +PluginInstall +qall
+vim -E +VimEnter +PluginInstall +qall
 if [ -d ~/.vim/bundle/youcompleteme ] ; then
 echo 'Install youcompleteme'
 cd ~/.vim/bundle/youcompleteme
