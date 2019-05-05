@@ -17,6 +17,7 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'klen/python-mode'
 Plugin 'junegunn/fzf'
 Plugin 'wincent/command-t'
+Plugin 'Chiel92/vim-autoformat'
 
 call vundle#end()
 filetype plugin indent on
