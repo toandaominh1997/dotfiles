@@ -1,5 +1,4 @@
 set -e
-mkdir ~/.dotfiles
 cd ~/.dotfiles
 
 source ~/.dotfiles/vimrcs/basic.vim
