@@ -2,7 +2,7 @@ set nocompatible
  
 filetype off
  
-set rtp+=~/.dotfiles/bundle/Vundle.vim
+set rtp+=~/.toandaominh1997/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
