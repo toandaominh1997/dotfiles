@@ -78,7 +78,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/.oh-m
 fi
 
 echo '
-source $HOME/.dotfiles/.dotfiles/zshrcs/basic.zsh
+source $HOME/.dotfiles/tool/zshrcs/basic.zsh
 '> ~/.zshrc
 cd
 export ZSH=$HOME/.dotfiles/tools/install.sh
