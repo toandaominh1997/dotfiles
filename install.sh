@@ -1,14 +1,14 @@
 set +e
 set -u
 
-if ! is_app_installed vim; then
+if ! is_app_installed git; then
   printf "WARNING: \"git\" command is not found. \
 Install it first\n"
   apt-get install -y git
 fi
 
-if [ -d ~/.toandaominh1997/.dotfiles ] ; then
-cd ~/.toandaominh1997/.dotfiles
+if [ -d $HOME/.dotfiles/.dotfiles ] ; then
+cd $HOME/.dotfiles/.dotfiles
 git pull origin master
 fi
 
@@ -19,20 +19,20 @@ Install it first\n"
 fi
 
 echo '
-set runtimepath+=~/.toandaominh1997/.dotfiles
-source ~/.toandaominh1997/.dotfiles/vimrcs/plugin.vim
-source ~/.toandaominh1997/.dotfiles/vimrcs/basic.vim
+set runtimepath+=$HOME/.dotfiles/tool
+source $HOME/.dotfiles/tool/vimrcs/plugin.vim
+source $HOME/.dotfiles/tool/vimrcs/basic.vim
 '> ~/.vimrc
 
-if [ ! -d ~/.toandaominh1997/bundle ] ; then
-git clone https://github.com/VundleVim/Vundle.vim.git ~/.toandaominh1997/bundle/Vundle.vim
+if [ ! -d $HOME/.dotfiles/bundle ] ; then
+git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.dotfiles/bundle/Vundle.vim
 fi
 
 vim -E +PluginInstall +qall
 
-if [ -d ~/.toandaominh1997/bundle/youcompleteme ] ; then
+if [ -d $HOME/.dotfiles/bundle/youcompleteme ] ; then
 echo 'Install youcompleteme'
-cd ~/.toandaominh1997/bundle/youcompleteme
+cd $HOME/.dotfiles/bundle/youcompleteme
 python3 install.py --all
 fi
 
@@ -53,43 +53,43 @@ Install it first\n"
 fi
 
 echo '
-source ~/.toandaominh1997/.dotfiles/tmuxs/tmux.conf
+source ~/.dotfiles/.dotfiles/tmuxs/tmux.conf
 '> ~/.tmux.conf
 
 if ! hash zsh; then
 apt-get install -y zsh
 fi
 cd 
-if [ ! -d ~/.toandaominh1997/.oh-my-zsh ] ; then
+if [ ! -d $HOME/.dotfiles/.oh-my-zsh ] ; then
 echo 'Install Oh my zsh'
 # sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-git clone https://github.com/robbyrussell/oh-my-zsh.git ~/.toandaominh1997/.oh-my-zsh
+git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/.oh-my-zsh
 fi
 
 cd
-if [ ! -d ~/.toandaominh1997/fonts ] ; then
-git clone https://github.com/powerline/fonts.git ~/.toandaominh1997/fonts
-sh ~/.toandaominh1997/fonts/install.sh
+if [ ! -d $HOME/.dotfiles/fonts ] ; then
+git clone https://github.com/powerline/fonts.git $HOME/.dotfiles/fonts
+sh $HOME/.dotfiles/fonts/install.sh
 fi
 
 
 cd
-if [ ! -d ~/.toandaominh1997/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ] ; then
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.toandaominh1997/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ] ; then
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 fi
 
 cd
-if [ ! -d ~/.toandaominh1997/.oh-my-zsh/custom/plugins/zsh-autosuggestions ] ; then
-git clone https://github.com/zsh-users/zsh-autosuggestions ~/.toandaominh1997/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions ] ; then
+git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 fi
 
 echo '
-source ~/.toandaominh1997/.dotfiles/zshrcs/basic.zsh
+source $HOME/.dotfiles/.dotfiles/zshrcs/basic.zsh
 '> ~/.zshrc
 cd
-export ZSH=~/.toandaominh1997/tools/install.sh
+export ZSH=$HOME/.dotfiles/tools/install.sh
 cd 
-sh ~/.toandaominh1997/.oh-my-zsh/tools/install.sh
+sh $HOME/.dotfiles/.oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
 
 printf "OK: Completed\n"

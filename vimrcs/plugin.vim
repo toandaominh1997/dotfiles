@@ -2,8 +2,8 @@ set nocompatible
  
 filetype off
  
-set rtp+=~/.toandaominh1997/bundle/Vundle.vim
-call vundle#begin('~/.toandaominh1997/bundle')
+set rtp+=$HOME/.dotfiles/bundle/Vundle.vim
+call vundle#begin('$HOME/.dotfiles/bundle')
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
