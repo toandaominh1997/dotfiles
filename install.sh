@@ -1,6 +1,12 @@
 set +e
 set -u
 
+if ! is_app_installed vim; then
+  printf "WARNING: \"git\" command is not found. \
+Install it first\n"
+  apt-get install -y git
+fi
+
 if [ -d ~/.toandaominh1997/.dotfiles ] ; then
 cd ~/.toandaominh1997/.dotfiles
 git pull origin master
@@ -9,7 +15,7 @@ fi
 if ! is_app_installed vim; then
   printf "WARNING: \"vim\" command is not found. \
 Install it first\n"
-  apt-get install vim
+  apt-get install -y vim
 fi
 
 echo '
