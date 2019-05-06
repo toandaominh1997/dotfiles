@@ -1,7 +1,7 @@
 set +e
 set -u
 
-if ! is_app_installed git; then
+if ! hash git; then
   printf "WARNING: \"git\" command is not found. \
 Install it first\n"
   apt-get install -y git
@@ -12,7 +12,7 @@ cd $HOME/.dotfiles/.dotfiles
 git pull origin master
 fi
 
-if ! is_app_installed vim; then
+if ! hash vim; then
   printf "WARNING: \"vim\" command is not found. \
 Install it first\n"
   apt-get install -y vim
@@ -28,7 +28,8 @@ if [ ! -d $HOME/.dotfiles/bundle ] ; then
 git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.dotfiles/bundle/Vundle.vim
 fi
 
-vim +PluginInstall +qall
+cd
+vim -E +PluginInstall +qall
 cd
 if [ -d $HOME/.dotfiles/bundle/youcompleteme ] ; then
 echo 'Install youcompleteme'
