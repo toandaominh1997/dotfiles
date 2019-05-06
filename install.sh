@@ -81,7 +81,7 @@ echo '
 source $HOME/.dotfiles/tool/zshrcs/basic.zsh
 '> ~/.zshrc
 cd
-export ZSH=$HOME/.dotfiles/tools/install.sh
+export ZSH=$HOME/.dotfiles/.oh-my-zsh
 cd 
 sh $HOME/.dotfiles/.oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
