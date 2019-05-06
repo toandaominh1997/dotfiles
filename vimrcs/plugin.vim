@@ -14,9 +14,9 @@ Plugin 'valloric/youcompleteme'
 Plugin 'dracula/vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'kien/ctrlp.vim'
-Plugin 'klen/python-mode'
+" Plugin 'klen/python-mode'
 Plugin 'junegunn/fzf'
-Plugin 'wincent/command-t'
+" Plugin 'wincent/command-t'
 Plugin 'Chiel92/vim-autoformat'
 
 call vundle#end()
