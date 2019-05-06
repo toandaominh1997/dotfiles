@@ -40,14 +40,7 @@ fi
 echo "Installed Vim configuration successfully ^~^"
 
 
-is_app_installed() {
-  type "$1" &>/dev/null
-}
-
-REPODIR="$(cd "$(dirname "$0")"; pwd -P)"
-cd "$REPODIR";
-
-if ! is_app_installed tmux; then
+if ! hash tmux; then
   printf "WARNING: \"tmux\" command is not found. \
 Install it first\n"
   apt-get insatll -y tmux
