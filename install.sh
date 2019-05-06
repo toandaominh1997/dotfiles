@@ -29,6 +29,7 @@ git clone https://github.com/VundleVim/Vundle.vim.git ~/.toandaominh1997/bundle/
 fi
 
 vim -E +PluginInstall +qall
+
 if [ -d ~/.toandaominh1997/bundle/youcompleteme ] ; then
 echo 'Install youcompleteme'
 cd ~/.toandaominh1997/bundle/youcompleteme
