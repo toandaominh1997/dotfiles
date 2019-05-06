@@ -47,7 +47,7 @@ Install it first\n"
 fi
 
 echo '
-source ~/.dotfiles/.dotfiles/tmuxs/tmux.conf
+source ~/.dotfiles/tool/tmuxs/tmux.conf
 '> ~/.tmux.conf
 
 if ! hash zsh; then
