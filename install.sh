@@ -7,8 +7,8 @@ Install it first\n"
   apt-get install -y git
 fi
 
-if [ -d $HOME/.dotfiles/.dotfiles ] ; then
-cd $HOME/.dotfiles/.dotfiles
+if [ -d $HOME/.dotfiles/tool ] ; then
+cd $HOME/.dotfiles/tool
 git pull origin master
 fi
 
