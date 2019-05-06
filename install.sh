@@ -9,7 +9,7 @@ fi
 if ! is_app_installed vim; then
   printf "WARNING: \"vim\" command is not found. \
 Install it first\n"
-  apt-get insatll vim
+  apt-get install vim
 fi
 
 echo '
