@@ -6,6 +6,12 @@ cd ~/.toandaominh1997/.dotfiles
 git pull origin master
 fi
 
+if ! is_app_installed vim; then
+  printf "WARNING: \"vim\" command is not found. \
+Install it first\n"
+  apt-get insatll vim
+fi
+
 echo '
 set runtimepath+=~/.toandaominh1997/.dotfiles
 source ~/.toandaominh1997/.dotfiles/vimrcs/plugin.vim
@@ -16,12 +22,12 @@ if [ ! -d ~/.toandaominh1997/bundle ] ; then
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.toandaominh1997/bundle/Vundle.vim
 fi
 
-# vim -E +PluginInstall +qall
-# if [ -d ~/.toandaominh1997/bundle/youcompleteme ] ; then
-# echo 'Install youcompleteme'
-# cd ~/.toandaominh1997/bundle/youcompleteme
-# python3 install.py --all
-# fi
+vim -E +PluginInstall +qall
+if [ -d ~/.toandaominh1997/bundle/youcompleteme ] ; then
+echo 'Install youcompleteme'
+cd ~/.toandaominh1997/bundle/youcompleteme
+python3 install.py --all
+fi
 
 echo "Installed Vim configuration successfully ^~^"
 
@@ -36,7 +42,7 @@ cd "$REPODIR";
 if ! is_app_installed tmux; then
   printf "WARNING: \"tmux\" command is not found. \
 Install it first\n"
-  exit 1
+  apt-get insatll tmux
 fi
 
 if [ ! -e "$HOME/.tmux/plugins/tpm" ]; then
