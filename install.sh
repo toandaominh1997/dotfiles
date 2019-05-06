@@ -28,7 +28,7 @@ if [ ! -d $HOME/.dotfiles/bundle ] ; then
 git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.dotfiles/bundle/Vundle.vim
 fi
 
-vim -E +PluginInstall +qall
+vim +PluginInstall +qall
 cd
 if [ -d $HOME/.dotfiles/bundle/youcompleteme ] ; then
 echo 'Install youcompleteme'
