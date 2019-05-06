@@ -88,6 +88,7 @@ source ~/.toandaominh1997/.dotfiles/zshrcs/basic.zsh
 '> ~/.zshrc
 cd
 export ZSH=~/.toandaominh1997/tools/install.sh
+cd 
 sh ~/.toandaominh1997/.oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
 
