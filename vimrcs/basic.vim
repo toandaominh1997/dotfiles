@@ -29,3 +29,12 @@ set encoding=utf8
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
+
+if !has("gui_running")
+    set t_Co=256
+    set term=screen-256color
+endif
+set mouse=a
+set clipboard=unnamed
+set number
+
