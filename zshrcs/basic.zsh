@@ -97,3 +97,5 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 [[ -e ~/.profile ]] && emulate sh -c 'source ~/.profile'
+export PATH=~/devtools/anaconda3/bin:$PATH
+export DEFAULT_USER="$(whoami)"
