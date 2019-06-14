@@ -7,18 +7,9 @@ call vundle#begin('$HOME/.dotfiles/bundle')
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'majutsushi/tagbar'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'valloric/youcompleteme'
 Plugin 'dracula/vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'kien/ctrlp.vim'
-" Plugin 'klen/python-mode'
-Plugin 'junegunn/fzf'
-" Plugin 'wincent/command-t'
-Plugin 'Chiel92/vim-autoformat'
-
 call vundle#end()
 filetype plugin indent on
 syntax on
