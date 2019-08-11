@@ -14,7 +14,6 @@ call vundle#end()
 filetype plugin indent on
 syntax on
  
-color dracula
 
 " config nerdtree
 " How can I open a NERDTree automatically when vim starts up if no files were specified?
