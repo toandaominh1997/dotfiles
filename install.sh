@@ -42,6 +42,8 @@ fi
 if [ -d $HOME/.dotfiles/tool ] ; then
 cd $HOME/.dotfiles/tool
 git pull origin master
+else
+  git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/tool
 fi
 
 echo '
