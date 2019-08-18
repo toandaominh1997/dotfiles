@@ -5,37 +5,47 @@ set -u
 dpkg -s 'git' &> /dev/null 
 if [ $? -ne 0 ]
 then
-  echo "WARNING: \"vim\" command is not found. Install it first\n"
-  apt-get install -y git 
-else
  echo "git is installed"
+ 
+else
+  echo "WARNING: \"vim\" command is not found. Install it first\n"
+  apt-get install -y git
+fi
+
+dpkg -s 'cmake' &> /dev/null
+if [ $? -ne 0 ]
+then
+  echo "cmake is installed"
+else
+  echo "WARNING: \"cmake\" command is not found. Install it first\n" 
+  apt-get install -y cmake 
 fi
 # install vim
 dpkg -s 'vim' &> /dev/null 
 if [ $? -ne 0 ]
 then
+  echo "vim is Installed"  
+else
   echo "WARNING: \"vim\" command is not found. Install it first\n"
   apt-get install -y vim 
-else
- echo "vim is Installed"
 fi
 # install zsh
 dpkg -s 'zsh' &> /dev/null 
 if [ $? -ne 0 ]
 then
-  echo "WARNING: \"zsh\" command is not found. Install it first\n"
-  apt-get install -y zsh 
+  echo "zsh is Installed"  
 else
- echo "zsh is Installed"
+  echo "WARNING: \"zsh\" command is not found. Install it first\n"
+  apt-get install -y zsh
 fi
 # install tmux
 dpkg -s 'tmux' &> /dev/null 
 if [ $? -ne 0 ]
 then
-  echo "WARNING: \"tmux\" command is not found. Install it first\n"
-  apt-get install -y tmux 
+  echo "tmux is Installed"
 else
- echo "tmux is Installed"
+  echo "WARNING: \"tmux\" command is not found. Install it first\n"
+  apt-get install -y tmux
 fi
 
 
