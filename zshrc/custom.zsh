@@ -74,6 +74,9 @@ plugins=(
     vundle
     autoenv
     autopep8
+    autojump
+    command-not-found
+    common-aliases
     )
 
 source $ZSH/oh-my-zsh.sh
