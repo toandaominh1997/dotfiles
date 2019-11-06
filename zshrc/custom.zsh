@@ -66,6 +66,12 @@ plugins=(
     git
     zsh-syntax-highlighting
     zsh-autosuggestions
+    pep8
+    pip
+    python
+    tmux
+    vscode
+    vundle
     )
 
 source $ZSH/oh-my-zsh.sh
