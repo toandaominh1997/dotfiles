@@ -72,6 +72,8 @@ plugins=(
     tmux
     vscode
     vundle
+    autoenv
+    autopep8
     )
 
 source $ZSH/oh-my-zsh.sh
