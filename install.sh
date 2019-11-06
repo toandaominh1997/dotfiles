@@ -100,7 +100,7 @@ fi
 
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf ] ; then
 git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf
-$HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf/install -y 
+$HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf/install
 fi
 echo '
 source $HOME/.dotfiles/tool/zshrc/custom.zsh
