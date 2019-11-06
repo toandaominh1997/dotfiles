@@ -98,6 +98,9 @@ if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions ] ; then
 git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 fi
 
+if [ ! -d ] ; then
+git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf
+fi
 echo '
 source $HOME/.dotfiles/tool/zshrc/custom.zsh
 '> ~/.zshrc
