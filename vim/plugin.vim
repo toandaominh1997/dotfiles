@@ -56,3 +56,6 @@ let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'default'
 
 let g:airline_theme='simple'
+
+" config jedi vim --------------------------------------
+jedi#goto()
