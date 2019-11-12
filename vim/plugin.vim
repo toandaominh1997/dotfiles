@@ -15,7 +15,7 @@ Plugin 'dracula/vim', { 'name': 'dracula' }
 
 Plugin 'davidhalter/jedi-vim'
 Plugin 'ctrlpvim/ctrlp.vim'
-
+Plugin 'NLKNguyen/copy-cut-paste.vim'
 
 
 " Plugin 'valloric/youcompleteme'
