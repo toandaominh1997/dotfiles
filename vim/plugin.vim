@@ -4,9 +4,12 @@ filetype off
  
 set rtp+=$HOME/.dotfiles/bundle/Vundle.vim
 call vundle#begin('$HOME/.dotfiles/bundle')
+
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+
 Plugin 'airblade/vim-gitgutter'
 Plugin 'valloric/youcompleteme'
 Plugin 'dracula/vim'
@@ -15,12 +18,14 @@ filetype plugin indent on
 syntax on
  
 
-" config nerdtree
+" config nerdtree----------------------------------------------------------
+
 " How can I open a NERDTree automatically when vim starts up if no files were specified?
 " Stick this in your vimrc:
 
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+
 " Note: Now start vim with plain vim, not vim .
 
 " How can I map a specific key or shortcut to open NERDTree?
@@ -33,3 +38,7 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " Use these variables in your vimrc. Note that below are default arrow symbols
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
+
+" config vim airline --------------------------------------------------------------
+" This is disabled by default; add the following to your vimrc to enable the extension:
+let g:airline#extensions#tabline#enabled = 1
