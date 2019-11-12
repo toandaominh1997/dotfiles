@@ -14,6 +14,7 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'dracula/vim', { 'name': 'dracula' }
 
 Plugin 'davidhalter/jedi-vim'
+Plugin 'ctrlpvim/ctrlp.vim'
 
 
 " Plugin 'valloric/youcompleteme'
