@@ -58,8 +58,8 @@ fi
 
 echo '
 set runtimepath+=$HOME/.dotfiles/tool
-source $HOME/.dotfiles/tool/vimrc/plugin.vim
-source $HOME/.dotfiles/tool/vimrc/custom.vim
+source $HOME/.dotfiles/tool/vim/plugin.vim
+source $HOME/.dotfiles/tool/vim/config.vim
 '> ~/.vimrc
 
 if [ ! -d $HOME/.dotfiles/bundle ] ; then
@@ -77,7 +77,7 @@ fi
 echo "Installed Vim configuration successfully ^~^"
 
 echo '
-source ~/.dotfiles/tool/tmuxrc/tmux.conf
+source ~/.dotfiles/tool/tmux/tmux.conf
 '> ~/.tmux.conf
 
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh ] ; then
@@ -103,7 +103,7 @@ git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/.oh-my-z
 $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf/install
 fi
 echo '
-source $HOME/.dotfiles/tool/zshrc/custom.zsh
+source $HOME/.dotfiles/tool/zsh/config.zsh
 '> ~/.zshrc
 
 export ZSH=$HOME/.dotfiles/.oh-my-zsh
