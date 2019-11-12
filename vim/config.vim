@@ -29,9 +29,7 @@ set encoding=utf-8
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
-syntax enable
-set background=dark
-colorscheme solarized
+
 
 if !has("gui_running")
     set t_Co=256
