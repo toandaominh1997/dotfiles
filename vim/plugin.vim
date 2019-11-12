@@ -58,4 +58,3 @@ let g:airline#extensions#tabline#formatter = 'default'
 let g:airline_theme='simple'
 
 " config jedi vim --------------------------------------
-let g:jedi#goto_command = 'goto_definitions'
