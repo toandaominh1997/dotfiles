@@ -68,11 +68,11 @@ fi
 
 vim -E +PluginInstall +qall
 
-if [ -d $HOME/.dotfiles/bundle/youcompleteme ] ; then
-  echo 'Install youcompleteme'
-  cd $HOME/.dotfiles/bundle/youcompleteme
-  python3 install.py --clang-completer
-fi
+# if [ -d $HOME/.dotfiles/bundle/youcompleteme ] ; then
+#   echo 'Install youcompleteme'
+#   cd $HOME/.dotfiles/bundle/youcompleteme
+#   python3 install.py --clang-completer
+# fi
 
 echo "Installed Vim configuration successfully ^~^"
 
