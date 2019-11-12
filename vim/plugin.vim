@@ -11,8 +11,10 @@ Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
 Plugin 'airblade/vim-gitgutter'
+Plugin 'dracula/vim', { 'name': 'dracula' }
+
 Plugin 'valloric/youcompleteme'
-Plugin 'dracula/vim'
+
 call vundle#end()
 filetype plugin indent on
 syntax on
