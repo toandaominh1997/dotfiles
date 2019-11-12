@@ -16,7 +16,6 @@ Plugin 'dracula/vim', { 'name': 'dracula' }
 Plugin 'davidhalter/jedi-vim'
 Plugin 'ctrlpvim/ctrlp.vim'
 
-Plugin 'dense-analysis/ale'
 
 
 " Plugin 'valloric/youcompleteme'
@@ -38,7 +37,7 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 " How can I map a specific key or shortcut to open NERDTree?
 " Stick this in your vimrc to open NERDTree with Ctrl+n (you can set whatever key you want):
-map <C-n> :NERDTreeToggle<CR>
+map <C-o> :NERDTreeToggle<CR>
 " How can I close vim if the only window left open is a NERDTree?
 "Stick this in your vimrc:
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -63,10 +62,3 @@ let g:airline_theme='badwolf'
 " config jedi vim --------------------------------------
 
 
-
-" config ale ----------------------------------------------
-" Check Python files with flake8 and pylint.
-
-let b:ale_linters = ['pyflakes', 'flake8', 'pylint']
-let b:ale_fixers = ['eslint']
-let b:ale_fix_on_save = 1
