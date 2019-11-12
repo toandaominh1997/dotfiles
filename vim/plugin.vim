@@ -16,6 +16,8 @@ Plugin 'dracula/vim', { 'name': 'dracula' }
 Plugin 'davidhalter/jedi-vim'
 Plugin 'ctrlpvim/ctrlp.vim'
 
+Plugin 'dense-analysis/ale'
+
 
 " Plugin 'valloric/youcompleteme'
 
@@ -59,3 +61,13 @@ let g:airline#extensions#tabline#formatter = 'default'
 let g:airline_theme='badwolf'
 
 " config jedi vim --------------------------------------
+
+
+
+" config ale ----------------------------------------------
+" Check Python files with flake8 and pylint.
+let b:ale_linters = ['flake8', 'pylint']
+" Fix Python files with autopep8 and yapf.
+let b:ale_fixers = ['autopep8', 'yapf']
+" Disable warnings about trailing whitespace for Python files.
+let b:ale_warn_about_trailing_whitespace = 0
