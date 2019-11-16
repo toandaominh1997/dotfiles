@@ -30,6 +30,8 @@ set encoding=utf-8
 set shiftwidth=4
 set tabstop=4
 
+" set hidden to buffer
+set hidden 
 
 if !has("gui_running")
     set t_Co=256
@@ -42,8 +44,13 @@ set number
 :vmap <C-C> "+y
 nnoremap <c-z> :u<CR>      " Avoid using this**
 inoremap <c-z> <c-o>:u<CR>
-nnoremap <c-t> :tabnew<CR>
-inoremap <c-t> <c-o>:tabnew<CR>
+" Tab navigation like FireFox
+nnoremap <C-S-tab> :tabprevious<CR>
+nnoremap <C-tab>   :tabnext<CR>
+nnoremap <C-t>     :tabnew<CR>
+inoremap <C-S-tab> <Esc>:tabprevious<CR>i
+inoremap <C-tab>   <Esc>:tabnext<CR>i
+inoremap <C-t>     <Esc>:tabnew<CR>
 
 let &t_SI = "\<esc>[5 q"  " blinking I-beam in insert mode
 let &t_SR = "\<esc>[5 q"  " blinking underline in replace mode

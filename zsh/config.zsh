@@ -75,11 +75,8 @@ plugins=(
     tmux
     vscode
     vundle
-    autoenv
     autopep8
-    autojump
     command-not-found
-    common-aliases
     fzf
     )
 
