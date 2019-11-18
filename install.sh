@@ -94,9 +94,15 @@ if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ] ; 
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 fi
 
+if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt ] ; then
+git clone https://github.com/denysdovhan/spaceship-prompt.git $HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt
+ln -s "$HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme" "$HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
+fi
+
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions ] ; then
 git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions
 fi
+
 
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf ] ; then
 git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf
