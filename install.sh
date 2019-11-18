@@ -77,7 +77,7 @@ vim -E +PluginInstall +qall
 echo "Installed Vim configuration successfully ^~^"
 
 echo '
-source ~/.dotfiles/tool/tmux/tmux.conf
+source ~/.dotfiles/tool/tmux/config.tmux
 '> ~/.tmux.conf
 sh ./tmux/tmux_colors.sh 
 
