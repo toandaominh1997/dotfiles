@@ -79,6 +79,8 @@ echo "Installed Vim configuration successfully ^~^"
 echo '
 source ~/.dotfiles/tool/tmux/tmux.conf
 '> ~/.tmux.conf
+sh ./tmux/tmux_colors.sh 
+
 
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh ] ; then
 echo 'install Oh-my-zsh'
