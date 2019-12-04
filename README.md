@@ -16,3 +16,17 @@ For detail:
         then
         sh $HOME/.dotfiles/tool/install.sh
 ```
+### Visualization
+
+##### 1. Oh-my-zsh:
+
+<img src='./docs/zsh.png'>
+ 
+##### 2. Vim:
+
+<img src='./docs/vim.png'>
+
+##### 3. `Tmux:
+
+<img src='./docs/tmux.png'>
+
