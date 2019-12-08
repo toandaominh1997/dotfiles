@@ -6,21 +6,27 @@ set rtp+=$HOME/.dotfiles/bundle/Vundle.vim
 call vundle#begin('$HOME/.dotfiles/bundle')
 
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdtree' " file list
+Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'  "to highlight files in nerdtree
+Plugin 'majutsushi/tagbar'  " show tags in a bar (functions etc) for easy browsing
+
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 
 Plugin 'airblade/vim-gitgutter'
-Plugin 'dracula/vim', { 'name': 'dracula' }
 
-Plugin 'davidhalter/jedi-vim'
+Plugin 'davidhalter/jedi-vim' " jedi for python
+
+Plugin 'Shougo/deoplete.nvim'
+Plugin 'roxma/nvim-yarp'
+Plugin 'roxma/vim-hug-neovim-rpc'
+
+" Code and files fuzzy finder
 Plugin 'ctrlpvim/ctrlp.vim'
+
 Plugin 'NLKNguyen/copy-cut-paste.vim'
-
-
-" Plugin 'valloric/youcompleteme'
-
 call vundle#end()
+
 filetype plugin indent on
 syntax on
  
@@ -61,26 +67,27 @@ let g:airline_theme='badwolf'
 
 " config jedi vim --------------------------------------
 
+" All these mappings work only for python code:
+let g:jedi#goto_command = "<leader>d"
+let g:jedi#goto_assignments_command = "<leader>g"
+let g:jedi#goto_definitions_command = ""
+let g:jedi#documentation_command = "K"
+let g:jedi#usages_command = "<leader>n"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#rename_command = "<leader>r"
+" Go to definition in new tab
+nmap ,D :tab split<CR>:call jedi#goto()<CR>
 
+" config deoplete 
+let g:deoplete#enable_at_startup = 1
 
-" config copy-cut-paste 
-
+" config copy-cut-paste -----------------------------
 let g:copy_cut_paste_no_mappings = 1
-
 " Use your keymap
-" nmap QC <Plug>CCP_CopyLine
-" vmap QC <Plug>CCP_CopyText
-"
-" nmap QX <Plug>CCP_CutLine
-" vmap QX <Plug>CCP_CutText
-"
-" nmap QV <Plug>CCP_PasteTextet g:copy_cut_paste_no_mappings = 1
+nmap QC <Plug>CCP_CopyLine
+vmap QC <Plug>CCP_CopyText
 
-" Use your keymap
-nmap <C-c> <Plug>CCP_CopyLine
-vmap <C-c> <Plug>CCP_CopyText
+nmap QX <Plug>CCP_CutLine
+vmap QX <Plug>CCP_CutText
 
-nmap <C-x> <Plug>CCP_CutLine
-vmap <C-x> <Plug>CCP_CutText
-
-nmap <C-v> <Plug>CCP_PasteText
+nmap QV <Plug>CCP_PasteText

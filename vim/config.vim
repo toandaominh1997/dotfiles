@@ -41,18 +41,18 @@ set mouse=a
 set clipboard=unnamed
 set number
 
-:vmap <C-C> "+y
 nnoremap <c-z> :u<CR>      " Avoid using this**
 inoremap <c-z> <c-o>:u<CR>
-" Tab navigation like FireFox
-" CTRL-Tab is next tab
-noremap <C-Tab> :<C-U>tabnext<CR>
-inoremap <C-Tab> <C-\><C-N>:tabnext<CR>
-cnoremap <C-Tab> <C-C>:tabnext<CR>
-" CTRL-SHIFT-Tab is previous tab
-noremap <C-S-Tab> :<C-U>tabprevious<CR>
-inoremap <C-S-Tab> <C-\><C-N>:tabprevious<CR>
-cnoremap <C-S-Tab> <C-C>:tabprevious<CR>
+" Tab navigation 
+nnoremap th  :tabfirst<CR>
+nnoremap tj  :tabnext<CR>
+nnoremap tk  :tabprev<CR>
+nnoremap tl  :tablast<CR>
+nnoremap tt  :tabedit<Space>
+nnoremap tn  :tabnext<Space>
+nnoremap tm  :tabm<Space>
+nnoremap td  :tabclose<CR>
+
 
 let &t_SI = "\<esc>[5 q"  " blinking I-beam in insert mode
 let &t_SR = "\<esc>[5 q"  " blinking underline in replace mode
