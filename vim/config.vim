@@ -18,10 +18,6 @@ let mapleader = ","
 " Fast saving
 nmap <leader>w :w!<cr>
 
-" :W sudo saves the file 
-" (useful for handling the permission-denied error)
-command W w !sudo tee % > /dev/null
-
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf-8
@@ -33,10 +29,6 @@ set tabstop=4
 " set hidden to buffer
 set hidden 
 
-if !has("gui_running")
-    set t_Co=256
-    set term=screen-256color
-endif
 set mouse=a
 set clipboard=unnamed
 set number
@@ -53,9 +45,3 @@ nnoremap tn  :tabnext<Space>
 nnoremap tm  :tabm<Space>
 nnoremap td  :tabclose<CR>
 
-
-let &t_SI = "\<esc>[5 q"  " blinking I-beam in insert mode
-let &t_SR = "\<esc>[5 q"  " blinking underline in replace mode
-let &t_EI = "\<esc>[5 q"  " default cursor (usually blinking block) otherwise
-
-let NERDTreeMapOpenInTab='\r'

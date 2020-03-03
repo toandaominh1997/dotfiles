@@ -67,6 +67,7 @@ ZSH_THEME="spaceship"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git
+    github
     zsh-syntax-highlighting
     zsh-autosuggestions
     colored-man-pages
@@ -75,6 +76,10 @@ plugins=(
     vscode
     vundle
     command-not-found
+    web-search
+    history
+    extract
+    copyfile
     )
 
 source $ZSH/oh-my-zsh.sh

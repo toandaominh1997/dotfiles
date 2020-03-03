@@ -82,3 +82,12 @@ nmap QX <Plug>CCP_CutLine
 vmap QX <Plug>CCP_CutText
 
 nmap QV <Plug>CCP_PasteText
+
+"
+" ==============================
+"	Airline Settings
+" ==============================
+"
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'default'
+let g:airline_theme='deus'
