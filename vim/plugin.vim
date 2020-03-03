@@ -7,8 +7,6 @@ call vundle#begin('$HOME/.dotfiles/bundle')
 
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree' " file list
-Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'  "to highlight files in nerdtree
-Plugin 'majutsushi/tagbar'  " show tags in a bar (functions etc) for easy browsing
 
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -16,13 +14,6 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'airblade/vim-gitgutter'
 
 Plugin 'davidhalter/jedi-vim' " jedi for python
-
-Plugin 'Shougo/deoplete.nvim'
-Plugin 'roxma/nvim-yarp'
-Plugin 'roxma/vim-hug-neovim-rpc'
-
-" Code and files fuzzy finder
-Plugin 'ctrlpvim/ctrlp.vim'
 
 Plugin 'NLKNguyen/copy-cut-paste.vim'
 call vundle#end()
