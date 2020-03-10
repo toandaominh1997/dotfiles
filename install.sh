@@ -20,7 +20,7 @@ else
   echo "WARNING: \"cmake\" command is not found. Install it first\n" 
   apt-get install -y cmake 
 fi
-# install vim
+# instzall vim
 dpkg -s 'vim' &> /dev/null 
 if [ $? -ne 0 ]
 then
