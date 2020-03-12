@@ -73,6 +73,7 @@ plugins=(
     colored-man-pages
     python
     tmux
+    fzf
     vscode
     vundle
     command-not-found
