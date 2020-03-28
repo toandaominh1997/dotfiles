@@ -49,38 +49,25 @@ else
 fi
 
 
-if [ -d $HOME/.dotfiles/tool ] ; then
-cd $HOME/.dotfiles/tool
+if [ -d $HOME/.dotfiles/config ] ; then
+cd $HOME/.dotfiles/config
 git pull origin master
 else
-  git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/tool
+  git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/config
 fi
 
-echo '
-set runtimepath+=$HOME/.dotfiles/tool
-source $HOME/.dotfiles/tool/vim/plugin.vim
-source $HOME/.dotfiles/tool/vim/config.vim
-'> ~/.vimrc
-
-if [ ! -d $HOME/.dotfiles/bundle ] ; then
-git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.dotfiles/bundle/Vundle.vim
+if [ ! -d $HOME/.dotfiles/plugged/YouCompleteMe ] ; then
+git clone https://github.com/ycm-core/YouCompleteMe.git $HOME/.dotfiles/plugged/YouCompleteMe
+python $HOME/.dotfiles/plugged/YouCompleteMe/install.py --all
 fi
 
-vim -E +PluginInstall +qall
-
-# if [ -d $HOME/.dotfiles/bundle/youcompleteme ] ; then
-#   echo 'Install youcompleteme'
-#   cd $HOME/.dotfiles/bundle/youcompleteme
-#   python3 install.py --clang-completer
-# fi
+echo 'source $HOME/.dotfiles/tool/vim/config.vim'> ~/.vimrc
 
 echo "Installed Vim configuration successfully ^~^"
 
-echo '
-source ~/.dotfiles/tool/tmux/config.tmux
-'> ~/.tmux.conf
-sh ./tmux/tmux_colors.sh 
+echo 'source ~/.dotfiles/tool/tmux/config.tmux'> ~/.tmux.conf
 
+echo "Installed Tmux configuration successfully ^~^"
 
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh ] ; then
 echo 'install Oh-my-zsh'
@@ -110,9 +97,8 @@ if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf ] ; then
 git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf
 $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf/install
 fi
-echo '
-source $HOME/.dotfiles/tool/zsh/config.zsh
-'> ~/.zshrc
+
+echo 'source $HOME/.dotfiles/tool/zsh/config.zsh'> ~/.zshrc
 
 export ZSH=$HOME/.dotfiles/.oh-my-zsh
 
