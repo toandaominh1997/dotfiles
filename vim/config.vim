@@ -31,7 +31,11 @@ set hidden
 
 set mouse=a
 set clipboard=unnamed
+
+
+" Show line number
 set number
+
 
 nnoremap <c-z> :u<CR>      " Avoid using this**
 inoremap <c-z> <c-o>:u<CR>
@@ -48,7 +52,7 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'   
-Plug 'dracula/vim', { 'as': 'dracula' }:
+" Plug 'dracula/vim', { 'as': 'dracula' }
 
 Plug 'airblade/vim-gitgutter'
 Plug '~/.dotfiles/plugged/YouCompleteMe'
@@ -98,7 +102,7 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 " This is disabled by default; add the following to your vimrc to enable the extension:
 let g:airline#extensions#tabline#enabled = 1
 
-let g:airline_theme='deus'
+let g:airline_theme='luna'
 
 
 "
