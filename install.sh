@@ -20,6 +20,12 @@ else
   echo "WARNING: \"cmake\" command is not found. Install it first\n" 
   apt-get install -y cmake 
 fi
+
+# install vim-plug
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+
 # instzall vim
 dpkg -s 'vim' &> /dev/null 
 if [ $? -ne 0 ]
@@ -58,7 +64,9 @@ fi
 
 if [ ! -d $HOME/.dotfiles/plugged/YouCompleteMe ] ; then
 git clone https://github.com/ycm-core/YouCompleteMe.git $HOME/.dotfiles/plugged/YouCompleteMe
-python $HOME/.dotfiles/plugged/YouCompleteMe/install.py --all
+cd $HOME/.dotfiles/plugged/YouCompleteMe
+git submodule update --init --recursive
+python3 $HOME/.dotfiles/plugged/YouCompleteMe/install.py --all
 fi
 
 echo 'source $HOME/.dotfiles/tool/vim/config.vim'> ~/.vimrc
