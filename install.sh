@@ -62,12 +62,12 @@ else
   git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/config
 fi
 
-if [ ! -d $HOME/.dotfiles/plugged/YouCompleteMe ] ; then
-git clone https://github.com/ycm-core/YouCompleteMe.git $HOME/.dotfiles/plugged/YouCompleteMe
-cd $HOME/.dotfiles/plugged/YouCompleteMe
-git submodule update --init --recursive
-python3 $HOME/.dotfiles/plugged/YouCompleteMe/install.py --all
-fi
+#if [ ! -d $HOME/.dotfiles/plugged/YouCompleteMe ] ; then
+#git clone https://github.com/ycm-core/YouCompleteMe.git $HOME/.dotfiles/plugged/YouCompleteMe
+#cd $HOME/.dotfiles/plugged/YouCompleteMe
+#git submodule update --init --recursive
+#python3 $HOME/.dotfiles/plugged/YouCompleteMe/install.py --all
+#fi
 
 echo 'source $HOME/.dotfiles/tool/vim/config.vim'> ~/.vimrc
 
