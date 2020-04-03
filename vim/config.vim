@@ -35,7 +35,9 @@ set clipboard=unnamedplus
 
 " Show line number
 set number
-
+nnoremap <Tab> :bn<CR>
+nnoremap <S-Tab> :bp<CR>
+nnoremap <C-d> :bd!<CR>
 
 nnoremap <c-z> :u<CR>      " Avoid using this**
 inoremap <c-z> <c-o>:u<CR>
@@ -112,4 +114,4 @@ let g:airline_theme='luna'
 " ==============================
 "
 " YouCompleteMe
-let g:ycm_autoclose_preview_window_after_completion = 1
+" let g:ycm_autoclose_preview_window_after_completion = 1
