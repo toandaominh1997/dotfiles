@@ -24,3 +24,8 @@ setw -g monitor-activity on
 
 # Reload the file with Prefix r
 bind r source-file ~/.tmux.conf \; display "reloaded!"
+
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R

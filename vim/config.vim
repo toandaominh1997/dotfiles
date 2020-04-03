@@ -58,6 +58,7 @@ Plug 'airblade/vim-gitgutter'
 " Plug '~/.dotfiles/plugged/YouCompleteMe'
 
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
 call plug#end()
 
