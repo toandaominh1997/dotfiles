@@ -30,7 +30,7 @@ set tabstop=4
 set hidden 
 
 set mouse=a
-set clipboard=unnamed
+set clipboard=unnamedplus
 
 
 " Show line number
@@ -55,7 +55,7 @@ Plug 'vim-airline/vim-airline-themes'
 " Plug 'dracula/vim', { 'as': 'dracula' }
 
 Plug 'airblade/vim-gitgutter'
-Plug '~/.dotfiles/plugged/YouCompleteMe'
+" Plug '~/.dotfiles/plugged/YouCompleteMe'
 
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': './install --all' }
 
