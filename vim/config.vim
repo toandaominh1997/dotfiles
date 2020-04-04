@@ -15,9 +15,13 @@ set autoread
 " like <leader>w saves the current file
 let mapleader = ","
 
-" Fast saving
-nmap <leader>w :w!<cr>
-
+" Quick write and quit
+" ------------------------
+nnoremap <leader>w :w!<cr>
+nnoremap <leader>q :q<cr>
+" Map Rename File
+" ---------------------------------------------------------------------------
+map <Leader>rf :Rename <space>
 
 " Set utf8 as standard encoding and en_US as the standard language
 set encoding=utf-8
@@ -31,13 +35,13 @@ set hidden
 
 set mouse=a
 set clipboard=unnamedplus
-
+" Show partial commands in the last line of the screen
+set showcmd
 
 " Show line number
 set number
 nnoremap <Tab> :bn<CR>
 nnoremap <S-Tab> :bp<CR>
-nnoremap <C-d> :bd!<CR>
 
 nnoremap <c-z> :u<CR>      " Avoid using this**
 inoremap <c-z> <c-o>:u<CR>
@@ -80,8 +84,8 @@ autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 " How can I open NERDTree automatically when vim starts up on opening a directory?
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 
 " How can I map a specific key or shortcut to open NERDTree?
 " Stick this in your vimrc to open NERDTree with Ctrl+n (you can set whatever key you want):
