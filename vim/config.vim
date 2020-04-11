@@ -27,7 +27,14 @@
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+set number 
+set mouse=a
+set clipboard=unnamedplus
+nnoremap <Tab> :bn<CR>
+nnoremap <S-Tab> :bp<CR>
 
+nnoremap <c-z> :u<CR>      " Avoid using this**
+inoremap <c-z> <c-o>:u<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -403,11 +410,15 @@ Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
+Plug 'tell-k/vim-autopep8'
 call plug#end()
 
 filetype plugin indent on
 syntax on
  
+" Autopep8 
+let g:autopep8_disable_show_diff=1
+let g:autopep8_on_save = 1
 
 "
 " ==============================
