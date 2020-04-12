@@ -2,11 +2,11 @@ set +e
 set -u
 
 # install git
-dpkg -s 'git' &> /dev/null 
+dpkg -s 'git' &> /dev/null
 if [ $? -ne 0 ]
 then
  echo "git is installed"
- 
+
 else
   echo "WARNING: \"vim\" command is not found. Install it first\n"
   apt-get install -y git
@@ -17,8 +17,8 @@ if [ $? -ne 0 ]
 then
   echo "cmake is installed"
 else
-  echo "WARNING: \"cmake\" command is not found. Install it first\n" 
-  apt-get install -y cmake 
+  echo "WARNING: \"cmake\" command is not found. Install it first\n"
+  apt-get install -y cmake
 fi
 
 # install vim-plug
@@ -27,25 +27,25 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 
 
 # instzall vim
-dpkg -s 'vim' &> /dev/null 
+dpkg -s 'vim' &> /dev/null
 if [ $? -ne 0 ]
 then
-  echo "vim is Installed"  
+  echo "vim is Installed"
 else
   echo "WARNING: \"vim\" command is not found. Install it first\n"
-  apt-get install -y vim 
+  apt-get install -y vim
 fi
 # install zsh
-dpkg -s 'zsh' &> /dev/null 
+dpkg -s 'zsh' &> /dev/null
 if [ $? -ne 0 ]
 then
-  echo "zsh is Installed"  
+  echo "zsh is Installed"
 else
   echo "WARNING: \"zsh\" command is not found. Install it first\n"
   apt-get install -y zsh
 fi
 # install tmux
-dpkg -s 'tmux' &> /dev/null 
+dpkg -s 'tmux' &> /dev/null
 if [ $? -ne 0 ]
 then
   echo "tmux is Installed"
@@ -81,7 +81,9 @@ if [ ! -d $HOME/.dotfiles/.oh-my-zsh ] ; then
 echo 'install Oh-my-zsh'
 git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/.oh-my-zsh
 fi
-
+if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/themes/powerlevel9k ] ; then
+    git clone https://github.com/Powerlevel9k/powerlevel9k.git  $HOME/.dotfiles/.oh-my-zsh/themes/powerlevel9k
+fi
 if [ ! -d $HOME/.dotfiles/fonts ] ; then
 git clone https://github.com/powerline/fonts.git $HOME/.dotfiles/fonts
 sh $HOME/.dotfiles/fonts/install.sh
@@ -91,10 +93,10 @@ if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ] ; 
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 fi
 
-if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt ] ; then
-git clone https://github.com/denysdovhan/spaceship-prompt.git $HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt
-ln -s "$HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme" "$HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
-fi
+#if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt ] ; then
+#git clone https://github.com/denysdovhan/spaceship-prompt.git $HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt
+#ln -s "$HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme" "$HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
+#fi
 
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions ] ; then
 git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions
