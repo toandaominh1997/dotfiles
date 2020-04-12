@@ -77,6 +77,16 @@ echo 'source ~/.dotfiles/tool/tmux/config.tmux'> ~/.tmux.conf
 
 echo "Installed Tmux configuration successfully ^~^"
 
+
+if [ ! -e $HOME/.vim/colors/peaksea.vim ] ; then
+echo 'install peaseak'
+if [ ! -d $HOME/.vim/colors ] ; then
+    mkdir $HOME/.vim/colors/
+fi
+wget https://raw.githubusercontent.com/amix/vimrc/master/sources_forked/peaksea/colors/peaksea.vim -O $HOME/.vim/colors/peaksea.vim
+fi
+
+
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh ] ; then
 echo 'install Oh-my-zsh'
 git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/.oh-my-zsh
