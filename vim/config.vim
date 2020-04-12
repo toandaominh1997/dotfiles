@@ -39,7 +39,7 @@ inoremap <c-z> <c-o>:u<CR>
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
-set history=500
+set history=5000
 
 " Enable filetype plugins
 filetype plugin on
@@ -405,7 +405,7 @@ call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
 
 Plug 'airblade/vim-gitgutter'
-" Plug '~/.dotfiles/plugged/YouCompleteMe'
+Plug '~/.dotfiles/plugged/YouCompleteMe'
 
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
