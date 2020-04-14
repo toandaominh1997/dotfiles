@@ -26,7 +26,8 @@
 "    -> Helper functions
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+nnoremap <c-p> :Files<CR>
+inoremap <c-p> :Files<CR>
 set number 
 set mouse=a
 set clipboard=unnamedplus
@@ -434,6 +435,9 @@ Plug 'preservim/nerdtree'
 
 Plug 'airblade/vim-gitgutter'
 " Plug '~/.dotfiles/plugged/YouCompleteMe'
+"
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier']
 
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -448,6 +452,33 @@ syntax on
 let g:autopep8_disable_show_diff=1
 let g:autopep8_on_save = 1
 
+"
+" ==============================
+"	config FZF
+" ==============================
+"
+nnoremap <C-p> :FZF<CR>
+let g:fzf_action = {
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-s': 'split',
+  \ 'ctrl-v': 'vsplit'
+  \}
+
+"
+" ==============================
+"	config Coc
+" ==============================
+nmap <silent> gd <Plug>(coc-definition)
+
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+nmap <leader>rn <Plug>(coc-rename)
 "
 " ==============================
 "	config Nerdtree
@@ -465,7 +496,7 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 " How can I map a specific key or shortcut to open NERDTree?
 " Stick this in your vimrc to open NERDTree with Ctrl+n (you can set whatever key you want):
-map <C-n> :NERDTreeToggle<CR>
+nnoremap <silent> <C-b> :NERDTreeToggle<CR>
 
 " How can I close vim if the only window left open is a NERDTree?
 "Stick this in your vimrc:
@@ -476,6 +507,17 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
+
+" ==============================
+"	config YouCompleteMe
+" ==============================
+" let g:ycm_min_num_of_chars_for_completion = 99
+" set completeopt-=preview
+" nnoremap <leader>gdl :YcmCompleter GoToDeclaration<CR>
+" nnoremap <leader>gdf :YcmCompleter GoToDefinition<CR>
+" nnoremap <leader>grf :YcmCompleter GoToReferences<CR>
+" nnoremap <leader>gt :YcmCompleter GetType<CR>
+" nnoremap <leader>gdoc :YcmCompleter GetDoc<CR>
 
 " filetypes
 """"""""""""""""""""""""""""""
@@ -497,3 +539,4 @@ au FileType python map <buffer> <leader>1 /class
 au FileType python map <buffer> <leader>2 /def 
 au FileType python map <buffer> <leader>C ?class 
 au FileType python map <buffer> <leader>D ?def 
+
