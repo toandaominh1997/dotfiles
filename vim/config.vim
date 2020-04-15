@@ -26,9 +26,25 @@
 "    -> Helper functions
 "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let &t_SI .= "\<Esc>[?2004h"
+let &t_EI .= "\<Esc>[?2004l"
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
+
+
 nnoremap <c-p> :Files<CR>
 inoremap <c-p> :Files<CR>
+set autoread
+au CursorHold * checktime
+au FileChangedShell * echo "Warning: File changed on disk"
 set number 
+set relativenumber
 set mouse=a
 set clipboard=unnamedplus
 nnoremap <Tab> :bn<CR>
