@@ -449,7 +449,8 @@ filetype off
 
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
-Plug 'arcticicestudio/nord-vim'
+" Plug 'arcticicestudio/nord-vim'
+Plug 'joshdick/onedark.vim'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -462,11 +463,18 @@ Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
+Plug 'tell-k/vim-autopep8'
+
 call plug#end()
-colorscheme nord
+colorscheme onedark
 
 filetype plugin indent on
 syntax on
+" Autopep8 
+let g:autopep8_aggressive=2
+let g:autopep8_disable_show_diff=1
+let g:autopep8_on_save = 1
+autocmd FileType python noremap <buffer> <F8> :call Autopep8()<CR>
 
 " Vim easymotion
 nmap <silent> ;; <Plug>(easymotion-overwin-f)
