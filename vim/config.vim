@@ -46,7 +46,8 @@ au FileChangedShell * echo "Warning: File changed on disk"
 set number 
 set relativenumber
 set mouse=a
-set clipboard=unnamedplus
+set clipboard+=unnamedplus
+let g:loaded_clipboard_provider = 1
 nnoremap <Tab> :bn<CR>
 nnoremap <S-Tab> :bp<CR>
 
@@ -448,6 +449,7 @@ filetype off
 
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
+Plug 'arcticicestudio/nord-vim'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -461,6 +463,7 @@ Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
 call plug#end()
+colorscheme nord
 
 filetype plugin indent on
 syntax on
@@ -625,23 +628,4 @@ let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
 
-""""""""""""""""""""""""""""""
-" => Python section
-""""""""""""""""""""""""""""""
-let python_highlight_all = 1
-au FileType python syn keyword pythonDecorator True None False self
-
-au BufNewFile,BufRead *.jinja set syntax=htmljinja
-au BufNewFile,BufRead *.mako set ft=mako
-
-au FileType python map <buffer> F :set foldmethod=indent<cr>
-
-au FileType python inoremap <buffer> $r return 
-au FileType python inoremap <buffer> $i import 
-au FileType python inoremap <buffer> $p print 
-au FileType python inoremap <buffer> $f # --- <esc>a
-au FileType python map <buffer> <leader>1 /class 
-au FileType python map <buffer> <leader>2 /def 
-au FileType python map <buffer> <leader>C ?class 
-au FileType python map <buffer> <leader>D ?def 
 
