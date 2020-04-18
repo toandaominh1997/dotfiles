@@ -45,7 +45,7 @@ au CursorHold * checktime
 au FileChangedShell * echo "Warning: File changed on disk"
 set number 
 set relativenumber
-set mouse=a
+set mouse+=a
 set clipboard+=unnamedplus
 let g:loaded_clipboard_provider = 1
 nnoremap <Tab> :bn<CR>
@@ -449,6 +449,7 @@ filetype off
 
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
+Plug 'preservim/nerdcommenter'
 " Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
 
@@ -465,6 +466,9 @@ Plug 'easymotion/vim-easymotion'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'tell-k/vim-autopep8'
 
+Plug 'jiangmiao/auto-pairs'
+Plug 'haya14busa/incsearch.vim'
+
 call plug#end()
 colorscheme onedark
 
@@ -472,13 +476,22 @@ filetype plugin indent on
 syntax on
 " Autopep8 
 let g:autopep8_aggressive=2
-let g:autopep8_disable_show_diff=1
-let g:autopep8_on_save = 1
+
 autocmd FileType python noremap <buffer> <F8> :call Autopep8()<CR>
 
 " Vim easymotion
 nmap <silent> ;; <Plug>(easymotion-overwin-f)
 nmap <silent> ;l <Plug>(easymotion-overwin-line)
+
+
+" Search
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+" Comment
+let g:NERDDefaultAlign = 'left'
+map mm <Plug>NERDCommenterToggle
 
 "
 " ==============================
