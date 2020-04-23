@@ -468,7 +468,7 @@ Plug 'tell-k/vim-autopep8'
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'haya14busa/incsearch.vim'
-
+Plug 'nathanaelkane/vim-indent-guides'
 call plug#end()
 colorscheme onedark
 
@@ -479,6 +479,11 @@ let g:autopep8_aggressive=2
 
 autocmd FileType python noremap <buffer> <F8> :call Autopep8()<CR>
 
+
+" vim indent guides
+let g:indent_guides_guide_size = 1
+let g:indent_guides_color_change_percent = 1
+let g:indent_guides_enable_on_vim_startup = 1
 " Vim easymotion
 nmap <silent> ;; <Plug>(easymotion-overwin-f)
 nmap <silent> ;l <Plug>(easymotion-overwin-line)

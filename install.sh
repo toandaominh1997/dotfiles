@@ -55,19 +55,13 @@ else
 fi
 
 
+
 if [ -d $HOME/.dotfiles/config ] ; then
 cd $HOME/.dotfiles/config
 git pull origin master
 else
   git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/config
 fi
-
-#if [ ! -d $HOME/.dotfiles/plugged/YouCompleteMe ] ; then
-#git clone https://github.com/ycm-core/YouCompleteMe.git $HOME/.dotfiles/plugged/YouCompleteMe
-#cd $HOME/.dotfiles/plugged/YouCompleteMe
-#git submodule update --init --recursive
-#python3 $HOME/.dotfiles/plugged/YouCompleteMe/install.py --all
-#fi
 
 echo 'source $HOME/.dotfiles/tool/vim/config.vim'> ~/.vimrc
 
@@ -77,15 +71,18 @@ echo 'source ~/.dotfiles/tool/tmux/config.tmux'> ~/.tmux.conf
 
 echo "Installed Tmux configuration successfully ^~^"
 
-
-if [ ! -e $HOME/.vim/colors/peaksea.vim ] ; then
-echo 'install peaseak'
-if [ ! -d $HOME/.vim/colors ] ; then
-    mkdir $HOME/.vim/colors/
+dpkg -s 'node' &> /dev/null
+if [ $? -ne 0 ]
+then
+  echo "node is Installed"
+else
+  echo "WARNING: \"node\" command is not found. Install it first\n"
+  curl -o- https://gist.githubusercontent.com/ankurk91/8f107ef490f40f74a1cf/raw/install-node-js.sh | bash -s -- --version lts
 fi
-wget https://raw.githubusercontent.com/amix/vimrc/master/sources_forked/peaksea/colors/peaksea.vim -O $HOME/.vim/colors/peaksea.vim
-fi
 
+
+# Install vim plugin
+vim +'PlugInstall --sync' +qa
 
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh ] ; then
 echo 'install Oh-my-zsh'
@@ -99,14 +96,11 @@ git clone https://github.com/powerline/fonts.git $HOME/.dotfiles/fonts
 sh $HOME/.dotfiles/fonts/install.sh
 fi
 
+
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ] ; then
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
 fi
 
-#if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt ] ; then
-#git clone https://github.com/denysdovhan/spaceship-prompt.git $HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt
-#ln -s "$HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship-prompt/spaceship.zsh-theme" "$HOME/.dotfiles/.oh-my-zsh/custom/themes/spaceship.zsh-theme"
-#fi
 
 if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions ] ; then
 git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions
