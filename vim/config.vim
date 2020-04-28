@@ -47,12 +47,8 @@ set number
 set relativenumber
 set mouse+=a
 set clipboard+=unnamedplus
-let g:loaded_clipboard_provider = 1
-nnoremap <Tab> :bn<CR>
-nnoremap <S-Tab> :bp<CR>
+let g:loaded_clipboard_provider = 0 
 
-nnoremap <c-z> :u<CR>      " Avoid using this**
-inoremap <c-z> <c-o>:u<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -482,6 +478,7 @@ Plug 'tell-k/vim-autopep8'
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'haya14busa/incsearch.vim'
+Plug 'christoomey/vim-system-copy'
 call plug#end()
 colorscheme onedark
 
@@ -493,6 +490,11 @@ syntax on
 "let g:airline#extensions#tabline#left_sep = ' '
 "let g:airline#extensions#tabline#left_alt_sep = '|'
 
+
+" Copy
+let g:system_copy_silent = 1
+map <C-c> cp
+map <C-v> cv
 
 
 " Autopep8 
