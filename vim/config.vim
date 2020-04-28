@@ -450,8 +450,10 @@ filetype off
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
-" Plug 'arcticicestudio/nord-vim'
 Plug 'joshdick/onedark.vim'
+
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -468,22 +470,25 @@ Plug 'tell-k/vim-autopep8'
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'haya14busa/incsearch.vim'
-Plug 'nathanaelkane/vim-indent-guides'
 call plug#end()
 colorscheme onedark
 
 filetype plugin indent on
 syntax on
+
+" Airline
+"let g:airline#extensions#tabline#enabled = 1
+"let g:airline#extensions#tabline#left_sep = ' '
+"let g:airline#extensions#tabline#left_alt_sep = '|'
+
+
+
 " Autopep8 
 let g:autopep8_aggressive=2
 
 autocmd FileType python noremap <buffer> <F8> :call Autopep8()<CR>
 
 
-" vim indent guides
-let g:indent_guides_guide_size = 1
-let g:indent_guides_color_change_percent = 1
-let g:indent_guides_enable_on_vim_startup = 1
 " Vim easymotion
 nmap <silent> ;; <Plug>(easymotion-overwin-f)
 nmap <silent> ;l <Plug>(easymotion-overwin-line)
@@ -497,6 +502,7 @@ map g/ <Plug>(incsearch-stay)
 " Comment
 let g:NERDDefaultAlign = 'left'
 map mm <Plug>NERDCommenterToggle
+
 
 "
 " ==============================
