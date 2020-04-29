@@ -480,6 +480,7 @@ Plug 'tell-k/vim-autopep8'
 Plug 'jiangmiao/auto-pairs'
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
+Plug 'Yggdroot/indentLine'
 call plug#end()
 colorscheme onedark
 
