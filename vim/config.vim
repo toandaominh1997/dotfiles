@@ -190,8 +190,8 @@ set guioptions-=L
 
 
 " Colorscheme
-set background=dark
-colorscheme peaksea
+"set background=dark
+"colorscheme peaksea
 
 
 " Set extra options when running in GUI mode
@@ -459,10 +459,8 @@ filetype off
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
-Plug 'joshdick/onedark.vim'
+Plug 'tomasr/molokai'
 
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -475,34 +473,27 @@ Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
-Plug 'tell-k/vim-autopep8'
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
 call plug#end()
-colorscheme onedark
+
+colorscheme molokai
+let g:molokai_original = 1
+let g:rehash256 = 1
+
+
 
 filetype plugin indent on
 syntax on
 
-" Airline
-"let g:airline#extensions#tabline#enabled = 1
-"let g:airline#extensions#tabline#left_sep = ' '
-"let g:airline#extensions#tabline#left_alt_sep = '|'
-
-
 " Copy
-let g:system_copy_silent = 1
+let g:system_copy_silent = 0
 map <C-c> cp
 map <C-v> cv
 
-
-" Autopep8 
-let g:autopep8_aggressive=2
-
-autocmd FileType python noremap <buffer> <F8> :call Autopep8()<CR>
 
 
 " Vim easymotion
