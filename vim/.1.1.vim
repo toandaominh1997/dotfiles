@@ -1,18 +1,59 @@
  
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Maintainer: 
+"       Amir Salihefendic — @amix3k
+"
+" Awesome_version:
+"       Get this config, nice color schemes and lots of plugins!
+"
+"       Install the awesome version from:
+"
+"           https://github.com/amix/vimrc
+"
+" Sections:
+"    -> General
+"    -> VIM user interface
+"    -> Colors and Fonts
+"    -> Files and backups
+"    -> Text, tab and indent related
+"    -> Visual mode related
+"    -> Moving around, tabs and buffers
+"    -> Status line
+"    -> Editing mappings
+"    -> vimgrep searching and cope displaying
+"    -> Spell checking
+"    -> Misc
+"    -> Helper functions
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let &t_SI .= "\<Esc>[?2004h"
+let &t_EI .= "\<Esc>[?2004l"
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
+
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
+
+
 nnoremap <c-p> :Files<CR>
 inoremap <c-p> :Files<CR>
+set autoread
+au CursorHold * checktime
+au FileChangedShell * echo "Warning: File changed on disk"
 set number 
 set relativenumber
 set mouse+=a
 set clipboard+=unnamedplus
 let g:loaded_clipboard_provider = 0 
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
-set history=500
+set history=5000
 
 " Enable filetype plugins
 filetype plugin on
@@ -43,9 +84,6 @@ set so=7
 
 " Avoid garbled characters in Chinese language windows OS
 let $LANG='en' 
-set langmenu=en
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
 
 " Turn on the Wild menu
 set wildmenu
@@ -227,7 +265,6 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-
 " Close the current buffer
 map <leader>bd :Bclose<cr>:tabclose<cr>gT
 
@@ -254,6 +291,7 @@ noremap <leader>7 7gt
 noremap <leader>8 8gt
 noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
+
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
@@ -287,6 +325,7 @@ set laststatus=2
 
 " Format the status line
 " set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+
 set statusline=
 set statusline+=%#PmenuSel#
 set statusline+=%#LineNr#
@@ -415,16 +454,13 @@ function! VisualSelection(direction, extra_filter) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
-
-
-
-
 filetype off
 
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
 Plug 'tomasr/molokai'
+
 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -442,7 +478,6 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
-Plug 'christoomey/vim-tmux-navigator'
 call plug#end()
 
 colorscheme molokai
@@ -451,61 +486,35 @@ let g:rehash256 = 1
 
 
 
-"
-" =============================================================================================================================
-"	config theme
-" =============================================================================================================================
-"
-colorscheme molokai
-let g:molokai_original = 1
-let g:rehash256 = 1
-
 filetype plugin indent on
 syntax on
 
-
-"
-" =============================================================================================================================
-"	config copy
-" =============================================================================================================================
-"
-let g:system_copy_silent = 1
+" Copy
+let g:system_copy_silent = 0
 map <C-c> cp
 map <C-v> cv
 
 
 
-"
-" =============================================================================================================================
-"	config easymotion
-" =============================================================================================================================
-"
+" Vim easymotion
 nmap <silent> ;; <Plug>(easymotion-overwin-f)
 nmap <silent> ;l <Plug>(easymotion-overwin-line)
 
 
-"
-" =============================================================================================================================
-"	config search
-" =============================================================================================================================
-"
+" Search
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
-"
-" =============================================================================================================================
-"	config comment
-" =============================================================================================================================
-"
+" Comment
 let g:NERDDefaultAlign = 'left'
 map mm <Plug>NERDCommenterToggle
 
 
 "
-" =============================================================================================================================
+" ==============================
 "	config FZF
-" =============================================================================================================================
+" ==============================
 "
 nnoremap <C-p> :FZF<CR>
 let g:fzf_action = {
@@ -515,11 +524,9 @@ let g:fzf_action = {
   \}
 
 "
-" =============================================================================================================================
-"	config coc.nvim
-" =============================================================================================================================
-"
-
+" ==============================
+"	config Coc
+" ==============================
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
@@ -632,11 +639,10 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 "
-" =============================================================================================================================
-"	config NERDTree
-" =============================================================================================================================
+" ==============================
+"	config Nerdtree
+" ==============================
 "
-
 " How can I open a NERDTree automatically when vim starts up if no files were specified?
 " Stick this in your vimrc:
 
@@ -660,5 +666,4 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 let NERDTreeCustomOpenArgs={'file':{'where': 't'}}
-
 
