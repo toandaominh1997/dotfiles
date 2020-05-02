@@ -1,59 +1,18 @@
  
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Maintainer: 
-"       Amir Salihefendic — @amix3k
-"
-" Awesome_version:
-"       Get this config, nice color schemes and lots of plugins!
-"
-"       Install the awesome version from:
-"
-"           https://github.com/amix/vimrc
-"
-" Sections:
-"    -> General
-"    -> VIM user interface
-"    -> Colors and Fonts
-"    -> Files and backups
-"    -> Text, tab and indent related
-"    -> Visual mode related
-"    -> Moving around, tabs and buffers
-"    -> Status line
-"    -> Editing mappings
-"    -> vimgrep searching and cope displaying
-"    -> Spell checking
-"    -> Misc
-"    -> Helper functions
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let &t_SI .= "\<Esc>[?2004h"
-let &t_EI .= "\<Esc>[?2004l"
-
-inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
-
-function! XTermPasteBegin()
-  set pastetoggle=<Esc>[201~
-  set paste
-  return ""
-endfunction
-
-
 nnoremap <c-p> :Files<CR>
 inoremap <c-p> :Files<CR>
-set autoread
-au CursorHold * checktime
-au FileChangedShell * echo "Warning: File changed on disk"
 set number 
 set relativenumber
 set mouse+=a
 set clipboard+=unnamedplus
 let g:loaded_clipboard_provider = 0 
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
-set history=5000
+set history=500
 
 " Enable filetype plugins
 filetype plugin on
@@ -83,6 +42,9 @@ set so=7
 
 " Avoid garbled characters in Chinese language windows OS
 let $LANG='en' 
+set langmenu=en
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
 
 " Turn on the Wild menu
 set wildmenu
@@ -158,40 +120,7 @@ if $COLORTERM == 'gnome-terminal'
     set t_Co=256
 endif
 
-"try
-"    colorscheme desert
-"catch
-"endtry
-"
-"set background=dark
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => GUI related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Set font according to system
-if has("mac") || has("macunix")
-    set gfn=IBM\ Plex\ Mono:h14,Hack:h14,Source\ Code\ Pro:h15,Menlo:h15
-elseif has("win16") || has("win32")
-    set gfn=IBM\ Plex\ Mono:h14,Source\ Code\ Pro:h12,Bitstream\ Vera\ Sans\ Mono:h11
-elseif has("gui_gtk2")
-    set gfn=IBM\ Plex\ Mono\ 14,:Hack\ 14,Source\ Code\ Pro\ 12,Bitstream\ Vera\ Sans\ Mono\ 11
-elseif has("linux")
-    set gfn=IBM\ Plex\ Mono\ 14,:Hack\ 14,Source\ Code\ Pro\ 12,Bitstream\ Vera\ Sans\ Mono\ 11
-elseif has("unix")
-    set gfn=Monospace\ 11
-endif
-
-" Disable scrollbars (real hackers don't use scrollbars for navigation!)
-set guioptions-=r
-set guioptions-=R
-set guioptions-=l
-set guioptions-=L
-
-
-" Colorscheme
 set background=dark
-colorscheme peaksea
-
 
 " Set extra options when running in GUI mode
 if has("gui_running")
@@ -264,6 +193,7 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
+
 " Close the current buffer
 map <leader>bd :Bclose<cr>:tabclose<cr>gT
 
@@ -290,7 +220,6 @@ noremap <leader>7 7gt
 noremap <leader>8 8gt
 noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
-
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
@@ -324,7 +253,6 @@ set laststatus=2
 
 " Format the status line
 " set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
-
 set statusline=
 set statusline+=%#PmenuSel#
 set statusline+=%#LineNr#
@@ -453,15 +381,16 @@ function! VisualSelection(direction, extra_filter) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
+
+
+
+
 filetype off
 
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
-Plug 'joshdick/onedark.vim'
-
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
+Plug 'tomasr/molokai'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -474,54 +403,70 @@ Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
-Plug 'tell-k/vim-autopep8'
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 call plug#end()
-colorscheme onedark
+
 
 filetype plugin indent on
 syntax on
 
-" Airline
-"let g:airline#extensions#tabline#enabled = 1
-"let g:airline#extensions#tabline#left_sep = ' '
-"let g:airline#extensions#tabline#left_alt_sep = '|'
+
+"
+" =============================================================================================================================
+"	config theme
+" =============================================================================================================================
+"
+colorscheme molokai
+let g:molokai_original = 1
+let g:rehash256 = 1
 
 
-" Copy
+
+"
+" =============================================================================================================================
+"	config copy
+" =============================================================================================================================
+"
 let g:system_copy_silent = 1
 map <C-c> cp
 map <C-v> cv
 
 
-" Autopep8 
-let g:autopep8_aggressive=2
 
-autocmd FileType python noremap <buffer> <F8> :call Autopep8()<CR>
-
-
-" Vim easymotion
+"
+" =============================================================================================================================
+"	config easymotion
+" =============================================================================================================================
+"
 nmap <silent> ;; <Plug>(easymotion-overwin-f)
 nmap <silent> ;l <Plug>(easymotion-overwin-line)
 
 
-" Search
+"
+" =============================================================================================================================
+"	config search
+" =============================================================================================================================
+"
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
-" Comment
+"
+" =============================================================================================================================
+"	config comment
+" =============================================================================================================================
+"
 let g:NERDDefaultAlign = 'left'
 map mm <Plug>NERDCommenterToggle
 
 
 "
-" ==============================
+" =============================================================================================================================
 "	config FZF
-" ==============================
+" =============================================================================================================================
 "
 nnoremap <C-p> :FZF<CR>
 let g:fzf_action = {
@@ -531,9 +476,11 @@ let g:fzf_action = {
   \}
 
 "
-" ==============================
-"	config Coc
-" ==============================
+" =============================================================================================================================
+"	config coc.nvim
+" =============================================================================================================================
+"
+
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
@@ -646,10 +593,11 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 "
-" ==============================
-"	config Nerdtree
-" ==============================
+" =============================================================================================================================
+"	config NERDTree
+" =============================================================================================================================
 "
+
 " How can I open a NERDTree automatically when vim starts up if no files were specified?
 " Stick this in your vimrc:
 
@@ -673,4 +621,5 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 let NERDTreeCustomOpenArgs={'file':{'where': 't'}}
+
 
