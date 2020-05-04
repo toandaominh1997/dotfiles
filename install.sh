@@ -1,125 +1,129 @@
 set +e
 set -u
 
+command_exists() {
+    hash "$1" &>/dev/null
+}
 # install git
-dpkg -s 'git' &> /dev/null
-if [ $? -ne 0 ]
-then
- echo "git is installed"
-
+if command_exists git; then
+    echo "git is installed"
 else
-  echo "WARNING: \"vim\" command is not found. Install it first\n"
-  apt-get install -y git
+    echo "WARNING: \"git\" command is not found. Install it first"
+    apt-get install -y git
 fi
 
-dpkg -s 'cmake' &> /dev/null
-if [ $? -ne 0 ]
-then
-  echo "cmake is installed"
+# install curl
+if command_exists curl; then
+    echo "curl is installed"
 else
-  echo "WARNING: \"cmake\" command is not found. Install it first\n"
-  apt-get install -y cmake
+    echo "WARNING: \"curl\" command is not found. Install it first"
+    apt-get install -y curl
+fi
+
+# install wget
+if command_exists wget; then
+    echo "wget is installed"
+else
+    echo "require wget but it's not installed. Install it first"
+    apt-get install -y wget
+fi
+
+# install vim stable
+if command_exists vim; then
+    echo "vim is installed"
+else
+    echo "require vim but it's not installed. Install it first"
+    add-apt-repository ppa:jonathonf/vim
+    apt-get update
+    apt-get install -y vim
 fi
 
 # install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-
-# instzall vim
-dpkg -s 'vim' &> /dev/null
-if [ $? -ne 0 ]
-then
-  echo "vim is Installed"
+# install zsh stable
+if command_exists zsh; then
+    echo "zsh is installed"
 else
-  echo "WARNING: \"vim\" command is not found. Install it first\n"
-  apt-get install -y vim
-fi
-# install zsh
-dpkg -s 'zsh' &> /dev/null
-if [ $? -ne 0 ]
-then
-  echo "zsh is Installed"
-else
-  echo "WARNING: \"zsh\" command is not found. Install it first\n"
-  apt-get install -y zsh
-fi
-# install tmux
-dpkg -s 'tmux' &> /dev/null
-if [ $? -ne 0 ]
-then
-  echo "tmux is Installed"
-else
-  echo "WARNING: \"tmux\" command is not found. Install it first\n"
-  apt-get install -y tmux
+    echo "require zsh but it's not installed. Install it first"
+    apt-get install -y zsh
 fi
 
-
-
-if [ -d $HOME/.dotfiles/config ] ; then
-cd $HOME/.dotfiles/config
-git pull origin master
+# install tmux stable
+if command_exists tmux; then
+    echo "tmux is installed"
 else
-  git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/config
+    echo "require tmux but it's not installed. Install it first"
+    apt-get install -y tmux
 fi
 
-echo 'source $HOME/.dotfiles/tool/vim/config.vim'> ~/.vimrc
+# config vim
+echo 'source $HOME/.dotfiles/tool/vim/config.vim' >$HOME/.vimrc
+if [ ! -d $HOME/.config/nvim ]; then
+    echo "Neovim setup"
+    mkdir $HOME/.config/nvim
+fi
+echo -e "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource $HOME/.dotfiles/tool/vim/config.vim" >$HOME/.config/nvim/init.vim
+vim +'PlugInstall --sync' +qa
+echo "Installed Vim/Nvim configuration successfully ^~^"
 
-echo "Installed Vim configuration successfully ^~^"
-
-echo 'source ~/.dotfiles/tool/tmux/config.tmux'> ~/.tmux.conf
-
+# config tmux
+echo 'source ~/.dotfiles/tool/tmux/config.tmux' >$HOME/.tmux.conf
 echo "Installed Tmux configuration successfully ^~^"
 
-dpkg -s 'node' &> /dev/null
-if [ $? -ne 0 ]
-then
-  echo "node is Installed"
+# install oh-my-zsh
+if [ ! -d $HOME/.dotfiles/oh-my-zsh ]; then
+    echo "install Oh-my-zsh"
+    git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/oh-my-zsh
 else
-  echo "WARNING: \"node\" command is not found. Install it first\n"
-  curl -o- https://gist.githubusercontent.com/ankurk91/8f107ef490f40f74a1cf/raw/install-node-js.sh | bash -s -- --version lts
+    echo "Oh-my-zsh is installed"
 fi
-
-
-# Install vim plugin
-vim +'PlugInstall --sync' +qa
-
-if [ ! -d $HOME/.dotfiles/.oh-my-zsh ] ; then
-echo 'install Oh-my-zsh'
-git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/.oh-my-zsh
+# install powerlevel9k
+if [ ! -d $HOME/.dotfiles/oh-my-zsh/themes/powerlevel9k ]; then
+    echo "install powerlevel9k"
+    git clone https://github.com/Powerlevel9k/powerlevel9k.git $HOME/.dotfiles/oh-my-zsh/themes/powerlevel9k
+else
+    echo "Powerlevel9k is installed"
 fi
-if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/themes/powerlevel9k ] ; then
-    git clone https://github.com/Powerlevel9k/powerlevel9k.git  $HOME/.dotfiles/.oh-my-zsh/themes/powerlevel9k
+# install fonts
+if [ ! -d $HOME/.dotfiles/fonts ]; then
+    echo "install fonts"
+    git clone https://github.com/powerline/fonts.git $HOME/.dotfiles/fonts
+    sh $HOME/.dotfiles/fonts/install.sh
+else
+    echo "fonts is installed"
 fi
-if [ ! -d $HOME/.dotfiles/fonts ] ; then
-git clone https://github.com/powerline/fonts.git $HOME/.dotfiles/fonts
-sh $HOME/.dotfiles/fonts/install.sh
+# install syntax-highlighting
+if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
+    echo "install syntax-highlighting"
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+else
+    echo "syntax_highlighting is installed"
 fi
-
-
-if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting ] ; then
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+# autosuggestions
+if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
+    echo "install autosuggestions"
+    git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-autosuggestions
+else
+    echo "autosuggestions is installed"
 fi
-
-
-if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions ] ; then
-git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+# fzf
+if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf ]; then
+    echo "install FZF"
+    git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf
+    $HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf/install
+else
+    echo "FZF is installed"
 fi
-
-
-if [ ! -d $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf ] ; then
-git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf
-$HOME/.dotfiles/.oh-my-zsh/custom/plugins/fzf/install
-fi
-
-echo 'source $HOME/.dotfiles/tool/zsh/config.zsh'> ~/.zshrc
-
-export ZSH=$HOME/.dotfiles/.oh-my-zsh
-
-sh $HOME/.dotfiles/.oh-my-zsh/tools/install.sh
+export ZSH=$HOME/.dotfiles/oh-my-zsh
+$HOME/.dotfiles/oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
+echo 'source $HOME/.dotfiles/tool/zsh/config.zsh' >$HOME/.zshrc
 
-echo "OK: Completed\n"
-
-
-
+if [ "$EUID" -ne 0 ]; then
+    # install nodejs
+    snap install node --channel=14/stable --classic
+    # install nvim
+    snap install --beta nvim --classic
+fi
