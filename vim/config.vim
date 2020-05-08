@@ -469,9 +469,12 @@ syntax on
 "	config copy
 " =============================================================================================================================
 "
-let g:system_copy_silent = 1
-map <C-c> cp
-map <C-v> cv
+let g:system_copy_silent = 0
+let g:system_copy#copy_command='xclip -sel clipboard'
+let g:system_copy#paste_command='xclip -sel clipboard -o'
+map <leader>c cp
+map <leader>v cv
+
 
 
 
