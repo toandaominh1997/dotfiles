@@ -1,63 +1,6 @@
 set +e
 set -u
 
-command_exists() {
-    hash "$1" &>/dev/null
-}
-# install git
-if command_exists git; then
-    echo "git is installed"
-else
-    echo "WARNING: \"git\" command is not found. Install it first"
-    apt-get install -y git
-fi
-
-# install curl
-if command_exists curl; then
-    echo "curl is installed"
-else
-    echo "WARNING: \"curl\" command is not found. Install it first"
-    apt-get install -y curl
-fi
-
-# install wget
-if command_exists wget; then
-    echo "wget is installed"
-else
-    echo "require wget but it's not installed. Install it first"
-    apt-get install -y wget
-fi
-
-# install vim stable
-if command_exists vim; then
-    echo "vim is installed"
-else
-    echo "require vim but it's not installed. Install it first"
-    add-apt-repository ppa:jonathonf/vim
-    apt-get update
-    apt-get install -y vim
-fi
-
-# install vim-plug
-curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-
-# install zsh stable
-if command_exists zsh; then
-    echo "zsh is installed"
-else
-    echo "require zsh but it's not installed. Install it first"
-    apt-get install -y zsh
-fi
-
-# install tmux stable
-if command_exists tmux; then
-    echo "tmux is installed"
-else
-    echo "require tmux but it's not installed. Install it first"
-    apt-get install -y tmux
-fi
-
 # config vim
 echo 'source $HOME/.dotfiles/tool/vim/config.vim' >$HOME/.vimrc
 if [ ! -d $HOME/.config/nvim ]; then
@@ -120,10 +63,3 @@ export ZSH=$HOME/.dotfiles/oh-my-zsh
 $HOME/.dotfiles/oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
 echo 'source $HOME/.dotfiles/tool/zsh/config.zsh' >$HOME/.zshrc
-
-if [ "$EUID" -ne 0 ]; then
-    # install nodejs
-    snap install node --channel=14/stable --classic
-    # install nvim
-    snap install --beta nvim --classic
-fi
