@@ -427,7 +427,6 @@ filetype off
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
-Plug 'tomasr/molokai'
 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -440,11 +439,13 @@ Plug 'junegunn/fzf.vim'
 Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
+Plug 'jiangmiao/auto-pairs'
 
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'flazz/vim-colorschemes'
 call plug#end()
 
 
@@ -453,9 +454,11 @@ call plug#end()
 "	config theme
 " =============================================================================================================================
 "
-colorscheme molokai
-let g:molokai_original = 1
-let g:rehash256 = 1
+
+colorscheme gruvbox
+"colorscheme molokai
+"let g:molokai_original = 1
+"let g:rehash256 = 1
 
 filetype plugin indent on
 syntax on
