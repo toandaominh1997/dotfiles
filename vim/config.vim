@@ -445,7 +445,7 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'flazz/vim-colorschemes'
+Plug 'altercation/vim-colors-solarized'
 call plug#end()
 
 
@@ -454,11 +454,19 @@ call plug#end()
 "	config theme
 " =============================================================================================================================
 "
+if has('gui_running')
+    set background=light
+else
+    set background=dark
+endif
+syntax enable
+set background=dark
+colorscheme solarized
+let g:solarized_termcolors=256
 
-colorscheme gruvbox
-"colorscheme molokai
-"let g:molokai_original = 1
-"let g:rehash256 = 1
+
+
+
 
 filetype plugin indent on
 syntax on
