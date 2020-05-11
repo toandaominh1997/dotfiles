@@ -454,15 +454,14 @@ call plug#end()
 "	config theme
 " =============================================================================================================================
 "
-if has('gui_running')
-    set background=light
-else
-    set background=dark
-endif
+
 syntax enable
 set background=dark
 colorscheme solarized
 let g:solarized_termcolors=256
+let g:solarized_contrast="high"
+let g:solarized_visibility="high"
+color solarized
 
 
 
