@@ -4,8 +4,11 @@ inoremap <c-p> :Files<CR>
 set number 
 set relativenumber
 set mouse+=a
-set clipboard+=unnamedplus
-let g:loaded_clipboard_provider = 0 
+if has('nvim')
+    set mouse+=nicr
+endif
+set clipboard+=unnamed
+let g:loaded_clipboard_provider = 1 
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -438,17 +441,11 @@ Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
 
-Plug 'jiangmiao/auto-pairs'
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
 Plug 'christoomey/vim-tmux-navigator'
 call plug#end()
-
-colorscheme molokai
-let g:molokai_original = 1
-let g:rehash256 = 1
-
 
 
 "
@@ -472,10 +469,10 @@ syntax on
 let g:system_copy_silent = 0
 let g:system_copy#copy_command='xclip -sel clipboard'
 let g:system_copy#paste_command='xclip -sel clipboard -o'
-map <leader>c cp
-map <leader>v cv
-
-
+map <leader>y cp
+map Y cP
+map <leader>p cv<CR>
+map P cV<CR>
 
 
 "
