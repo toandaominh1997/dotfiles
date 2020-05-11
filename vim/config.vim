@@ -445,7 +445,7 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'altercation/vim-colors-solarized'
+Plug 'ayu-theme/ayu-vim' " or other package manager
 call plug#end()
 
 
@@ -454,14 +454,9 @@ call plug#end()
 "	config theme
 " =============================================================================================================================
 "
-
-syntax enable
-set background=dark
-colorscheme solarized
-let g:solarized_termcolors=256
-let g:solarized_contrast="high"
-let g:solarized_visibility="high"
-color solarized
+set termguicolors     " enable true colors support
+let ayucolor="mirage" " for mirage version of theme
+colorscheme ayu
 
 
 
