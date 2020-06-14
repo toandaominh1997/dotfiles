@@ -55,7 +55,12 @@ else
     apt-get install -y tmux
 fi
 
-# install nodejs
-snap install node --channel=14/stable --classic
 # install nvim
 snap install --beta nvim --classic
+
+# install nodejs
+#snap install node --channel=12/stable --classic
+curl -sL install-node.now.sh/lts -o node_lts.sh
+sudo bash node_lts.sh
+sudo rm -rf node_lts.sh
+

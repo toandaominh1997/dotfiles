@@ -8,6 +8,7 @@ if [ ! -d $HOME/.config/nvim ]; then
     mkdir $HOME/.config/nvim
 fi
 echo -e "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource $HOME/.dotfiles/tool/vim/config.vim" >$HOME/.config/nvim/init.vim
+
 vim +'PlugInstall --sync' +qa
 echo "Installed Vim/Nvim configuration successfully ^~^"
 

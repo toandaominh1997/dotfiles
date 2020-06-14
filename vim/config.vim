@@ -7,7 +7,7 @@ set mouse+=a
 if has('nvim')
     set mouse+=nicr
 endif
-set clipboard+=unnamed
+set clipboard+=unnamedplus
 let g:loaded_clipboard_provider = 1 
 
 
@@ -156,6 +156,7 @@ set guioptions-=L
 
 " Colorscheme
 "set background=dark
+"set t_Co=256
 "colorscheme peaksea
 
 
@@ -477,7 +478,8 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'sainnhe/sonokai'
+Plug 'arzg/vim-colors-xcode'
+"Plug 'dracula/vim', { 'as': 'dracula' }
 call plug#end()
 
 
@@ -486,19 +488,8 @@ call plug#end()
 "	config theme
 " =============================================================================================================================
 "
-" important!!
-set termguicolors
 
-" the configuration options should be placed before `colorscheme sonokai`
-let g:sonokai_style = 'andromeda'
-let g:sonokai_enable_italic = 1
-let g:sonokai_disable_italic_comment = 1
-
-colorscheme sonokai
-
-
-
-
+colorscheme xcodedarkhc
 
 filetype plugin indent on
 syntax on
