@@ -573,6 +573,8 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
+let g:coc_node_path = '$HOME/.dotfiles/nodejs/bin/node'
+
 "
 " =============================================================================================================================
 "	config NERDTree
