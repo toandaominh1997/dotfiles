@@ -56,10 +56,6 @@ else
     apt-get install -y tmux
 fi
 
-# install nodejs
-#snap install node --channel=12/stable --classic
-curl -sL install-node.now.sh/lts | bash -s -- --prefix=$HOME/.dotfiles/nodejs --version=lts --verbose
-rm -rf node_lts.sh
 if command_exists snap; then
     echo "Snap install"
     snap install --beta nvim --classic
