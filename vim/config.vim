@@ -1,17 +1,4 @@
- 
-nnoremap <c-p> :Files<CR>
-inoremap <c-p> :Files<CR>
-set number 
-set relativenumber
-set mouse+=a
-if has('nvim')
-    set mouse+=nicr
-endif
-set clipboard+=unnamedplus
-let g:loaded_clipboard_provider = 1 
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+ """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
@@ -124,42 +111,6 @@ if $COLORTERM == 'gnome-terminal'
     set t_Co=256
 endif
 
-"try
-"    colorscheme desert
-"catch
-"endtry
-"
-"set background=dark
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => GUI related
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Set font according to system
-if has("mac") || has("macunix")
-    set gfn=IBM\ Plex\ Mono:h14,Hack:h14,Source\ Code\ Pro:h15,Menlo:h15
-elseif has("win16") || has("win32")
-    set gfn=IBM\ Plex\ Mono:h14,Source\ Code\ Pro:h12,Bitstream\ Vera\ Sans\ Mono:h11
-elseif has("gui_gtk2")
-    set gfn=IBM\ Plex\ Mono\ 14,:Hack\ 14,Source\ Code\ Pro\ 12,Bitstream\ Vera\ Sans\ Mono\ 11
-elseif has("linux")
-    set gfn=IBM\ Plex\ Mono\ 14,:Hack\ 14,Source\ Code\ Pro\ 12,Bitstream\ Vera\ Sans\ Mono\ 11
-elseif has("unix")
-    set gfn=Monospace\ 11
-endif
-
-" Disable scrollbars (real hackers don't use scrollbars for navigation!)
-set guioptions-=r
-set guioptions-=R
-set guioptions-=l
-set guioptions-=L
-
-
-" Colorscheme
-"set background=dark
-"set t_Co=256
-"colorscheme peaksea
-
-
 " Set extra options when running in GUI mode
 if has("gui_running")
     set guioptions-=T
@@ -248,17 +199,6 @@ map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove 
 map <leader>t<leader> :tabnext 
 
-noremap <leader>1 1gt
-noremap <leader>2 2gt
-noremap <leader>3 3gt
-noremap <leader>4 4gt
-noremap <leader>5 5gt
-noremap <leader>6 6gt
-noremap <leader>7 7gt
-noremap <leader>8 8gt
-noremap <leader>9 9gt
-noremap <leader>0 :tablast<cr>
-
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
 nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
@@ -282,59 +222,6 @@ endtry
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-
-""""""""""""""""""""""""""""""
-" => Status line
-""""""""""""""""""""""""""""""
-" status bar colors
-
-" Always show the status line
-let g:currentmode={
-    \ 'n'  : 'Normal',
-    \ 'no' : 'Normal·Operator Pending',
-    \ 'v'  : 'Visual',
-    \ 'V'  : 'V·Line',
-    \ '^V' : 'V·Block',
-    \ 's'  : 'Select',
-    \ 'S'  : 'S·Line',
-    \ '^S' : 'S·Block',
-    \ 'i'  : 'Insert',
-    \ 'R'  : 'Replace',
-    \ 'Rv' : 'V·Replace',
-    \ 'c'  : 'Command',
-    \ 'cv' : 'Vim Ex',
-    \ 'ce' : 'Ex',
-    \ 'r'  : 'Prompt',
-    \ 'rm' : 'More',
-    \ 'r?' : 'Confirm',
-    \ '!'  : 'Shell',
-    \ 't'  : 'Terminal'
-    \}
-
-set laststatus=2
-
-" Format the status line
-" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
-set statusline=
-set noshowmode
-set statusline+=\ %*
-set statusline+=%0*\ %{toupper(g:currentmode[mode()])}\  " The current mode
-set statusline+=%#PmenuSel#
-set statusline+=%#LineNr#
-set statusline+=\ ‹‹
-set statusline+=\ %f
-set statusline+=\ ››
-set statusline+=\ %m
-set statusline+=%#keywork#\ %F
-set statusline+=%=
-set statusline+=%#CursorColumn#
-set statusline+=\ %y
-set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
-set statusline+=\[%{&fileformat}\]
-set statusline+=\ %p%%
-set statusline+=%3*\ ‹‹
-set statusline+=%3*\ %l:%c
-set statusline+=%3*\ ››
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -452,15 +339,33 @@ function! VisualSelection(direction, extra_filter) range
     let @" = l:saved_reg
 endfunction
 
+set number 
+set relativenumber
+set mouse+=a
+if has('nvim')
+    set mouse+=nicr
+endif
+set clipboard+=unnamedplus
+let g:loaded_clipboard_provider = 1 
 
-
+noremap <leader>1 1gt
+noremap <leader>2 2gt
+noremap <leader>3 3gt
+noremap <leader>4 4gt
+noremap <leader>5 5gt
+noremap <leader>6 6gt
+noremap <leader>7 7gt
+noremap <leader>8 8gt
+noremap <leader>9 9gt
+noremap <leader>0 :tablast<cr>
 
 filetype off
 
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
-
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -500,13 +405,19 @@ syntax on
 "	config copy
 " =============================================================================================================================
 "
+nnoremap <leader>y "+Y
 vnoremap <leader>y "+y
-nnoremap <leader>Y "+Y
 nnoremap <leader>p "+p
-nnoremap <leader>P "+P
+vnoremap <leader>p "+p
 
 
-
+"=============================================================================================================================
+"	config vim-airline
+" =============================================================================================================================
+"
+"
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_theme='base16'
 "=============================================================================================================================
 "	config easymotion
 " =============================================================================================================================
@@ -538,7 +449,7 @@ map mm <Plug>NERDCommenterToggle
 "	config FZF
 " =============================================================================================================================
 "
-nnoremap <C-p> :FZF<CR>
+nnoremap <c-p> :Files<CR>
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
   \ 'ctrl-s': 'split',
