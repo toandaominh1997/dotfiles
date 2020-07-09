@@ -345,8 +345,12 @@ set mouse+=a
 if has('nvim')
     set mouse+=nicr
 endif
-set clipboard+=unnamedplus
-let g:loaded_clipboard_provider = 1 
+set clipboard+=unnamed,unnamedplus
+if has('nvim')
+    let g:loaded_clipboard_provider = 0
+    unlet g:loaded_clipboard_provider
+    runtime autoload/provider/clipboard.vim
+endif
 
 noremap <leader>1 1gt
 noremap <leader>2 2gt
@@ -572,9 +576,7 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
-let g:coc_node_path = '$HOME/.dotfiles/nodejs/bin/node'
-let g:coc_config_file = '$HOME/.dotfiles/tool/vim/coc-settings.json'
-"let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier']
+let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier']
 
 "
 " =============================================================================================================================
