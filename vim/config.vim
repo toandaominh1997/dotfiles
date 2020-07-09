@@ -369,7 +369,6 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier']
 
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -574,6 +573,8 @@ nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
 nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
 let g:coc_node_path = '$HOME/.dotfiles/nodejs/bin/node'
+let g:coc_config_file = '$HOME/.dotfiles/tool/vim/coc-settings.json'
+"let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier']
 
 "
 " =============================================================================================================================
