@@ -15,5 +15,5 @@ For detail:
 ### Visualization
 
 
-<img src='./docs/plot.png'>
+<img src='./docs/demo.png'>
  
