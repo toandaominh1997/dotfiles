@@ -30,11 +30,18 @@ if command_exists vim; then
     echo "vim is installed"
 else
     echo "require vim but it's not installed. Install it first"
-    add-apt-repository ppa:jonathonf/vim
-    apt-get update
+    add-apt-repository -y ppa:jonathonf/vim
+    apt-get update -y
     apt-get install -y vim
-    apt-get install vim-gnome
+    apt-get install -y vim-gnome
 fi
+if command_exists nvim; then
+    echo "nvim is installed"
+else
+    echo "require nvim but it's not installed. Install it first"
+    add-apt-repository -y ppa:neovim-ppa/stable
+    apt-get update -y
+    apt-get install -y neovim
 
 # install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
@@ -56,8 +63,13 @@ else
     apt-get install -y tmux
 fi
 
-if command_exists snap; then
-    echo "Snap install"
-    snap install --beta nvim --classic
-fi
+# install node lts
+if command_exists node; then
+    echo "nodejs is installed"
+else
+    echo "require nodejs but it's not installed. Install it first"
+    wget install-node.now.sh/lts
+    bash lts
+    rm -rf lts
+
 

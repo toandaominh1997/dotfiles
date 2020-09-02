@@ -57,7 +57,7 @@ fi
 if [ ! -d $HOME/.dotfiles/nodejs/bin ]; then
     echo "install nodejs"
     mkdir $HOME/.dotfiles/nodejs
-    curl -sL install-node.now.sh/lts | bash -s -- --prefix=$HOME/.dotfiles/nodejs --version=lts --verbose
+    curl -sL install-node.now.sh/lts | bash --verbose
 else
     echo "node is installed"
 fi
