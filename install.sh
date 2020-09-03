@@ -42,6 +42,7 @@ else
     add-apt-repository -y ppa:neovim-ppa/stable
     apt-get update -y
     apt-get install -y neovim
+fi
 
 # install vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
@@ -71,5 +72,4 @@ else
     wget install-node.now.sh/lts
     bash lts
     rm -rf lts
-
-
+fi
