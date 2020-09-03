@@ -53,14 +53,7 @@ if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-autosuggestions ]; then
 else
     echo "autosuggestions is installed"
 fi
-# nodejs
-if [ ! -d $HOME/.dotfiles/nodejs/bin ]; then
-    echo "install nodejs"
-    mkdir $HOME/.dotfiles/nodejs
-    curl -sL install-node.now.sh/lts | bash --verbose
-else
-    echo "node is installed"
-fi
+
 # fzf
 if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf ]; then
     echo "install FZF"
@@ -69,6 +62,7 @@ if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf ]; then
 else
     echo "FZF is installed"
 fi
+
 export ZSH=$HOME/.dotfiles/oh-my-zsh
 $HOME/.dotfiles/oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
