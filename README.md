@@ -7,10 +7,14 @@ Dotfiles is installed by running one of the following commands in your terminal.
 ```bash
 git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/tool
 bash $HOME/.dotfiles/tool/config.sh
-
+```
+</br>
 For detail:
-    if you not in ['vim/nvim', 'zsh', 'tmux', 'vim-plug', 'node']:
-        sudo bash $HOME/.dotfiles/tool/install.sh
+
+if you not in ['vim/nvim', 'zsh', 'tmux', 'vim-plug', 'node']:
+
+```bash
+sudo bash $HOME/.dotfiles/tool/install.sh
 ```
 ### Visualization
 
