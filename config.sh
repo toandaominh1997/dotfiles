@@ -14,6 +14,14 @@ vim +PlugInstall +qall > /dev/null
 echo "Installed Vim/Nvim configuration successfully ^~^"
 
 # config tmux
+## install tpm
+if [ ! -d $HOME/.dotfiles/.tmux/plugins/tpm ]; then
+    echo "install tpm"
+    git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+else
+    echo "tpm is installed"
+fi
+
 echo 'source ~/.dotfiles/tool/tmux/config.tmux' >$HOME/.tmux.conf
 echo "Installed Tmux configuration successfully ^~^"
 

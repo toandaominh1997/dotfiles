@@ -34,6 +34,23 @@ set -g display-panes-time 800 # slightly longer pane indicators display time
 set -g display-time 1000      # slightly longer status messages display time
 
 set -g status-interval 10     # redraw status line every 10 seconds
+
+# Statusbar has white on black/transparent background
+
+set -g status-bg default
+set -g status-fg default
+
+set -g @online_icon "ON"
+set -g @offline_icon "OFF"
+
+set -g status-right-length 65
+set -g status-left-length 15
+set -g status-right " Online: #{online_status} | Battery: #{battery_percentage} | %H:%M %a %d-%b-%Y "
+
+setw -g window-status-format " #I #W "
+setw -g window-status-current-format " #I #W "
+setw -g window-status-current-style fg=black,bg=colour48
+
 # -- navigation ----------------------------------------------------------------
 
 # create session
@@ -108,3 +125,13 @@ bind-key -T copy-mode-vi 'C-j' select-pane -D
 bind-key -T copy-mode-vi 'C-k' select-pane -U
 bind-key -T copy-mode-vi 'C-l' select-pane -R
 bind-key -T copy-mode-vi 'C-\' select-pane -l
+
+# List of plugins
+set -g @plugin 'tmux-plugins/tpm'
+set -g @plugin 'tmux-plugins/tmux-sensible'
+set -g @plugin 'tmux-plugins/tmux-battery'
+set -g @plugin 'tmux-plugins/tmux-online-status'
+
+
+# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
+run '$HOME/.dotfiles/.tmux/plugins/tpm/tpm'
