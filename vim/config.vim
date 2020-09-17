@@ -301,8 +301,6 @@ filetype off
 call plug#begin('~/.dotfiles/plugged')
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
 Plug 'itchyny/lightline.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
