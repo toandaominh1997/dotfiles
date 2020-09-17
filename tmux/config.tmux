@@ -1,7 +1,6 @@
 set -g mouse on
 set-option -sa terminal-overrides ',XXX:RGB'
 tmux_conf_copy_to_os_clipboard=true # copy and paster with xclip
-bind-key -T vi-copy y copy-pipe "xclip -sel clip -i"
 # -- general -------------------------------------------------------------------
 set -g default-terminal 'screen-256color' # colors!
 setw -g xterm-keys on
