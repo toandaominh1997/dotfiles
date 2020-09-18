@@ -17,7 +17,7 @@ echo "Installed Vim/Nvim configuration successfully ^~^"
 ## install tpm
 if [ ! -d $HOME/.dotfiles/.tmux/plugins/tpm ]; then
     echo "install tpm"
-    git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+    git clone https://github.com/tmux-plugins/tpm $HOME/.dotfiles/.tmux/plugins/tpm
 else
     echo "tpm is installed"
 fi

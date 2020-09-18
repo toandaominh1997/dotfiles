@@ -39,12 +39,13 @@ set -g status-interval 10     # redraw status line every 10 seconds
 set -g status-bg default
 set -g status-fg default
 
-set -g @online_icon "ON"
-set -g @offline_icon "OFF"
+set -g @online_icon "ok"
+set -g @offline_icon "offline!"
 
 set -g status-right-length 65
 set -g status-left-length 15
-set -g status-right " Online: #{online_status} | Battery: #{battery_percentage} | %H:%M %a %d-%b-%Y "
+
+set -g status-right "Online: #{online_status}#{cpu_bg_color} CPU: #{cpu_icon} #{cpu_percentage}| #{ram_bg_color} RAM: #{ram_icon} #{ram_percentage}| Battery: #{battery_percentage} | %H:%M %a %d-%b-%Y "
 
 setw -g window-status-format " #I #W "
 setw -g window-status-current-format " #I #W "
@@ -126,14 +127,17 @@ bind-key -T copy-mode-vi 'C-l' select-pane -R
 bind-key -T copy-mode-vi 'C-\' select-pane -l
 
 # tmux yank
-set-option -g default-command "reattach-to-user-namespace -l $SHELL"
+#set-option -g default-command "reattach-to-user-namespace -l $SHELL"
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'tmux-plugins/tmux-battery'
-set -g @plugin 'tmux-plugins/tmux-online-status'
+set -g @plugin 'tmux-plugins/tmux-cpu'
+set -g @plugin 'tmux-plugins/tmux-resurrect'
+set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-yank'
+set -g @plugin 'tmux-plugins/tmux-online-status'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '$HOME/.dotfiles/.tmux/plugins/tpm/tpm'
