@@ -1,6 +1,6 @@
 export ZSH="$HOME/.dotfiles/oh-my-zsh"
 export FZF_BASE="$HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf"
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="powerlevel9k/powerlevel9k"
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
 plugins=(
     git

@@ -304,8 +304,9 @@ Plug 'preservim/nerdcommenter'
 Plug 'itchyny/lightline.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
+Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
+Plug 'ryanoasis/vim-devicons'
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 " Moving around easier
@@ -321,7 +322,6 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'arzg/vim-colors-xcode'
 Plug 'dracula/vim', { 'as': 'dracula' }
 call plug#end()
-
 
 "
 " =============================================================================================================================
@@ -350,11 +350,12 @@ vnoremap <leader>p "+p
 "	config lightline
 " =============================================================================================================================
 "
+set guifont=DroidSansMono\ Nerd\ Font\ 11
 let g:lightline = {
       \ 'colorscheme': 'dracula',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch',  'cocstatus', 'readonly', 'filename', 'modified' ] ],
+      \             [ 'gitbranch', 'currentfunction', 'cocstatus', 'readonly', 'filename', 'modified' ] ],
       \   'right': [ 
       \              ['lineinfo'],
       \              ['percent'] ,   
@@ -363,7 +364,8 @@ let g:lightline = {
       \ },
       \ 'component_function': {
       \   'gitbranch': 'FugitiveHead',
-      \   'cocstatus': 'coc#status'
+      \   'cocstatus': 'coc#status',
+      \   'currentfunction': 'coc_current_function',
       \ },
       \ 'separator': { 'left': '', 'right': '' },
       \ 'subseparator': { 'left': '', 'right': '' },

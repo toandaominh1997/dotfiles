@@ -32,17 +32,18 @@ if [ ! -d $HOME/.dotfiles/oh-my-zsh ]; then
 else
     echo "Oh-my-zsh is installed"
 fi
-# install powerlevel9k
-if [ ! -d $HOME/.dotfiles/oh-my-zsh/themes/powerlevel9k ]; then
-    echo "install powerlevel9k"
-    git clone https://github.com/Powerlevel9k/powerlevel9k.git $HOME/.dotfiles/oh-my-zsh/themes/powerlevel9k
+# install powerlevel10k
+if [ ! -d $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k ]; then
+    echo "install powerlevel10k"
+    git clone https://github.com/romkatv/powerlevel10k.git $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k
 else
-    echo "Powerlevel9k is installed"
+    echo "Powerlevel10k is installed"
 fi
+
 # install fonts
 if [ ! -d $HOME/.dotfiles/fonts ]; then
     echo "install fonts"
-    git clone https://github.com/powerline/fonts.git $HOME/.dotfiles/fonts
+    git clone https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
     sh $HOME/.dotfiles/fonts/install.sh
 else
     echo "fonts is installed"
