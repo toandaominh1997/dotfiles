@@ -313,6 +313,7 @@ Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
 Plug 'jiangmiao/auto-pairs'
+Plug 'junegunn/vim-easy-align'
 
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
@@ -386,6 +387,17 @@ nmap <silent> ;w <Plug>(easymotion-overwin-w)
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
+
+"
+"=============================================================================================================================
+"	config Aligh
+" =============================================================================================================================
+"
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 
 "
 " =============================================================================================================================
