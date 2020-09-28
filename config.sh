@@ -44,7 +44,7 @@ fi
 if [ ! -d $HOME/.dotfiles/fonts ]; then
     echo "install fonts"
     git clone https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
-    sh $HOME/.dotfiles/fonts/install.sh
+    bash $HOME/.dotfiles/fonts/install.sh
 else
     echo "fonts is installed"
 fi
