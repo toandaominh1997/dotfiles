@@ -16,6 +16,7 @@ au FocusGained,BufEnter * checktime
 " like <leader>w saves the current file
 let mapleader = ","
 
+inoremap jj <esc><cr>
 " Fast saving
 nmap <leader>w :w!<cr>
 nmap <C-s> :w!<cr>
