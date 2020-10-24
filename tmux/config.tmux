@@ -1,6 +1,37 @@
+#############################
+########## Bindings
+#############################
+# Set the prefix to `Ctrl + a` instead of `Ctrl + b`
+unbind C-b
+set-option -g prefix C-a
+bind-key C-a send-prefix
+
+# Automatically set window title
+set-window-option -g automatic-rename on
+set-option -g set-titles on
+
+# Prefix + / to search
+bind-key / copy-mode \; send-key ?
+
+# Setup 'v' to begin selection, just like Vim
+bind-key -T copy-mode-vi 'v' send -X begin-selection
+
+ # Setup 'y' to yank (copy), just like Vim
+bind-key -T copy-mode-vi 'y' send -X copy-pipe-and-cancel "pbcopy"
+bind-key -T copy-mode-vi 'V' send -X select-line
+bind-key -T copy-mode-vi 'r' send -X rectangle-toggle
+
+# Reload configuration
+bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
+
+
+#############################
+########## Settings
+#############################
+
+# Setup mouse 
 set -g mouse on
-set-option -sa terminal-overrides ',XXX:RGB'
-tmux_conf_copy_to_os_clipboard=true # copy and paster with xclip
+
 # -- general -------------------------------------------------------------------
 set -g default-terminal 'screen-256color' # colors!
 setw -g xterm-keys on
@@ -8,48 +39,85 @@ set -s escape-time 10                     # faster command sequences
 set -sg repeat-time 600                   # increase repeat timeout
 set -s focus-events on
 
-set -g prefix2 C-a                        # GNU-Screen compatible prefix
-bind C-a send-prefix -2
 
 set -q -g status-utf8 on                  # expect UTF-8 (tmux < 2.2)
 setw -q -g utf8 on
 
-set -g history-limit 10000                 # boost history
+set -g history-limit 100000                 # boost history
 
-# reload configuration
-bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
 
-# -- display -------------------------------------------------------------------
-
+# Start window and pane indices at 1.
 set -g base-index 1           # start windows numbering at 1
 setw -g pane-base-index 1     # make pane numbering consistent with windows
 
-setw -g automatic-rename on   # rename window to reflect current program
-set -g renumber-windows on    # renumber windows when a window is closed
-
-set -g set-titles on          # set terminal title
 
 set -g display-panes-time 800 # slightly longer pane indicators display time
 set -g display-time 1000      # slightly longer status messages display time
 
-set -g status-interval 10     # redraw status line every 10 seconds
+# redraw status line every 10 seconds
+set -g status-interval 5 
 
-# Statusbar has white on black/transparent background
 
-set -g status-bg default
-set -g status-fg default
+# Length of tmux status line
+set -g status-left-length 30
+set -g status-right-length 150
 
-set -g @online_icon "ok"
-set -g @offline_icon "offline!"
+set-option -g status "on"
 
-set -g status-right-length 65
-set -g status-left-length 15
+# Default statusbar color
+set-option -g status-style bg=colour237,fg=colour223 # bg=bg1, fg=fg1
 
-set -g status-right "Online: #{online_status}#{cpu_bg_color} CPU: #{cpu_icon} #{cpu_percentage}| #{ram_bg_color} RAM: #{ram_icon} #{ram_percentage}| Battery: #{battery_percentage} | %H:%M %a %d-%b-%Y "
+# Default window title colors
+set-window-option -g window-status-style bg=colour214,fg=colour237 # bg=yellow, fg=bg1
 
-setw -g window-status-format " #I #W "
-setw -g window-status-current-format " #I #W "
-setw -g window-status-current-style fg=black,bg=colour48
+# Default window with an activity alert
+set-window-option -g window-status-activity-style bg=colour237,fg=colour248 # bg=bg1, fg=fg3
+
+# Active window title colors
+set-window-option -g window-status-current-style bg=red,fg=colour237 # fg=bg1
+
+# Set active pane border color
+set-option -g pane-active-border-style fg=colour214
+
+# Set inactive pane border color
+set-option -g pane-border-style fg=colour239
+
+# Message info
+set-option -g message-style bg=colour239,fg=colour223 # bg=bg2, fg=fg1
+
+# Writing commands inactive
+set-option -g message-command-style bg=colour239,fg=colour223 # bg=fg3, fg=bg1
+
+# Pane number display
+set-option -g display-panes-active-colour colour1 #fg2
+set-option -g display-panes-colour colour237 #bg1
+
+# Clock
+set-window-option -g clock-mode-colour colour109 #blue
+
+# Bell
+set-window-option -g window-status-bell-style bg=colour167,fg=colour235 # bg=red, fg=bg
+
+set-option -g status-left "\
+#[fg=colour7, bg=colour241]#{?client_prefix,#[bg=colour167],} ❐ #S \
+#[fg=colour241, bg=colour237]#{?client_prefix,#[fg=colour167],}#{?window_zoomed_flag, 🔍,}"
+
+set-option -g status-right "\
+#[fg=colour246, bg=colour237]  %b %d %y\
+#[fg=colour109]  %H:%M \
+#[fg=colour248, bg=colour239]"
+
+set-window-option -g window-status-current-format "\
+#[fg=colour237, bg=colour214]\
+#[fg=colour239, bg=colour214] #I* \
+#[fg=colour239, bg=colour214, bold] #W \
+#[fg=colour214, bg=colour237]"
+
+set-window-option -g window-status-format "\
+#[fg=colour237,bg=colour239,noitalics]\
+#[fg=colour223,bg=colour239] #I \
+#[fg=colour223, bg=colour239] #W \
+#[fg=colour239, bg=colour237]"
 
 # -- navigation ----------------------------------------------------------------
 
@@ -88,20 +156,10 @@ bind -r C-h previous-window # select previous window
 bind -r C-l next-window     # select next window
 bind Tab last-window        # move to last active window
 
-# toggle mouse
-bind m run "cut -c3- ~/.tmux.conf | sh -s _toggle_mouse"
-
 
 # -- urlview -------------------------------------------------------------------
 
 bind U run "cut -c3- ~/.tmux.conf | sh -s _urlview #{pane_id}"
-
-
-# -- facebook pathpicker -------------------------------------------------------
-
-bind F run "cut -c3- ~/.tmux.conf | sh -s _fpp #{pane_id}"
-
-
 
 
 # -- vim-tmux-navigator -------------------------------------------
@@ -125,16 +183,21 @@ bind-key -T copy-mode-vi 'C-j' select-pane -D
 bind-key -T copy-mode-vi 'C-k' select-pane -U
 bind-key -T copy-mode-vi 'C-l' select-pane -R
 bind-key -T copy-mode-vi 'C-\' select-pane -l
+# -- end vim-tmux-navigator --------------------------------------------
 
-# tmux yank
-#set-option -g default-command "reattach-to-user-namespace -l $SHELL"
+
+# Setup 'v' to begin selection, just like Vim
+bind-key -T copy-mode-vi 'v' send -X begin-selection
+
+ # Setup 'y' to yank (copy), just like Vim
+bind-key -T copy-mode-vi 'y' send -X copy-pipe-and-cancel "pbcopy"
+bind-key -T copy-mode-vi 'V' send -X select-line
+bind-key -T copy-mode-vi 'r' send -X rectangle-toggle
 
 # List of plugins
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @plugin 'tmux-plugins/tmux-battery'
 set -g @plugin 'tmux-plugins/tmux-cpu'
-set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'tmux-plugins/tmux-yank'
 set -g @plugin 'tmux-plugins/tmux-online-status'

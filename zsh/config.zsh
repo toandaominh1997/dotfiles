@@ -1,7 +1,10 @@
 export ZSH="$HOME/.dotfiles/oh-my-zsh"
 export FZF_BASE="$HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf"
 ZSH_THEME="powerlevel10k/powerlevel10k"
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
+DEFAULT_USER=`whoami`
+
+
+
 plugins=(
     git
     github
@@ -21,3 +24,4 @@ plugins=(
     )
 
 source $ZSH/oh-my-zsh.sh
+export EDITOR='vim'
