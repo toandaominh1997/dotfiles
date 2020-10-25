@@ -373,7 +373,7 @@ vnoremap <leader>p "+p
 "
 set guifont=DroidSansMono\ Nerd\ Font\ 11
 let g:lightline = {
-      \ 'colorscheme': 'onehalfdark',
+      \ 'colorscheme': 'gruvbox',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'currentfunction', 'cocstatus', 'readonly', 'filename', 'modified' ] ],
