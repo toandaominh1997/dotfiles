@@ -41,13 +41,14 @@ else
 fi
 
 # install fonts
-if [ ! -d $HOME/.dotfiles/fonts ]; then
-    echo "install fonts"
-    git clone https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
-    bash $HOME/.dotfiles/fonts/install.sh
-else
-    echo "fonts is installed"
-fi
+#if [ ! -d $HOME/.dotfiles/fonts ]; then
+#    echo "install fonts"
+#    git clone https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
+#    bash $HOME/.dotfiles/fonts/install.sh
+#else
+#    echo "fonts is installed"
+#fi
+
 # install syntax-highlighting
 if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
     echo "install syntax-highlighting"
