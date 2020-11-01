@@ -325,6 +325,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'itchyny/lightline.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-surround'
 Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ryanoasis/vim-devicons'
@@ -545,5 +546,5 @@ nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
-let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier', 'coc-highlight', 'coc-tabnine', 'coc-yaml']
-
+let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier', 'coc-highlight', 'coc-tabnine', 'coc-yaml', 'coc-tsserver']
+let g:coc_config_home = "$HOME/.dotfiles/tool/vim/"
