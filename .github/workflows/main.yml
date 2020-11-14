@@ -35,7 +35,7 @@ jobs:
           pip install jedi
       - name: Install vim/nvim zsh tmux vim-plug node
         run: |
-          bash install.sh
+          sudo bash install.sh
       - name: Install config
         run: |
           bash config.sh
