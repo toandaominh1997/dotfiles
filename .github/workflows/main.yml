@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
-        os: [ubuntu-latest, macOS-latest, windows-latest]
+        os: [ubuntu-latest, ubuntu-18.04]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
