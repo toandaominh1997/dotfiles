@@ -1,6 +1,10 @@
 set +e
 set -u
 
+# install vim plug
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
 # config vim
 echo 'source $HOME/.dotfiles/tool/vim/config.vim' >$HOME/.vimrc
 if [ ! -d $HOME/.config/nvim ]; then
@@ -10,7 +14,7 @@ fi
 echo -e "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource $HOME/.dotfiles/tool/vim/config.vim" >$HOME/.config/nvim/init.vim
 
 echo "PlugInstall for vim"
-vim +PlugInstall +qall > /dev/null
+vim +PlugInstall --sync +qall &> /dev/null
 echo "Installed Vim/Nvim configuration successfully ^~^"
 
 # config tmux
@@ -41,13 +45,13 @@ else
 fi
 
 # install fonts
-#if [ ! -d $HOME/.dotfiles/fonts ]; then
-#    echo "install fonts"
-#    git clone https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
-#    bash $HOME/.dotfiles/fonts/install.sh
-#else
-#    echo "fonts is installed"
-#fi
+if [ ! -d $HOME/.dotfiles/fonts ]; then
+    echo "install fonts"
+    git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
+    bash $HOME/.dotfiles/fonts/install.sh DroidSansMono
+else
+    echo "fonts is installed"
+fi
 
 # install syntax-highlighting
 if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]; then
