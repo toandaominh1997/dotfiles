@@ -10,6 +10,16 @@ set -g mouse on
 set -sg repeat-time 600
 
 
+# Increase Scrollback/History limit
+set-option -g history-limit 50000
+
+# Start window and pane numbering at 1
+set-option -g base-index 1
+set-option -w -g pane-base-index 1
+
+# Renumber window automatically when a window is closed
+set-option -g renumber-windows on
+
 # Automatically set window title
 set-window-option -g automatic-rename on
 set-option -g set-titles on
