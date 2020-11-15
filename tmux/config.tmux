@@ -1,168 +1,97 @@
-#############################
-########## Bindings
-#############################
 # Set the prefix to `Ctrl + a` instead of `Ctrl + b`
 unbind C-b
 set-option -g prefix C-a
 bind-key C-a send-prefix
 
-# Automatically set window title
-set-window-option -g automatic-rename on
-set-option -g set-titles on
-
-# Prefix + / to search
-bind-key / copy-mode \; send-key ?
-
-# Setup 'v' to begin selection, just like Vim
-bind-key -T copy-mode-vi 'v' send -X begin-selection
-
- # Setup 'y' to yank (copy), just like Vim
-bind-key -T copy-mode-vi 'y' send -X copy-pipe-and-cancel "pbcopy"
-bind-key -T copy-mode-vi 'V' send -X select-line
-bind-key -T copy-mode-vi 'r' send -X rectangle-toggle
-
-# Reload configuration
-bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
-
-
-#############################
-########## Settings
-#############################
-
 # Setup mouse 
 set -g mouse on
 
-# -- general -------------------------------------------------------------------
-set -g default-terminal 'screen-256color' # colors!
-setw -g xterm-keys on
-set -s escape-time 10                     # faster command sequences
-set -sg repeat-time 600                   # increase repeat timeout
-set -s focus-events on
+# increase repeat timeout
+set -sg repeat-time 600
 
 
-set -q -g status-utf8 on                  # expect UTF-8 (tmux < 2.2)
-setw -q -g utf8 on
+# Automatically set window title
+set-window-option -g automatic-rename on
+set-option -g set-titles on
+set-option -g set-titles-string "#{session_name} - #W"
 
-set -g history-limit 100000                 # boost history
+# Don't add delay when pressing meta or escape keys
+set-option -s escape-time 10
 
+# Use vim mode in copy mode
+set-option -w -g mode-keys vi
 
-# Start window and pane indices at 1.
-set -g base-index 1           # start windows numbering at 1
-setw -g pane-base-index 1     # make pane numbering consistent with windows
+# Don't show `Activity in window N` message but do send a visual highlight bell
+set-option -g visual-activity off
+set-option -w -g monitor-activity on
 
+# Send focus events
+set-option -g focus-events on
 
-set -g display-panes-time 800 # slightly longer pane indicators display time
-set -g display-time 1000      # slightly longer status messages display time
+# Rather than constraining window size to the maximum size of any client
+# connected to the *session*, constrain window size to the maximum size of any
+# client connected to *that window*
+set-option -w -g aggressive-resize on
 
-# redraw status line every 10 seconds
-set -g status-interval 5 
+# Use bash in interactive (i.e non-login) mode as default shell/command
+set-option -g default-command $SHELL
 
+# Restore original C-l mapping (clear screen)
+bind-key C-l send-keys 'C-l'
 
-# Length of tmux status line
-set -g status-left-length 30
-set -g status-right-length 150
+# Split pane using v and h (in the same directory from where they are called)
+# For horizontal splits we automatically set the size to rougly 12 lines
+unbind-key '"'
+unbind-key %
+bind-key v split-window -h -c "#{pane_current_path}"
+bind-key s split-window -v -c "#{pane_current_path}"
 
-set-option -g status "on"
-
-# Default statusbar color
-set-option -g status-style bg=colour237,fg=colour223 # bg=bg1, fg=fg1
-
-# Default window title colors
-set-window-option -g window-status-style bg=colour214,fg=colour237 # bg=yellow, fg=bg1
-
-# Default window with an activity alert
-set-window-option -g window-status-activity-style bg=colour237,fg=colour248 # bg=bg1, fg=fg3
-
-# Active window title colors
-set-window-option -g window-status-current-style bg=red,fg=colour237 # fg=bg1
-
-# Set active pane border color
-set-option -g pane-active-border-style fg=colour214
-
-# Set inactive pane border color
-set-option -g pane-border-style fg=colour239
-
-# Message info
-set-option -g message-style bg=colour239,fg=colour223 # bg=bg2, fg=fg1
-
-# Writing commands inactive
-set-option -g message-command-style bg=colour239,fg=colour223 # bg=fg3, fg=bg1
-
-# Pane number display
-set-option -g display-panes-active-colour colour1 #fg2
-set-option -g display-panes-colour colour237 #bg1
-
-# Clock
-set-window-option -g clock-mode-colour colour109 #blue
-
-# Bell
-set-window-option -g window-status-bell-style bg=colour167,fg=colour235 # bg=red, fg=bg
-
-set-option -g status-left "\
-#[fg=colour7, bg=colour241]#{?client_prefix,#[bg=colour167],} ❐ #S \
-#[fg=colour241, bg=colour237]#{?client_prefix,#[fg=colour167],}#{?window_zoomed_flag, 🔍,}"
-
-set-option -g status-right "\
-#[fg=colour246, bg=colour237]  %b %d %y\
-#[fg=colour109]  %H:%M \
-#[fg=colour248, bg=colour239]"
-
-set-window-option -g window-status-current-format "\
-#[fg=colour237, bg=colour214]\
-#[fg=colour239, bg=colour214] #I* \
-#[fg=colour239, bg=colour214, bold] #W \
-#[fg=colour214, bg=colour237]"
-
-set-window-option -g window-status-format "\
-#[fg=colour237,bg=colour239,noitalics]\
-#[fg=colour223,bg=colour239] #I \
-#[fg=colour223, bg=colour239] #W \
-#[fg=colour239, bg=colour237]"
-
-# -- navigation ----------------------------------------------------------------
-
-# create session
-bind C-c new-session
-
-# find session
-bind C-f command-prompt -p find-session 'switch-client -t %%'
-
-# split current window horizontally
-bind - split-window -v
-# split current window vertically
-bind _ split-window -h
 
 # pane navigation
-bind -r h select-pane -L  # move left
-bind -r j select-pane -D  # move down
-bind -r k select-pane -U  # move up
-bind -r l select-pane -R  # move right
-bind > swap-pane -D       # swap current pane with the next one
-bind < swap-pane -U       # swap current pane with the previous one
+bind-key -r h select-pane -L  # move left
+bind-key -r j select-pane -D  # move down
+bind-key -r k select-pane -U  # move up
+bind-key -r l select-pane -R  # move right
+bind-key > swap-pane -D       # swap current pane with the next one
+bind-key < swap-pane -U       # swap current pane with the previous one
+# Increase or decrease pane height with h,j,k and l (the -r flag makes it
+# repeatable i.e no need to press prefix key again and again)
+bind-key -r J resize-pane -D 3
+bind-key -r K resize-pane -U 3
+bind-key -r H resize-pane -L 3
+bind-key -r L resize-pane -R 3
+bind-key L next-layout
+bind-key = select-layout -E
 
-# maximize current pane
-bind + run 'cut -c3- ~/.tmux.conf | sh -s _maximize_pane "#{session_name}" #D'
+# Rename window
+#bind-key r command-prompt 'rename-window %%'
 
-# pane resizing
-bind -r H resize-pane -L 2
-bind -r J resize-pane -D 2
-bind -r K resize-pane -U 2
-bind -r L resize-pane -R 2
+# Move windows
+bind-key -r C-h swap-window -d -t -1
+bind-key -r C-l swap-window -d -t +1
 
-# window navigation
-unbind n
-unbind p
-bind -r C-h previous-window # select previous window
-bind -r C-l next-window     # select next window
-bind Tab last-window        # move to last active window
+# Choose window (window tree navigation)
+bind-key w choose-window
 
+# Pane movement (merge and break)
+bind-key m choose-window "join-pane -v -s "%%""  # horizontal merge
+bind-key C-b break-pane
 
-# -- urlview -------------------------------------------------------------------
+# From here on we set vim copy bindings (note: we set the insert and command
+# mode mappings directly in our bash profile!)
+# Go the beginning and end of line in copy mode
+bind-key -Tcopy-mode-vi H send -X start-of-line
+bind-key -Tcopy-mode-vi L send -X end-of-line\; send -X cursor-left
 
-bind U run "cut -c3- ~/.tmux.conf | sh -s _urlview #{pane_id}"
+# Do visual and block selection as in vim (for block selection we need to press
+# C-v + space and then start our selection)
+unbind-key -Tcopy-mode-vi v
+bind-key -Tcopy-mode-vi v send -X begin-selection
+bind-key -Tcopy-mode-vi 'C-v' send -X rectangle-toggle
+bind-key -Tcopy-mode-vi V send -X select-line\; send -X cursor-left
 
-
-# -- vim-tmux-navigator -------------------------------------------
+# Unbind Enter since we rebind it for copying
+unbind-key -Tcopy-mode-vi Enter
 
 # Smart pane switching with awareness of Vim splits.
 # See: https://github.com/christoomey/vim-tmux-navigator
@@ -183,24 +112,137 @@ bind-key -T copy-mode-vi 'C-j' select-pane -D
 bind-key -T copy-mode-vi 'C-k' select-pane -U
 bind-key -T copy-mode-vi 'C-l' select-pane -R
 bind-key -T copy-mode-vi 'C-\' select-pane -l
-# -- end vim-tmux-navigator --------------------------------------------
+
+# Colors 
+
+# Note: this terminfo comes with ncurses (it is needed for colored undecurl to
+# work). It should be located at: /usr/share/terminfo/t/tmux-256color
+# If it isn't reinstall ncurses
+set-option -g default-terminal "tmux-256color"
+
+# Define terminal overrides (note that when adding terminal overrides we use a
+# generic `*` catchall because `tmux info` doesn't report `tmux-256color` even
+# with the above default-terminal setting).
+# Enable 24-bit color support (check if this works via `tmux info | grep Tc`)
+set-option -s -a terminal-overrides ",*:Tc"
+# Add Undercurl (test it with `printf '\e[4:3mUndercurl\n\e[0m'`)
+set-option -s -a terminal-overrides ',*:Smulx=\E[4::%p1%dm'
+# Add colored undercurl (test it with `printf '\e[4:3;58:2:255:100:0mUndercurl\n\e[0m'`)
+set-option -s -a terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
+
+# Pane border (use same color for active and foreground)
+set-option -g pane-border-style 'fg=#282c34'
+set-option -g pane-active-border-style 'fg=#282c34'
+
+# Command mode
+set-option -g message-style 'fg=#abb2bf,bg=#282c34'
+
+# Copy mode
+set-option -w -g mode-style 'fg=#abb2bf,bg=#3b4048'
+
+# The following seems to be needed to avoid strange highlighting of windows with
+# activity (basically it disables such hl (even if present in the statusline))
+set-option -g window-status-activity-style 'bold'
 
 
-# Setup 'v' to begin selection, just like Vim
-bind-key -T copy-mode-vi 'v' send -X begin-selection
+# Status line 
 
- # Setup 'y' to yank (copy), just like Vim
-bind-key -T copy-mode-vi 'y' send -X copy-pipe-and-cancel "pbcopy"
-bind-key -T copy-mode-vi 'V' send -X select-line
-bind-key -T copy-mode-vi 'r' send -X rectangle-toggle
+# Reload status every second and set lengths
+set-option -g status-interval 1
+set-option -g status-left-length 32
+set-option -g status-right-length 156
+
+# Background and foreground colors
+set-option -g status-fg '#abb2bf'
+set-option -g status-bg '#282c34'
+
+# Actually set the statusline (consistent with vim and airline)
+set-option -g status-left \
+'#{?client_prefix,#[fg=#24272e]#[bg=#98c379]#[bold] T '\
+'#[fg=#98c379]#[bg=#d0d0d0]#[nobold]#[fg=#282c34]#[bg=#d0d0d0]#[bold],'\
+'#[fg=#282c34]#[bg=#d0d0d0]#[bold]} #S '\
+'#{?#{==:#I,1},#[fg=#d0d0d0]#[bg=#61afef],#[fg=#d0d0d0]#[bg=#282c34]}'
+
+set-option -g status-right \
+'#[fg=#828997,bg=#282c34,nobold]#{battery_icon} #{battery_percentage} '\
+'#[fg=#828997,bg=#282c34,nobold]'\
+'#[fg=#828997,bg=#282c34,nobold]  %H:%M #[fg=#3b4048,bg=#282c34,nobold]'\
+'#[fg=#abb2bf,bg=#3b4048,nobold] %d %b %Y #[fg=#d0d0d0,bg=#3b4048,nobold]'\
+'#[fg=#282c34,bg=#d0d0d0,bold] #h '
+
+set-option -g window-status-current-format \
+'#{?#{==:#I,1},,#[fg=#282c34]#[bg=#61afef]}'\
+'#[fg=#24272e,bg=#61afef,noreverse,bold] #I:#W '\
+'#{?window_zoomed_flag,#[bold] ,}#[fg=#61afef,bg=#282c34,nobold]'
+
+set-option -g window-status-format \
+'#{?window_bell_flag,'\
+'#[fg=#e06c75]#[bg=#282c34]#[nobold]'\
+'#[fg=#e06c75]#[bg=#282c34]#[bold] #I:#W '\
+'#[fg=#282c34]#[bg=#e06c75]#[nobold],'\
+'#[fg=#abb2bf]#[bg=#282c34]#[nobold] #I:#W }'
+
+# Plugins
+
+# Auto install tmux plugin manager if it is not installed
+if "test ! -d ~/.tmux/plugins/tpm" \
+   "run 'git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm'"
 
 # List of plugins
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @plugin 'tmux-plugins/tmux-cpu'
-set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'tmux-plugins/tmux-yank'
-set -g @plugin 'tmux-plugins/tmux-online-status'
+set-option -g @tpm_plugins ' \
+    tmux-plugins/tpm \
+    tmux-plugins/tmux-copycat \
+    tmux-plugins/tmux-battery \
+    tmux-plugins/tmux-resurrect \
+    tmux-plugins/tmux-continuum \
+'
 
-# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-run '$HOME/.dotfiles/.tmux/plugins/tpm/tpm'
+# Install plugins if not installed
+set-environment -g TMUX_PLUGIN_MANAGER_PATH '$HOME/.tmux/plugins/'
+if "test ! -d ~/.tmux/plugins/tmux-copycat" \
+   "run '~/.tmux/plugins/tpm/bin/install_plugins'"
+
+# Battery icons (note: these require nerd fonts)
+set-option -g @batt_icon_charge_tier1 ''
+set-option -g @batt_icon_charge_tier2 ''
+set-option -g @batt_icon_charge_tier3 ''
+set-option -g @batt_icon_charge_tier4 ''
+set-option -g @batt_icon_charge_tier5 ''
+set-option -g @batt_icon_charge_tier6 ''
+set-option -g @batt_icon_charge_tier7 ''
+set-option -g @batt_icon_charge_tier8 ''
+set-option -g @batt_icon_status_charged ''
+set-option -g @batt_icon_status_charging ''
+
+# Continuum and resurrect (use C-r to restore)
+set-option -g @continuum-save-interval '3'
+set-option -g @resurrect-capture-pane-contents 'on'
+set-option -g @resurrect-processes 'ssh mosh-client pgcli mssql-cli litecli ranger fzf'
+
+# Initialize TMUX plugin manager (this must be the last line of the conf file)
+run-shell '~/.tmux/plugins/tpm/tpm'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Reload configuration
+bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
+
+
+
