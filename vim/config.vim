@@ -1,3 +1,47 @@
+" Define OS variable
+let s:is_win = has('win32') || has('win64')
+let s:is_mac = !s:is_win && (has('mac') || has('macunix') || has('gui_macvim')
+            \ || system('uname') =~? '^darwin')
+let s:is_linux = !s:is_win && !s:is_mac
+
+" Define vimfiles directory
+if !has('nvim')
+    if s:is_win
+        let $DOTVIM = expand('$HOME/vimfiles')
+    else
+        let $DOTVIM = expand('$HOME/.vim')
+    endif
+else
+    let $DOTVIM = expand('$HOME/.config/nvim')
+    " Set python3 host (i.e executable)
+    if s:is_mac
+        let g:python3_host_prog = '/usr/local/bin/python3'
+    elseif s:is_linux
+        let g:python3_host_prog = '/usr/bin/python'
+    endif
+endif
+
+" OS specific settings
+if s:is_win
+    let $CACHE = expand('$DOTVIM/cache/Acer')
+    " Note: the following option must set after setting runtimepath. Also note
+    " that it breaks the shellescape() function since cmd.exe uses double quotes
+    " for command line arguments but shellslash forces single quotes. Hence it
+    " also breaks dispatch!
+    set shellslash
+    " Set menu and messages in English in windows
+    language messages en
+elseif s:is_mac
+    let $CACHE = expand('$DOTVIM/cache/MacBookPro')
+else
+    let $CACHE = expand('$DOTVIM/cache/Arch')
+endif
+
+" Improve scrolling and redrawing in terminal
+if !has('nvim')
+    set ttyfast
+endif
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -8,13 +52,36 @@ if has('nvim')
 endif
 
 " Setup clipboard
-set clipboard+=unnamed,unnamedplus
-if has('nvim')
-    let g:loaded_clipboard_provider = 0
-    unlet g:loaded_clipboard_provider
-    runtime autoload/provider/clipboard.vim
+if !has('nvim')
+    if s:is_win || s:is_mac
+        set clipboard=autoselect,unnamed
+    elseif s:is_linux && has('unnamedplus')
+        " On linux with X11 use the + register (i.e the CLIPBOARD and not the
+        " PRIMARY register). On tmux use `xsel -i -b` to be consistent with this.
+        set clipboard=autoselectplus,unnamedplus
+    endif
+else
+    set clipboard+=unnamedplus
+    " This mimicks autoselect in neovim
+    vmap <Esc> "+ygv<C-c>
 endif
+" version is old
+"set clipboard+=unnamed,unnamedplus
+"if has('nvim')
+"    let g:loaded_clipboard_provider = 0
+"    unlet g:loaded_clipboard_provider
+"    runtime autoload/provider/clipboard.vim
+"endif
 
+" Persistent undo (i.e vim remembers undo actions even if file is closed and
+" reopened)
+set undofile
+set undolevels=1000   " Maximum number of changes that can be undone
+set undoreload=10000  " Maximum number lines to save for undo on a buffer reload
+
+set undodir=$CACHE/tmp/undo//
+
+set backup          " Enable backups
 
 " Sets how many lines of history VIM has to remember
 set history=5000
@@ -323,11 +390,10 @@ noremap <leader>0 :tablast<cr>
 filetype off
 
 call plug#begin('~/.dotfiles/plugged')
+" General coding/editing
+Plug 'itchyny/lightline.vim'
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
-Plug 'itchyny/lightline.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
 Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -344,9 +410,20 @@ Plug 'junegunn/vim-easy-align'
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
-Plug 'christoomey/vim-tmux-navigator'
 Plug 'sonph/onehalf', { 'rtp': 'vim' }
+" Colorschemes 
 Plug 'morhetz/gruvbox'
+" Git 
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
+
+" Markdown
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
+
+" Tmux 
+Plug 'christoomey/vim-tmux-navigator'
+
 call plug#end()
 
 "
