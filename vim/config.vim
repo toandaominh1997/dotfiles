@@ -412,7 +412,8 @@ Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
 Plug 'sonph/onehalf', { 'rtp': 'vim' }
 " Colorschemes 
-Plug 'morhetz/gruvbox'
+"Plug 'morhetz/gruvbox'
+Plug 'adrian5/oceanic-next-vim'
 " Git 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -432,7 +433,10 @@ call plug#end()
 " =============================================================================================================================
 "
 
-colorscheme onehalfdark
+let g:oceanic_for_polyglot = 1
+let g:oceanic_bold = 0
+colorscheme oceanicnext
+"colorscheme onehalfdark
 filetype plugin indent on
 syntax on
 
@@ -454,7 +458,7 @@ vnoremap <leader>p "+p
 "
 set guifont=DroidSansMono\ Nerd\ Font\ 11
 let g:lightline = {
-      \ 'colorscheme': 'onehalfdark',
+      \ 'colorscheme': 'oceanicnext',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'currentfunction', 'cocstatus', 'readonly', 'filename', 'modified' ] ],
