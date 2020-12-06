@@ -630,5 +630,5 @@ nmap <leader>rn <Plug>(coc-rename)
 " Formatting selected code.
 xmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
-let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier', 'coc-highlight', 'coc-tabnine', 'coc-yaml', 'coc-tsserver']
+let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier', 'coc-highlight', 'coc-tabnine', 'coc-yaml', 'coc-tsserver', 'coc-flutter']
 let g:coc_config_home = "$HOME/.dotfiles/tool/vim/"
