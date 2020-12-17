@@ -398,7 +398,9 @@ Plug 'tpope/vim-surround'
 Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ryanoasis/vim-devicons'
-Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': './install --all' }
+
+" Fzf for vim
+Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " Moving around easier
 Plug 'easymotion/vim-easymotion'
@@ -410,7 +412,6 @@ Plug 'junegunn/vim-easy-align'
 Plug 'haya14busa/incsearch.vim'
 Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
-Plug 'sonph/onehalf', { 'rtp': 'vim' }
 " Colorschemes 
 "Plug 'morhetz/gruvbox'
 Plug 'adrian5/oceanic-next-vim'
@@ -520,11 +521,8 @@ map mm <Plug>NERDCommenterToggle
 "	config FZF
 " =============================================================================================================================
 "
-" Empty value to disable preview window altogether
-let g:fzf_preview_window = ''
-
 " Always enable preview window on the right with 60% width
-let g:fzf_preview_window = 'right:60%'
+let g:fzf_preview_window = ['right:50%', 'ctrl-/']
 
 nnoremap <c-p> :Files<CR>
 let g:fzf_action = {
