@@ -114,7 +114,6 @@ set incsearch
 set lazyredraw 
 set magic
 set nowrap
-set autochdir
 set showmatch
 set showtabline=2
 set cursorline
