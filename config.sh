@@ -13,8 +13,8 @@ if [ ! -d $HOME/.config/nvim ]; then
 fi
 echo -e "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource $HOME/.dotfiles/tool/vim/config.vim" >$HOME/.config/nvim/init.vim
 
-echo "PlugInstall for vim"
-vim +PlugInstall --sync +qall &> /dev/null
+echo "Remove PlugInstall for vim"
+#vim +PlugInstall --sync +qall &> /dev/null
 echo "Installed Vim/Nvim configuration successfully ^~^"
 
 # config tmux
