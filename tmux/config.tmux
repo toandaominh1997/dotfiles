@@ -232,27 +232,24 @@ set-option -g @resurrect-processes 'ssh mosh-client pgcli mssql-cli litecli rang
 # Initialize TMUX plugin manager (this must be the last line of the conf file)
 run-shell '~/.tmux/plugins/tpm/tpm'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Reload configuration
 bind r source-file ~/.tmux.conf \; display '~/.tmux.conf sourced'
 
 
+# Copy to system clipboard as in vim (both with y and the default `Enter`
+# mappings). On linux and X11 operate on the clipboard selection and not the
+# primary one (i.e in vim we use the + register and not the * one)
+bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
+bind -T copy-mode-vi Enter send -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"
+
+# Paste from system clipboard without bracketed paste
+bind P run-shell "xclip -o -sel clip | tmux load-buffer - ; tmux paste-buffer"
+
+# Paste from system clipboard using bracketed paste mode
+bind p run-shell " \
+    xclip -o -sel clip | \
+    tmux load-buffer - ; \
+    tmux send-keys escape \"[200~\"; \
+    tmux paste-buffer; \
+    tmux send-keys escape \"[201~\""
 
