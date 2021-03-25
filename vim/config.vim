@@ -13,7 +13,7 @@ if !has('nvim')
     if s:is_win
         let $DOTVIM = expand('$HOME/vimfiles')
     else
-        let $DOTVIM = expand('$HOME/.vim')
+        let $DOTVIM = expand('$HOME/.dotfiles/tool/vim')
     endif
 else
     let $DOTVIM = expand('$HOME/.config/nvim')
