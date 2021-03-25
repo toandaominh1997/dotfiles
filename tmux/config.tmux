@@ -128,7 +128,7 @@ bind-key -T copy-mode-vi 'C-\' select-pane -l
 # Note: this terminfo comes with ncurses (it is needed for colored undecurl to
 # work). It should be located at: /usr/share/terminfo/t/tmux-256color
 # If it isn't reinstall ncurses
-set-option -g default-terminal "tmux-256color"
+set-option -g default-terminal "screen-256color"
 
 # Define terminal overrides (note that when adding terminal overrides we use a
 # generic `*` catchall because `tmux info` doesn't report `tmux-256color` even
