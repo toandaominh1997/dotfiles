@@ -12,16 +12,13 @@ plugins=(
     zsh-autosuggestions
     colored-man-pages
     python
-    tmux
     fzf
     vscode
-    vundle
     command-not-found
-    web-search
     history
     extract
     copyfile
     )
 
 source $ZSH/oh-my-zsh.sh
-export EDITOR='vim'
+export EDITOR='nvim'
