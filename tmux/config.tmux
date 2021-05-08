@@ -71,7 +71,6 @@ bind-key -r K resize-pane -U 3
 bind-key -r H resize-pane -L 3
 bind-key -r L resize-pane -R 3
 bind-key L next-layout
-bind-key = select-layout -E
 
 # Rename window
 #bind-key r command-prompt 'rename-window %%'
