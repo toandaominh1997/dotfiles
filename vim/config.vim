@@ -215,7 +215,7 @@ nnoremap <C-s> :w<CR>
 nnoremap <C-q> :wq!<CR>
 
 " Close current buffer
-nnoremap <C-b> :bd<CR>
+nnoremap <leader>b :bd<CR>
 
 " Better tabbing
 vnoremap < <gv
@@ -460,7 +460,7 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
 " How can I map a specific key or shortcut to open NERDTree?
 " Stick this in your vimrc to open NERDTree with Ctrl+n (you can set whatever key you want):
-nnoremap <silent> <C-b> :NERDTreeToggle<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
 
 " How can I close vim if the only window left open is a NERDTree?
 "Stick this in your vimrc:
@@ -477,6 +477,7 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 "	config coc.nvim
 " =============================================================================================================================
 "
+
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim
 set encoding=utf-8
@@ -500,7 +501,7 @@ set shortmess+=c
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
-if has("patch-8.1.1564")
+if has("nvim-0.5.0") || has("patch-8.1.1564")
   " Recently vim can merge signcolumn and number column into one
   set signcolumn=number
 else
@@ -642,6 +643,7 @@ nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
+
 let g:coc_global_extensions = ['coc-python', 'coc-json', 'coc-prettier', 'coc-highlight', 'coc-tabnine', 'coc-yaml']
 let g:coc_config_home = "$HOME/.dotfiles/tool/vim/"
 
