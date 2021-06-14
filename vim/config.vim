@@ -2,44 +2,6 @@ if exists('g:vscode')
     source $HOME/.dotfiles/tool/vim/vscode/settings.vim
 endif
 
-" Define OS variable
-let s:is_win = has('win32') || has('win64')
-let s:is_mac = !s:is_win && (has('mac') || has('macunix') || has('gui_macvim')
-            \ || system('uname') =~? '^darwin')
-let s:is_linux = !s:is_win && !s:is_mac
-
-" Define vimfiles directory
-if !has('nvim')
-    if s:is_win
-        let $DOTVIM = expand('$HOME/vimfiles')
-    else
-        let $DOTVIM = expand('$HOME/.dotfiles/tool/vim')
-    endif
-else
-    let $DOTVIM = expand('$HOME/.config/nvim')
-    " Set python3 host (i.e executable)
-    if s:is_mac
-        let g:python3_host_prog = '/usr/local/bin/python3'
-    elseif s:is_linux
-        let g:python3_host_prog = '/usr/bin/python'
-    endif
-endif
-
-" OS specific settings
-if s:is_win
-    let $CACHE = expand('$DOTVIM/cache/Acer')
-    " Note: the following option must set after setting runtimepath. Also note
-    " that it breaks the shellescape() function since cmd.exe uses double quotes
-    " for command line arguments but shellslash forces single quotes. Hence it
-    " also breaks dispatch!
-    set shellslash
-    " Set menu and messages in English in windows
-    language messages en
-elseif s:is_mac
-    let $CACHE = expand('$DOTVIM/cache/MacBookPro')
-else
-    let $CACHE = expand('$DOTVIM/cache/Arch')
-endif
 
 " Improve scrolling and redrawing in terminal
 if !has('nvim')
@@ -49,10 +11,18 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set mouse+=a
-if has('nvim')
-    set mouse+=nicr
-endif
+set nocompatible                    " Don't make Vim vi-compatibile.
+
+" Enable syntax highlighting.
+syntax on   
+
+" Copy indent to the new line.
+set autoindent
+
+" Allow backspace in insert mode
+set backspace=eol,start,indent      
+
+
 if !has('nvim')
     if s:is_win || s:is_mac
         set clipboard=autoselect,unnamed
@@ -63,15 +33,179 @@ else
     set clipboard+=unnamedplus
     vmap <Esc> "+ygv<C-c>
 endif
-" version is old
-"set clipboard+=unnamed,unnamedplus
-"if has('nvim')
-"    let g:loaded_clipboard_provider = 0
-"    unlet g:loaded_clipboard_provider
-"    runtime autoload/provider/clipboard.vim
-"endif
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Sets how many lines of history VIM has to remember
+set history=500
+
+" Enable filetype plugins
+filetype plugin on
+filetype indent on
+
+" Set to auto read when a file is changed from the outside
+set autoread
+au FocusGained,BufEnter * checktime
+
+" With a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+let mapleader = ","
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" :W sudo saves the file 
+" (useful for handling the permission-denied error)
+command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
+
+
+" Set 7 lines to the cursor - when moving vertically using j/k
+set so=7
+
+" Avoid garbled characters in Chinese language windows OS
+let $LANG='en' 
+set langmenu=en
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+
+" Turn on the Wild menu
+set wildmenu
+
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc
+if has("win16") || has("win32")
+    set wildignore+=.git\*,.hg\*,.svn\*
+else
+    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
+endif
+"Always show current position
+set ruler
+
+" Height of the command bar
+set cmdheight=1
+
+" A buffer becomes hidden when it is abandoned
+set hid
+
+" Show relative line numbers
+set relativenumber
+
+" Configure backspace so it acts as it should act
+set backspace=eol,start,indent
+set whichwrap+=<,>,h,l
+
+" Ignore case when searching
+set ignorecase
+
+" When searching try to be smart about cases 
+set smartcase
+
+" Highlight search results
+set hlsearch
+
+" Makes search act like search in modern browsers
+set incsearch 
+
+" Don't redraw while executing macros (good performance config)
+set lazyredraw 
+
+" For regular expressions turn magic on
+set magic
+
+" Show matching brackets when text indicator is over them
+set showmatch 
+" How many tenths of a second to blink when matching brackets
+set mat=2
+
+" No annoying sound on errors
+set noerrorbells
+set novisualbell
+set t_vb=
+set tm=500
+
+" Properly disable sound on errors on MacVim
+if has("gui_macvim")
+    autocmd GUIEnter * set vb t_vb=
+endif
+
+" Add a bit extra margin to the left
+set foldcolumn=1
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Colors and Fonts
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Enable syntax highlighting
+syntax enable 
+
+" Enable 256 colors palette in Gnome Terminal
+if $COLORTERM == 'gnome-terminal'
+    set t_Co=256
+endif
+
+try
+    colorscheme desert
+catch
+endtry
+
+set background=dark
+
+" Set extra options when running in GUI mode
+if has("gui_running")
+    set guioptions-=T
+    set guioptions-=e
+    set t_Co=256
+    set guitablabel=%M\ %t
+endif
+
+" Set utf8 as standard encoding and en_US as the standard language
+set encoding=utf8
+
+" Use Unix as the standard file type
+set ffs=unix,dos,mac
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files, backups and undo
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Turn backup off, since most stuff is in SVN, git etc. anyway...
+set nobackup
+set nowb
+set noswapfile
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use spaces instead of tabs
+set expandtab
+
+" Be smart when using tabs ;)
+set smarttab
+
+" 1 tab == 4 spaces
+set shiftwidth=4
+set tabstop=4
+
+" Linebreak on 500 characters
+set lbr
+set tw=500
+
+set ai "Auto indent
+set si "Smart indent
+set wrap "Wrap lines
+
+
+set mouse+=a
+if has('nvim')
+    set mouse+=nicr
+endif
+
 xnoremap p pgvy
 
+inoremap jj <ESC> :w<CR>
 
 " Persistent undo (i.e vim remembers undo actions even if file is closed and
 " reopened)
@@ -80,185 +214,171 @@ set undolevels=1000   " Maximum number of changes that can be undone
 set undoreload=10000  " Maximum number lines to save for undo on a buffer reload
 set undodir=$CACHE/tmp/undo//
 set backup          " Enable backups
-set history=5000
-filetype plugin on
-filetype indent on
 set autoread
-au FocusGained,BufEnter * checktime
-let mapleader = ","
-inoremap jj <ESC> :w<CR>
-nmap <leader>w :w!<cr>
-nmap <C-s> :w!<cr>
-command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
-set so=7
-let $LANG='en' 
-set langmenu=en
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
-set wildmenu
-set wildignore=*.o,*~,*.pyc
-if has("win16") || has("win32")
-    set wildignore+=.git\*,.hg\*,.svn\*
-else
-    set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
-endif
-set ruler
-set cmdheight=1
-set hid
-set backspace=eol,start,indent
-set whichwrap+=<,>,h,l
-set ignorecase
-set smartcase
-set hlsearch
-set incsearch 
-set lazyredraw 
-set magic
-set nowrap
-set showmatch
-set showtabline=2
-set cursorline
-set number
-set relativenumber
-set encoding=utf8
-set mat=2
-set laststatus=2
-set noerrorbells
-set novisualbell
-set t_vb=
-set tm=500
-if has("gui_macvim")
-    autocmd GUIEnter * set vb t_vb=
-endif
-set foldcolumn=1
-syntax enable 
-if $COLORTERM == 'gnome-terminal'
-    set t_Co=256
-endif
-if has("gui_running")
-    set guioptions-=T
-    set guioptions-=e
-    set t_Co=256
-    set guitablabel=%M\ %t
-endif
-set ffs=unix,dos,mac
-set nobackup
-set nowb
-set noswapfile
-set expandtab
-set smarttab
-set shiftwidth=4
-set tabstop=4
-set lbr
-set tw=500
-set ai "Auto indent
-set si "Smart indent
-set wrap "Wrap lines
-
-try
-  set switchbuf=useopen,usetab,newtab
-  set stal=2
-catch
-endtry
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-" Keys vim
-map <silent> <leader><cr> :noh<cr>
-map 0 ^
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-if has("mac") || has("macunix")
-  nmap <D-j> <M-j>
-  nmap <D-k> <M-k>
-  vmap <D-j> <M-j>
-  vmap <D-k> <M-k>
-endif
-fun! CleanExtraSpaces()
-    let save_cursor = getpos(".")
-    let old_query = getreg('/')
-    silent! %s/\s\+$//e
-    call setpos('.', save_cursor)
-    call setreg('/', old_query)
-endfun
-
-if has("autocmd")
-    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
-endif
-map <leader>ss :setlocal spell!<cr>
-map <leader>sn ]s
-map <leader>sp [s
-map <leader>sa zg
-map <leader>s? z=
-noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
-map <leader>q :e ~/buffer<cr>
-map <leader>x :e ~/buffer.md<cr>
-map <leader>pp :setlocal paste!<cr>
-
- 
-" Remap escape
-nnoremap <C-c> <Esc>
-inoremap jk <Esc>
-inoremap kj <Esc>
-inoremap jj <Esc>
-inoremap kk <Esc>
-
-
-" Use alt + hjkl to resize windows
-nnoremap <M-j> :resize -2<CR>
-nnoremap <M-k> :resize +2<CR>
-nnoremap <M-h> :vertical resize -2<CR>
-nnoremap <M-l> :vertical resize +2<CR>
 
 " Alternate way to save
 nnoremap <C-s> :w<CR>
 " Alternate way to quit and save
 nnoremap <C-q> :wq!<CR>
 
-" Close current buffer
-nnoremap <leader>b :bd<CR>
 
 " Better tabbing
 vnoremap < <gv
 vnoremap > >gv
 
 
-" Better window navigation
+
+
+""""""""""""""""""""""""""""""
+" => Visual mode related
+""""""""""""""""""""""""""""""
+" Visual mode pressing * or # searches for the current selection
+" Super useful! From an idea by Michael Naumann
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving around, tabs, windows and buffers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
+map <space> /
+map <C-space> ?
+
+" Disable highlight when <leader><cr> is pressed
+map <silent> <leader><cr> :noh<cr>
+
+" Smart way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
+
+" Close the current buffer
 map <leader>bd :Bclose<cr>:tabclose<cr>gT
+
+" Close all the buffers
 map <leader>ba :bufdo bd<cr>
-nnoremap <leader>n :bnext<cr>
-nnoremap <leader>p :bprevious<cr>
-nnoremap <Leader>q :bp <BAR> bd #<CR>
+
+map <leader>l :bnext<cr>
+map <leader>h :bprevious<cr>
+
+" Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove 
 map <leader>t<leader> :tabnext 
+
+" Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
-nnoremap <Leader>tl :exe "tabn ".g:lasttab<CR>
+nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
 au TabLeave * let g:lasttab = tabpagenr()
+
+
+" Opens a new tab with the current buffer's path
+" Super useful when editing files in the same directory
 map <leader>te :tabedit <C-r>=expand("%:p:h")<cr>/
+
+" Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
-noremap <leader>1 1gt
-noremap <leader>2 2gt
-noremap <leader>3 3gt
-noremap <leader>4 4gt
-noremap <leader>5 5gt
-noremap <leader>6 6gt
-noremap <leader>7 7gt
-noremap <leader>8 8gt
-noremap <leader>9 9gt
-noremap <leader>0 :tablast<cr>
+" Specify the behavior when switching between buffers 
+try
+  set switchbuf=useopen,usetab,newtab
+  set stal=2
+catch
+endtry
+
+" Return to last edit position when opening files (You want this!)
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+
+""""""""""""""""""""""""""""""
+" => Status line
+""""""""""""""""""""""""""""""
+" Always show the status line
+set laststatus=2
+
+" Format the status line
+" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
 
-" checks if your terminal has 24-bit color support
-if (has("termguicolors"))
-    set termguicolors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Editing mappings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remap VIM 0 to first non-blank character
+map 0 ^
+
+
+" Move a line of text using ALT+[jk] or Command+[jk] on mac
+nmap <M-j> mz:m+<cr>`z
+nmap <M-k> mz:m-2<cr>`z
+vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
+vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Spell checking
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<cr>
+
+" Shortcuts using <leader>
+map <leader>sn ]s
+map <leader>sp [s
+map <leader>sa zg
+map <leader>s? z=
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Misc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remove the Windows ^M - when the encodings gets messed up
+noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+
+" Quickly open a buffer for scribble
+map <leader>q :e ~/buffer<cr>
+
+" Quickly open a markdown buffer for scribble
+map <leader>x :e ~/buffer.md<cr>
+
+" Toggle paste mode on and off
+map <leader>pp :setlocal paste!<cr>
+
+""""""""""""""""""""""""""""""
+" => Python section
+""""""""""""""""""""""""""""""
+let python_highlight_all = 1
+au FileType python syn keyword pythonDecorator True None False self
+
+au BufNewFile,BufRead *.jinja set syntax=htmljinja
+au BufNewFile,BufRead *.mako set ft=mako
+
+au FileType python map <buffer> F :set foldmethod=indent<cr>
+
+au FileType python inoremap <buffer> $r return 
+au FileType python inoremap <buffer> $i import 
+au FileType python inoremap <buffer> $p print 
+au FileType python inoremap <buffer> $f # --- <esc>a
+au FileType python map <buffer> <leader>1 /class 
+au FileType python map <buffer> <leader>2 /def 
+au FileType python map <buffer> <leader>C ?class 
+au FileType python map <buffer> <leader>D ?def 
+
+""""""""""""""""""""""""""""""
+" => Shell section
+""""""""""""""""""""""""""""""
+if exists('$TMUX') 
+    if has('nvim')
+        set termguicolors
+    else
+        set term=screen-256color 
+    endif
 endif
+""""""""""""""""""""""""""""""
+" => Markdown
+""""""""""""""""""""""""""""""
+let vim_markdown_folding_disabled = 1
+
 
 filetype off
 
@@ -267,10 +387,18 @@ call plug#begin('~/.dotfiles/plugged')
 Plug 'itchyny/lightline.vim'
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
+
 Plug 'tpope/vim-surround'
+
+" Vim repeat 
+Plug 'tpope/vim-repeat'
+
 Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ryanoasis/vim-devicons'
+
+" Go Lang
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " Fzf for vim
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': { -> fzf#install() } }
@@ -292,6 +420,9 @@ Plug 'joshdick/onedark.vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 
+" Css 
+Plug 'ap/vim-css-color'
+
 " Markdown
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
@@ -306,13 +437,7 @@ call plug#end()
 "	config theme
 " =============================================================================================================================
 "
-
-"let g:oceanic_for_polyglot = 1
-"let g:oceanic_bold = 0
 colorscheme onedark
-"colorscheme onehalfdark
-filetype plugin indent on
-syntax on
 
 
 "
@@ -325,11 +450,9 @@ vnoremap <leader>y "+y
 nnoremap <leader>p "+p
 vnoremap <leader>p "+p
 
-"
-"=============================================================================================================================
-"	config lightline
-" =============================================================================================================================
-"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => lightline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set guifont=DroidSansMono\ Nerd\ Font\ 11
 let g:lightline = {
       \ 'colorscheme': 'onedark',
@@ -395,6 +518,17 @@ map mm <Plug>NERDCommenterToggle
 "
 " Always enable preview window on the right with 60% width
 let g:fzf_preview_window = ['right:50%', 'ctrl-/']
+" [Buffers] Jump to the existing window if possible
+let g:fzf_buffers_jump = 1
+
+" [[B]Commits] Customize the options used by 'git log':
+let g:fzf_commits_log_options = '--graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr"'
+
+" [Tags] Command to generate tags file
+let g:fzf_tags_command = 'ctags -R'
+
+" [Commands] --expect expression for directly executing the command
+let g:fzf_commands_expect = 'alt-enter,ctrl-x'
 
 nnoremap <c-p> :Files<CR>
 map <leader>b :Buffers<CR>
@@ -407,8 +541,6 @@ let g:fzf_action = {
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit'
   \}
-" [Buffers] Jump to the existing window if possible
-let g:fzf_buffers_jump = 1
 let g:fzf_colors =
 \ { 'fg':      ['fg', 'Normal'],
   \ 'bg':      ['bg', 'Normal'],
@@ -424,30 +556,40 @@ let g:fzf_colors =
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => surround.vim config
+" Annotate strings with gettext 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+vmap Si S(i_<esc>f)
+au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 
-"
-" =============================================================================================================================
-"	config multiple cursors
-" =============================================================================================================================
-"
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => vim-multiple-cursors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:multi_cursor_use_default_mapping=0
 
 " Default mapping
-let g:multi_cursor_start_word_key      = '<C-n>'
-let g:multi_cursor_select_all_word_key = '<A-n>'
-let g:multi_cursor_start_key           = 'g<C-n>'
-let g:multi_cursor_select_all_key      = 'g<A-n>'
-let g:multi_cursor_next_key            = '<C-n>'
+let g:multi_cursor_start_word_key      = '<C-s>'
+let g:multi_cursor_select_all_word_key = '<A-s>'
+let g:multi_cursor_start_key           = 'g<C-s>'
+let g:multi_cursor_select_all_key      = 'g<A-s>'
+let g:multi_cursor_next_key            = '<C-s>'
 let g:multi_cursor_prev_key            = '<C-p>'
 let g:multi_cursor_skip_key            = '<C-x>'
 let g:multi_cursor_quit_key            = '<Esc>'
 
 
-"
-" =============================================================================================================================
-"	config NERDTree
-" =============================================================================================================================
-"
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Nerd Tree
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:NERDTreeWinPos = "right"
+let NERDTreeShowHidden=0
+let NERDTreeIgnore = ['\.pyc$', '__pycache__']
+let g:NERDTreeWinSize=35
+map <leader>nn :NERDTreeToggle<cr>
+map <leader>nb :NERDTreeFromBookmark<Space>
+map <leader>nf :NERDTreeFind<cr>
 " How can I open a NERDTree automatically when vim starts up if no files were specified?
 " Stick this in your vimrc:
 
@@ -458,10 +600,6 @@ autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 " autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 
-" How can I map a specific key or shortcut to open NERDTree?
-" Stick this in your vimrc to open NERDTree with Ctrl+n (you can set whatever key you want):
-nnoremap <C-t> :NERDTreeToggle<CR>
-
 " How can I close vim if the only window left open is a NERDTree?
 "Stick this in your vimrc:
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
@@ -470,14 +608,19 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isT
 " Use these variables in your vimrc. Note that below are default arrow symbols
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
-"let NERDTreeCustomOpenArgs={'file':{'where': 't'}}
 
-"
-" =============================================================================================================================
-"	config coc.nvim
-" =============================================================================================================================
-"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Git gutter (Git diff)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:gitgutter_enabled=0
+nnoremap <silent> <leader>d :GitGutterToggle<cr>
 
+
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => coc.nvim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set internal encoding of vim, not needed on neovim, since coc.nvim using some
 " unicode characters in the file autoload/float.vim
 set encoding=utf-8
