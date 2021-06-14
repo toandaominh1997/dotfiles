@@ -15,6 +15,7 @@ plugins=(
     fzf
     vscode
     command-not-found
+    common-aliases
     history
     extract
     copyfile

@@ -390,7 +390,7 @@ Plug 'preservim/nerdcommenter'
 Plug 'vim-syntastic/syntastic'
 
 Plug 'tpope/vim-surround'
-Plugin 'mattn/emmet-vim'
+Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-unimpaired'
 
 Plug 'mbbill/undotree'
