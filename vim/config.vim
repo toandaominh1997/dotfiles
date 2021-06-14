@@ -387,8 +387,13 @@ call plug#begin('~/.dotfiles/plugged')
 Plug 'itchyny/lightline.vim'
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
+Plug 'vim-syntastic/syntastic'
 
 Plug 'tpope/vim-surround'
+Plugin 'mattn/emmet-vim'
+Plug 'tpope/vim-unimpaired'
+
+Plug 'mbbill/undotree'
 
 " Vim repeat 
 Plug 'tpope/vim-repeat'
@@ -423,12 +428,19 @@ Plug 'tpope/vim-fugitive'
 " Css 
 Plug 'ap/vim-css-color'
 
+"Json 
+Plug 'elzr/vim-json'
+
 " Markdown
 Plug 'godlygeek/tabular'
 Plug 'plasticboy/vim-markdown'
 
+" Latex
+Plug 'lervag/vimtex'
+
 " Tmux 
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'preservim/vimux'
 
 call plug#end()
 
@@ -563,6 +575,11 @@ let g:fzf_colors =
 vmap Si S(i_<esc>f)
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => vim-multiple-cursors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <leader>U :UndotreeToggle<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => vim-multiple-cursors
