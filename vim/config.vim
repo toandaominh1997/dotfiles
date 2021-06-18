@@ -387,7 +387,6 @@ call plug#begin('~/.dotfiles/plugged')
 Plug 'itchyny/lightline.vim'
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
-Plug 'vim-syntastic/syntastic'
 
 Plug 'tpope/vim-surround'
 Plug 'mattn/emmet-vim'
@@ -804,6 +803,6 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-let g:coc_global_extensions = ['coc-json', 'coc-prettier', 'coc-highlight', 'coc-tabnine', 'coc-yaml']
+let g:coc_global_extensions = ['coc-jedi', 'coc-json', 'coc-prettier',  'coc-git', 'coc-highlight', 'coc-tabnine', 'coc-yaml', 'coc-pairs']
 let g:coc_config_home = "$HOME/.dotfiles/tool/vim/"
 
