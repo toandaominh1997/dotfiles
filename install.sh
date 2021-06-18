@@ -39,7 +39,7 @@ if command_exists vim; then
     echo "vim is installed"
 elif [ "$(uname)" == "Darwin" ]; then
     echo "WARNING: \"vim\" command is not found. Install it first"
-    brew install -y vim
+    brew install vim
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "require vim but it's not installed. Install it first"
     add-apt-repository -y ppa:jonathonf/vim
@@ -51,8 +51,8 @@ fi
 if command_exists nvim; then
     echo "nvim is installed"
 elif [ "$(uname)" == "Darwin" ]; then
-    echo "WARNING: \"wget\" command is not found. Install it first"
-    brew install -y neovim
+    echo "WARNING: \"nvim\" command is not found. Install it first"
+    brew install neovim
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "require nvim but it's not installed. Install it first"
     add-apt-repository -y ppa:neovim-ppa/stable
@@ -71,7 +71,7 @@ if command_exists zsh; then
     echo "zsh is installed"
 elif [ "$(uname)" == "Darwin" ]; then
     echo "WARNING: \"zsh\" command is not found. Install it first"
-    brew install -y zsh
+    brew install zsh
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "WARNING: \"zsh\" command is not found. Install it first"
     apt-get install -y zsh
