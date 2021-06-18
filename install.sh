@@ -6,7 +6,7 @@ if command_exists git; then
     echo "git is installed"
 elif [ "$(uname)" == "Darwin" ]; then
     echo "WARNING: \"git\" command is not found. Install it first"
-    brew install -y git
+    brew install git
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "WARNING: \"git\" command is not found. Install it first"
     apt-get install -y git
@@ -17,7 +17,7 @@ if command_exists curl; then
     echo "curl is installed"
 elif [ "$(uname)" == "Darwin" ]; then
     echo "WARNING: \"curl\" command is not found. Install it first"
-    brew install -y curl
+    brew install curl
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "WARNING: \"curl\" command is not found. Install it first"
     apt-get install -y curl
@@ -28,7 +28,7 @@ if command_exists wget; then
     echo "wget is installed"
 elif [ "$(uname)" == "Darwin" ]; then
     echo "WARNING: \"wget\" command is not found. Install it first"
-    brew install -y wget
+    brew install wget
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "WARNING: \"wgetl\" command is not found. Install it first"
     apt-get install -y wget
@@ -81,8 +81,8 @@ fi
 if command_exists tmux; then
     echo "tmux is installed"
 elif [ "$(uname)" == "Darwin" ]; then
-    echo "WARNING: \"zsh\" command is not found. Install it first"
-    brew install -y tmux
+    echo "WARNING: \"tmux\" command is not found. Install it first"
+    brew install tmux
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "WARNING: \"tmux\" command is not found. Install it first"
     apt-get install -y tmux
