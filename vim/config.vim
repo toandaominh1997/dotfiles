@@ -24,11 +24,7 @@ set backspace=eol,start,indent
 
 
 if !has('nvim')
-    if s:is_win || s:is_mac
-        set clipboard=autoselect,unnamed
-    elseif s:is_linux && has('unnamedplus')
-        set clipboard=autoselectplus,unnamedplus
-    endif
+    set clipboard+=unnamed,unnamedplus
 else
     set clipboard+=unnamedplus
     vmap <Esc> "+ygv<C-c>
@@ -51,7 +47,7 @@ au FocusGained,BufEnter * checktime
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = ","
+let mapleader = " "
 
 " Fast saving
 nmap <leader>w :w!<cr>
