@@ -797,6 +797,6 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-let g:coc_global_extensions = ['coc-jedi', 'coc-json', 'coc-prettier',  'coc-git', 'coc-highlight', 'coc-tabnine', 'coc-yaml', 'coc-pairs']
+let g:coc_global_extensions = ['coc-marketplace', 'coc-jedi', 'coc-json', 'coc-prettier',  'coc-git', 'coc-highlight', 'coc-tabnine', 'coc-yaml', 'coc-pairs']
 let g:coc_config_home = "$HOME/.dotfiles/tool/vim/"
 
