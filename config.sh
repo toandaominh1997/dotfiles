@@ -69,10 +69,10 @@ else
 fi
 
 # fzf
-if [ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf ]; then
+if [ ! -d $HOME/.dotfiles/fzf ]; then
     echo "install FZF"
-    git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf
-    $HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf/install --all
+    git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/fzf
+    $HOME/.dotfiles/fzf/install --all
 else
     echo "FZF is installed"
 fi
