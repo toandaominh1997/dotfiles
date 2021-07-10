@@ -1,6 +1,11 @@
 command_exists() {
     hash "$1" &>/dev/null
 }
+
+if [ ! -d $HOME/.dotfiles/development ]; then
+    echo "Neovim setup"
+    mkdir $HOME/.dotfiles/development
+fi
 # install git
 if command_exists git; then
     echo "git is installed"
@@ -57,7 +62,7 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "require nvim but it's not installed. Install it first"
     wget https://github.com/neovim/neovim/releases/download/stable/nvim.appimage -O $HOME/.dotfiles/development/nvim.appimage
     chmod u+x $HOME/.dotfiles/development/nvim.appimage
-    ln -sfn $HOME/.dotfiles/development/nvim.appimage /usr/local/bin/nvim
+    sudo ln -sfn $HOME/.dotfiles/development/nvim.appimage /usr/local/bin/nvim
     #add-apt-repository -y ppa:neovim-ppa/stable
     #apt-get update -y
     #apt-get install -y neovim
@@ -91,8 +96,9 @@ elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     wget https://github.com/tmux/tmux/releases/download/3.2a/tmux-3.2a.tar.gz -O $HOME/.dotfiles/development/tmux-3.2a.tar.gz
     tar xvzf $HOME/.dotfiles/development/tmux-3.2a.tar.gz -C $HOME/.dotfiles/development
     cd $HOME/.dotfiles/development/tmux-3.2a
+    sudo apt install -y libevent-dev
     ./configure && make
-    ln -sfn $HOME/.dotfiles/development/tmux-3.2a/tmux /usr/local/bin/tmux
+    sudo ln -sfn $HOME/.dotfiles/development/tmux-3.2a/tmux /usr/local/bin/tmux
     #apt-get install -y tmux
 fi
 
