@@ -55,9 +55,12 @@ elif [ "$(uname)" == "Darwin" ]; then
     brew install neovim
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "require nvim but it's not installed. Install it first"
-    add-apt-repository -y ppa:neovim-ppa/stable
-    apt-get update -y
-    apt-get install -y neovim
+    git clone https://github.com/neovim/neovim/releases/download/stable/nvim.appimage $HOME/.dotfiles/development
+    chmod u+x $HOME/development/nvim.appimage
+    ln -sv $HOME/.dotfiles/development/nvim.appimage /usr/local/bin/nvim
+    #add-apt-repository -y ppa:neovim-ppa/stable
+    #apt-get update -y
+    #apt-get install -y neovim
 fi
 
 # install vim-plug
@@ -85,7 +88,9 @@ elif [ "$(uname)" == "Darwin" ]; then
     brew install tmux
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "WARNING: \"tmux\" command is not found. Install it first"
-    apt-get install -y tmux
+    git clone https://github.com/tmux/tmux/releases/download/3.2a/tmux-3.2a.tar.gz $HOME/.dotfiles/development
+
+    #apt-get install -y tmux
 fi
 
 # install node lts
