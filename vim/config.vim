@@ -387,7 +387,7 @@ Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-unimpaired'
 
 Plug 'mbbill/undotree'
-
+Plug 'mcchrish/nnn.vim'
 " Vim repeat 
 Plug 'tpope/vim-repeat'
 
@@ -567,6 +567,17 @@ let g:fzf_colors =
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap Si S(i_<esc>f)
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
+
+"============================================================================================================================
+"	config nnn
+" =============================================================================================================================
+"
+
+" Disable default mappings
+let g:nnn#set_default_mappings = 0
+
+" Set personalized mappings
+nnoremap <silent> <leader>nn :NnnPicker %:p:h<CR>
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
