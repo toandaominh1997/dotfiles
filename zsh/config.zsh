@@ -1,5 +1,5 @@
 export ZSH="$HOME/.dotfiles/oh-my-zsh"
-export FZF_BASE="$HOME/.dotfiles/oh-my-zsh/custom/plugins/fzf"
+export FZF_BASE="$HOME/.dotfiles/fzf"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 DEFAULT_USER=`whoami`
 
