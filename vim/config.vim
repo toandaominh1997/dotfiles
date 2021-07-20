@@ -361,6 +361,7 @@ au FileType python map <buffer> <leader>D ?def
 """"""""""""""""""""""""""""""
 " => Shell section
 """"""""""""""""""""""""""""""
+set termguicolors
 if exists('$TMUX') 
     if has('nvim')
         set termguicolors
@@ -394,6 +395,7 @@ Plug 'tpope/vim-repeat'
 Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ryanoasis/vim-devicons'
+Plug 'karb94/neoscroll.nvim'
 
 " Go Lang
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
