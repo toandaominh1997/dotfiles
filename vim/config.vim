@@ -379,6 +379,7 @@ filetype off
 
 call plug#begin('~/.dotfiles/plugged')
 " General coding/editing
+Plug 'rust-lang/rust.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'preservim/nerdtree'
 Plug 'preservim/nerdcommenter'
