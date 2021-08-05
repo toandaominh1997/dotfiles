@@ -387,7 +387,6 @@ Plug 'preservim/nerdcommenter'
 Plug 'tpope/vim-surround'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-unimpaired'
-
 Plug 'mbbill/undotree'
 Plug 'mcchrish/nnn.vim'
 " Vim repeat 
@@ -395,6 +394,7 @@ Plug 'tpope/vim-repeat'
 
 Plug 'sheerun/vim-polyglot'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'nvim-lua/completion-nvim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'karb94/neoscroll.nvim'
 
@@ -649,7 +649,6 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:gitgutter_enabled=0
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
-
 
 
 
