@@ -540,9 +540,7 @@ let g:fzf_commands_expect = 'alt-enter,ctrl-x'
 
 nnoremap <c-p> :Files<CR>
 map <leader>b :Buffers<CR>
-nnoremap <leader>g :Rg<CR>
-nnoremap <leader>t :Tags<CR>
-nnoremap <leader>m :Marks<CR>
+nnoremap <c-g> :Rg<CR>
 
 let g:fzf_action = {
   \ 'ctrl-t': 'tab split',
