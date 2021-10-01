@@ -184,6 +184,7 @@ set smarttab
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
+set softtabstop=5
 
 " Linebreak on 500 characters
 set lbr
@@ -400,10 +401,19 @@ Plug 'karb94/neoscroll.nvim'
 
 " Go Lang
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+" Javascript
+Plug 'pangloss/vim-javascript'
 
 " Fzf for vim
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+
+" Solid language pack for vim
+Plug 'sheerun/vim-polyglot'
+
+"Dockerfile
+Plug 'ekalinin/Dockerfile.vim'
+
 " Moving around easier
 Plug 'easymotion/vim-easymotion'
 
@@ -821,6 +831,6 @@ nnoremap <silent><nowait> <space>k  :<C-u>CocPrev<CR>
 " Resume latest coc list.
 nnoremap <silent><nowait> <space>p  :<C-u>CocListResume<CR>
 
-let g:coc_global_extensions = ['coc-marketplace', 'coc-jedi', 'coc-json', 'coc-prettier',  'coc-git', 'coc-highlight', 'coc-tabnine', 'coc-yaml', 'coc-pairs']
+let g:coc_global_extensions = ['coc-marketplace', 'coc-json', 'coc-prettier',  'coc-git', 'coc-highlight', 'coc-tabnine', 'coc-yaml', 'coc-pairs', 'coc-jedi', 'coc-tsserver', 'coc-flutter', 'coc-java', 'coc-go', 'coc-sql']
 let g:coc_config_home = "$HOME/.dotfiles/tool/vim/"
 
