@@ -605,7 +605,7 @@ let g:nnn#action = {
       \ '<c-v>': 'vsplit' }
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => vim-multiple-cursors
+" => vim-undotree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nnoremap <leader>U :UndotreeToggle<CR>
 
