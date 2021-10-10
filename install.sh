@@ -19,7 +19,7 @@ if command_exists git; then
     echo "git is installed"
     if [[ $1 == "upgrade" ]]; then
         echo "upgrade git package"
-        brew upgrade git
+        brew reinstall git
     fi
 elif [[ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
     echo "WARNING: \"git\" command is not found. Install it first"
@@ -31,7 +31,7 @@ if command_exists curl; then
     echo "curl is installed"
     if [[ $1 == "upgrade" ]]; then
         echo "upgrade curl package"
-        brew upgrade curl
+        brew reinstall curl
     fi
 elif [[ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
     echo "WARNING: \"curl\" command is not found. Install it first"
@@ -43,7 +43,7 @@ if command_exists wget; then
     echo "wget is installed"
     if [[ $1 == "upgrade" ]]; then
         echo "upgrade wget package"
-        brew upgrade wget
+        brew reinstall wget
     fi
 elif [[ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
     echo "WARNING: \"curl\" command is not found. Install it first"
@@ -55,7 +55,7 @@ if command_exists vim; then
     echo "vim is installed"
     if [[ $1 == "upgrade" ]]; then
         echo "upgrade vim package"
-        brew upgrade vim
+        brew reinstall vim
     fi
 elif [[ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
     echo "WARNING: \"vim\" command is not found. Install it first"
@@ -66,7 +66,7 @@ if command_exists nvim; then
     echo "nvim is installed"
     if [[ $1 == "upgrade" ]]; then
         echo "upgrade nvim package"
-        brew upgrade neovim
+        brew reinstall neovim
     fi
 elif [[ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
     echo "WARNING: \"nvim\" command is not found. Install it first"
@@ -84,7 +84,7 @@ if command_exists zsh; then
     echo "zsh is installed"
     if [[ $1 == "upgrade" ]]; then
         echo "upgrade zsh package"
-        brew upgrade zsh
+        brew reinstall zsh
     fi
 elif [[ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
     echo "WARNING: \"zsh\" command is not found. Install it first"
@@ -96,7 +96,7 @@ if command_exists tmux; then
     echo "tmux is installed"
     if [[ $1 == "upgrade" ]]; then
         echo "upgrade tmux package"
-        brew upgrade tmux
+        brew reinstall tmux
     fi
 elif [[ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
     echo "WARNING: \"tmux\" command is not found. Install it first"
@@ -108,7 +108,7 @@ if command_exists node; then
     echo "nodejs is installed"
     if [[ $1 == "upgrade" ]]; then
         echo "upgrade node package"
-        brew upgrade node
+        brew reinstall node
     fi
 elif [[ "$(uname)" == "Darwin" || "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
     echo "WARNING: \"node\" command is not found. Install it first"

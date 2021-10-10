@@ -34,6 +34,7 @@ jobs:
           pip install --upgrade pip
       - name: install necessary package
         run: |
+          bash install.sh
           bash install.sh upgrade
       - name: config package
         run: |
@@ -45,3 +46,4 @@ jobs:
           echo nvim --version
           echo node --version
           echo fzf --version
+          nvim +PlugInstall +qall
