@@ -19,7 +19,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.8]
-        os: [macos-latest, ubuntu-latest, ubuntu-18.04]
+        os: [macos-latest, ubuntu-latest, ubuntu-18.04, ubuntu-20.04]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -29,13 +29,19 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{matrix.python-version}}
-      - name: Install dependencies
+      - name: install dependencies
         run: |
           pip install --upgrade pip
-          pip install jedi
-      - name: Install vim/nvim zsh tmux vim-plug node
+      - name: install necessary package
         run: |
           bash install.sh
-      - name: Install config
+      - name: config package
         run: |
           bash config.sh
+      - name: check version
+        run: |
+          echo tmux -V
+          echo vim --version
+          echo nvim --version
+          echo node --version
+          echo fzf --version
