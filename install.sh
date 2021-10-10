@@ -2,7 +2,7 @@ command_exists() {
     hash "$1" &>/dev/null
 }
 # install brew
-if command_exists git; then
+if command_exists brew; then
     echo "brew is installed"
 elif [ "$(uname)" == "Darwin" ]; then
     echo "WARNING: \"brew\" command is not found. Install it first"
@@ -10,14 +10,10 @@ elif [ "$(uname)" == "Darwin" ]; then
 elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
     echo "WARNING: \"brew\" command is not found. Install it first"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    sudo ln -sfn /home/linuxbrew/.linuxbrew/bin/brew /usr/local/bin/brew
+    ls -l /home/linuxbrew/.linuxbrew/bin/brew
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
 fi
 
-# mkdir development
-if [ ! -d $HOME/.dotfiles/development ]; then
-    echo "development setup"
-    mkdir $HOME/.dotfiles/development
-fi
 # install git
 if command_exists git; then
     echo "git is installed"

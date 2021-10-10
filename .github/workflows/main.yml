@@ -34,7 +34,7 @@ jobs:
           pip install --upgrade pip
       - name: install necessary package
         run: |
-          bash install.sh
+          bash install.sh upgrade
       - name: config package
         run: |
           bash config.sh
