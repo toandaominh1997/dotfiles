@@ -1,23 +1,21 @@
 # dotfiles
-A set of vim/nvim, zsh, and tmux configuration files.
+A set of vim/nvim, zsh/oh-my-zsh, and tmux configuration files.
 
-### Basic Installation
+## Basic Installation
 
 Dotfiles is installed by running one of the following commands in your terminal. You can install this via the command-line with `git`.
+
+#### Install dotfiles
 ```bash
 git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/tool
+bash $HOME/.dotfiles/tool/install.sh
 bash $HOME/.dotfiles/tool/config.sh
 ```
-</br>
-For detail:
-
-if you not in ['vim/nvim', 'zsh', 'tmux', 'vim-plug', 'node']:
-
+#### Upgrade dotfiles
 ```bash
-sudo bash $HOME/.dotfiles/tool/install.sh
+bash $HOME/.dotfiles/tool/install.sh upgrade
+bash $HOME/.dotfiles/tool/config.sh upgrade
 ```
-### Visualization
-
-
+## Visualization
 <img src='./docs/demo.png'>
  
