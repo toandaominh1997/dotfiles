@@ -446,6 +446,11 @@ if has("nvim")
     Plug 'saadparwaiz1/cmp_luasnip'
     Plug 'L3MON4D3/LuaSnip'
     Plug 'hrsh7th/cmp-buffer'
+    Plug 'glepnir/lspsaga.nvim'
+    Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
+
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim'
 endif
 
 call plug#end()
@@ -660,12 +665,55 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 let g:gitgutter_enabled=0
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => telescope
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("nvim")
+    " Find files using Telescope command-line sugar.
+    nnoremap <leader>ff <cmd>Telescope find_files<cr>
+    nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+    nnoremap <leader>fb <cmd>Telescope buffers<cr>
+    nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => treesitter
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+lua <<EOF
+require'nvim-treesitter.configs'.setup {
+    ensure_installed = {
+    "python",
+    "json",
+    "yaml",
+    "javascript",
+    "typescript",
+    "go"
+    }, -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  sync_install = false, -- install languages synchronously (only applied to `ensure_installed`)
+  ignore_install = {}, -- List of parsers to ignore installing
+  highlight = {
+    enable = false,              -- false will disable the whole extension
+    disable = {},  -- list of language that will be disabled
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+  indent = {
+    enable = false,
+    disable = {},
+  },
+}
+EOF
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => LSPConfig
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set completeopt=menu,menuone,noselect
 lua << EOF
+-- local saga = require 'lspsaga'
+-- saga.init_lsp_saga()
 -- luasnip setup
 local luasnip = require 'luasnip'
 
@@ -770,7 +818,8 @@ for _, lsp in ipairs(servers) do
     capabilities = capabilities,
     flags = {
         debounce_text_changes = 150,
-        }
+    }
   }
+
 end
 EOF
