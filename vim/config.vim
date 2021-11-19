@@ -394,19 +394,6 @@ Plug 'tpope/vim-repeat'
 
 Plug 'sheerun/vim-polyglot'
 
-Plug 'neovim/nvim-lspconfig'
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/nvim-cmp'
-
-" For vsnip users.
-"Plug 'hrsh7th/cmp-vsnip'
-"Plug 'hrsh7th/vim-vsnip'
-
-" For luasnip users.
-Plug 'L3MON4D3/LuaSnip'
-Plug 'saadparwaiz1/cmp_luasnip'
-
 Plug 'ryanoasis/vim-devicons'
 Plug 'karb94/neoscroll.nvim'
 
@@ -451,6 +438,15 @@ Plug 'elzr/vim-json'
 " Tmux 
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'preservim/vimux'
+
+if has("nvim")
+    Plug 'neovim/nvim-lspconfig'
+    Plug 'hrsh7th/nvim-cmp'
+    Plug 'hrsh7th/cmp-nvim-lsp'
+    Plug 'saadparwaiz1/cmp_luasnip'
+    Plug 'L3MON4D3/LuaSnip'
+    Plug 'hrsh7th/cmp-buffer'
+endif
 
 call plug#end()
 
@@ -763,10 +759,10 @@ local on_attach = function(client, bufnr)
 end
 
 -- Add additional capabilities supported by nvim-cmp
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
+-- Enable some language servers with the additional completion capabilities offered by nvim-cmp
 local servers = { 'pyright', 'rust_analyzer', 'tsserver' }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
