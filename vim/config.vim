@@ -405,6 +405,7 @@ Plug 'pangloss/vim-javascript'
 " Fzf for vim
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
 
 " Solid language pack for vim
 Plug 'sheerun/vim-polyglot'
@@ -438,6 +439,12 @@ Plug 'elzr/vim-json'
 " Tmux 
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'preservim/vimux'
+
+" Coc nvim
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" FloatTerm
+Plug 'voldikss/vim-floaterm'
 
 if has("nvim")
     Plug 'neovim/nvim-lspconfig'
@@ -664,6 +671,17 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:gitgutter_enabled=0
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => FloatTerm
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <silent> <leader>t :FloatermNew --position=bottomright<CR>
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Coc nvim
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let g:coc_global_extensions = ['coc-json', 'coc-prettier',  'coc-git', 'coc-highlight', 'coc-yaml', 'coc-pairs']
+let g:coc_config_home = "$HOME/.dotfiles/tool/vim/"
+
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => telescope
