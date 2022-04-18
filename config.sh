@@ -109,5 +109,3 @@ $HOME/.dotfiles/oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
 echo 'source $HOME/.dotfiles/tool/zsh/config.zsh' >$HOME/.zshrc
 
-# alacritty
-ln -s $HOME/.dotfiles/tool/alacritty/alacritty.yml $HOME/.config/alacritty/alacritty.yml

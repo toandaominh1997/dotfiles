@@ -398,7 +398,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'karb94/neoscroll.nvim'
 
 " Go Lang
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+"Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " Javascript
 Plug 'pangloss/vim-javascript'
 
@@ -445,6 +445,8 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " FloatTerm
 Plug 'voldikss/vim-floaterm'
+
+Plug 'editorconfig/editorconfig-vim'
 
 if has("nvim")
     Plug 'neovim/nvim-lspconfig'
@@ -829,7 +831,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'jedi_language_server', 'rust_analyzer', 'tsserver' }
+local servers = { 'jedi_language_server', 'gopls', 'rust_analyzer', 'tsserver' }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
