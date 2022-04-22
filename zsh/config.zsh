@@ -19,6 +19,10 @@ plugins=(
     history
     extract
     copyfile
+    kubectl
+    dotenv
+    helm
+    httpie
     )
 
 source $ZSH/oh-my-zsh.sh
