@@ -8,6 +8,7 @@ if [[ ! -d $HOME/.config/nvim ]]; then
     echo "Neovim setup"
     mkdir $HOME/.config/nvim
 fi
+
 echo -e "set runtimepath^=~/.vim runtimepath+=~/.vim/after\nlet &packpath = &runtimepath\nsource $HOME/.dotfiles/tool/vim/config.vim" >$HOME/.config/nvim/init.vim
 ln -s ~/.dotfiles/tool/vim/lua ~/.config/nvim/lua
 
