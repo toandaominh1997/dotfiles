@@ -440,9 +440,6 @@ Plug 'elzr/vim-json'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'preservim/vimux'
 
-" Coc nvim
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
 " FloatTerm
 Plug 'voldikss/vim-floaterm'
 
@@ -629,15 +626,14 @@ nnoremap <leader>U :UndotreeToggle<CR>
 let g:multi_cursor_use_default_mapping=0
 
 " Default mapping
-let g:multi_cursor_start_word_key      = '<C-s>'
-let g:multi_cursor_select_all_word_key = '<A-s>'
-let g:multi_cursor_start_key           = 'g<C-s>'
-let g:multi_cursor_select_all_key      = 'g<A-s>'
-let g:multi_cursor_next_key            = '<C-s>'
+let g:multi_cursor_start_word_key      = '<C-n>'
+let g:multi_cursor_select_all_word_key = '<A-n>'
+let g:multi_cursor_start_key           = 'g<C-n>'
+let g:multi_cursor_select_all_key      = 'g<A-n>'
+let g:multi_cursor_next_key            = '<C-n>'
 let g:multi_cursor_prev_key            = '<C-p>'
 let g:multi_cursor_skip_key            = '<C-x>'
 let g:multi_cursor_quit_key            = '<Esc>'
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Nerd Tree
@@ -677,12 +673,6 @@ nnoremap <silent> <leader>d :GitGutterToggle<cr>
 " => FloatTerm
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 nnoremap <silent> <leader>t :FloatermNew --position=bottomright<CR>
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Coc nvim
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:coc_global_extensions = ['coc-json', 'coc-prettier',  'coc-git', 'coc-highlight', 'coc-yaml', 'coc-pairs']
-let g:coc_config_home = "$HOME/.dotfiles/tool/vim/"
-
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
