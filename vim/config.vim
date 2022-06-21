@@ -453,8 +453,11 @@ if has("nvim")
     Plug 'L3MON4D3/LuaSnip'
     Plug 'hrsh7th/cmp-buffer'
     Plug 'glepnir/lspsaga.nvim'
+
+    " Treesitter
     Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
 
+    " Telescope
     Plug 'nvim-lua/plenary.nvim'
     Plug 'nvim-telescope/telescope.nvim'
 endif
