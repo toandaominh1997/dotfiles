@@ -388,7 +388,6 @@ Plug 'tpope/vim-surround'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-unimpaired'
 Plug 'mbbill/undotree'
-Plug 'mcchrish/nnn.vim'
 " Vim repeat 
 Plug 'tpope/vim-repeat'
 
@@ -421,27 +420,19 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
 
 Plug 'haya14busa/incsearch.vim'
-Plug 'christoomey/vim-system-copy'
 Plug 'Yggdroot/indentLine'
 " Colorschemes 
 "Plug 'morhetz/gruvbox'
-Plug 'joshdick/onedark.vim'
+"Plug 'joshdick/onedark.vim'
+Plug 'EdenEast/nightfox.nvim'
+
 " Git 
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 
-" Css 
-Plug 'ap/vim-css-color'
-
-"Json 
-Plug 'elzr/vim-json'
-
 " Tmux 
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'preservim/vimux'
-
-" FloatTerm
-Plug 'voldikss/vim-floaterm'
 
 Plug 'editorconfig/editorconfig-vim'
 
@@ -451,8 +442,6 @@ if has("nvim")
     Plug 'hrsh7th/cmp-nvim-lsp'
     Plug 'saadparwaiz1/cmp_luasnip'
     Plug 'L3MON4D3/LuaSnip'
-    Plug 'hrsh7th/cmp-buffer'
-    Plug 'glepnir/lspsaga.nvim'
 
     " Treesitter
     Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
@@ -469,8 +458,8 @@ call plug#end()
 "	config theme
 " =============================================================================================================================
 "
-colorscheme onedark
-
+"colorscheme onedark
+colorscheme nightfox
 
 "
 " =============================================================================================================================
@@ -487,7 +476,7 @@ vnoremap <leader>p "+p
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set guifont=DroidSansMono\ Nerd\ Font\ 11
 let g:lightline = {
-      \ 'colorscheme': 'onedark',
+      \ 'colorscheme': 'nightfox',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'currentfunction', 'cocstatus', 'readonly', 'filename', 'modified' ] ],
