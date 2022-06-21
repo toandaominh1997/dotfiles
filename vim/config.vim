@@ -582,31 +582,6 @@ let g:fzf_colors =
 vmap Si S(i_<esc>f)
 au FileType mako vmap Si S"i${ _(<esc>2f"a) }<esc>
 
-"============================================================================================================================
-"	config nnn
-" =============================================================================================================================
-"
-
-" Disable default mappings
-let g:nnn#set_default_mappings = 0
-
-" Set personalized mappings
-nnoremap <silent> <leader>nn :NnnPicker %:p:h<CR>
-
-" Opens the n³ window in a split
-let g:nnn#layout = 'new' " or vnew, tabnew etc.
-
-" Or pass a dictionary with window size
-let g:nnn#layout = { 'left': '~20%' } " or right, up, down
-
-" Floating window (neovim latest and vim with patch 8.2.191)
-let g:nnn#layout = { 'window': { 'width': 0.9, 'height': 0.6, 'highlight': 'Debug' } }
-
-let g:nnn#action = {
-      \ '<c-t>': 'tab split',
-      \ '<c-x>': 'split',
-      \ '<c-v>': 'vsplit' }
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => vim-undotree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -661,11 +636,6 @@ let g:NERDTreeDirArrowCollapsible = '▾'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:gitgutter_enabled=0
 nnoremap <silent> <leader>d :GitGutterToggle<cr>
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => FloatTerm
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-nnoremap <silent> <leader>t :FloatermNew --position=bottomright<CR>
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => telescope
