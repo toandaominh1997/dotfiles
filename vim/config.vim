@@ -381,8 +381,19 @@ filetype off
 call plug#begin('~/.dotfiles/plugged')
 " General coding/editing
 Plug 'itchyny/lightline.vim'
-Plug 'preservim/nerdtree'
-Plug 'preservim/nerdcommenter'
+
+if has("nvim")
+    Plug 'numToStr/Comment.nvim'
+else
+    Plug 'preservim/nerdcommenter'
+endif
+
+if has("nvim")
+    Plug 'kyazdani42/nvim-web-devicons' " optional, for file icons
+    Plug 'kyazdani42/nvim-tree.lua'
+else
+    Plug 'preservim/nerdtree'
+endif
 
 Plug 'tpope/vim-surround'
 Plug 'mattn/emmet-vim'
@@ -392,8 +403,8 @@ Plug 'mbbill/undotree'
 Plug 'tpope/vim-repeat'
 
 Plug 'sheerun/vim-polyglot'
-
 Plug 'ryanoasis/vim-devicons'
+
 Plug 'karb94/neoscroll.nvim'
 
 " Go Lang
@@ -401,7 +412,12 @@ Plug 'karb94/neoscroll.nvim'
 " Javascript
 Plug 'pangloss/vim-javascript'
 
-" Fzf for vim
+" Fzf
+if has("nvim")
+    " Telescope
+    Plug 'nvim-lua/plenary.nvim'
+    Plug 'nvim-telescope/telescope.nvim'
+endif
 Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
@@ -416,11 +432,24 @@ Plug 'ekalinin/Dockerfile.vim'
 Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
-Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
 
+" Auto pairs
+if has("nvim")
+    Plug 'windwp/nvim-autopairs'
+else
+    Plug 'jiangmiao/auto-pairs'
+endif
+
+
 Plug 'haya14busa/incsearch.vim'
-Plug 'Yggdroot/indentLine'
+
+if has("nvim")
+    Plug 'lukas-reineke/indent-blankline.nvim'
+else
+    Plug 'Yggdroot/indentLine'
+endif
+
 " Colorschemes 
 "Plug 'morhetz/gruvbox'
 "Plug 'joshdick/onedark.vim'
@@ -442,13 +471,10 @@ if has("nvim")
     Plug 'hrsh7th/cmp-nvim-lsp'
     Plug 'saadparwaiz1/cmp_luasnip'
     Plug 'L3MON4D3/LuaSnip'
+    Plug 'ray-x/lsp_signature.nvim'
 
     " Treesitter
     Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
-
-    " Telescope
-    Plug 'nvim-lua/plenary.nvim'
-    Plug 'nvim-telescope/telescope.nvim'
 endif
 
 call plug#end()
@@ -529,8 +555,14 @@ nmap ga <Plug>(EasyAlign)
 "	config comment
 " =============================================================================================================================
 "
-let g:NERDDefaultAlign = 'left'
-map mm <Plug>NERDCommenterToggle
+if has("nvim")
+    lua require("user.comment")
+    " use gc or gb
+else
+    let g:NERDDefaultAlign = 'left'
+    map mm <Plug>NERDCommenterToggle
+endif
+
 
 "
 " =============================================================================================================================
@@ -603,33 +635,41 @@ let g:multi_cursor_skip_key            = '<C-x>'
 let g:multi_cursor_quit_key            = '<Esc>'
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Nerd Tree
+" => Nerd Tree or nvim-tree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-let g:NERDTreeWinPos = "left"
-let NERDTreeShowHidden=0
-let NERDTreeIgnore = ['\.pyc$', '__pycache__']
-let g:NERDTreeWinSize=35
-map <C-t> :NERDTreeToggle<cr>
-map <leader>nb :NERDTreeFromBookmark<Space>
-map <leader>nf :NERDTreeFind<cr>
-" How can I open a NERDTree automatically when vim starts up if no files were specified?
-" Stick this in your vimrc:
+if has("nvim")
+    lua require('user.nvimtree')
+    map <C-t> :NvimTreeFindFileToggle<cr>
+    map <leader>nr :NvimTreeRefresh<cr>
 
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+    " reference: https://github.com/kyazdani42/nvim-tree.lua/blob/master/doc/nvim-tree-lua.txt
+else
+    let g:NERDTreeWinPos = "left"
+    let NERDTreeShowHidden=0
+    let NERDTreeIgnore = ['\.pyc$', '__pycache__']
+    let g:NERDTreeWinSize=35
+    map <C-t> :NERDTreeToggle<cr>
+    map <leader>nb :NERDTreeFromBookmark<Space>
+    map <leader>nf :NERDTreeFind<cr>
+    " How can I open a NERDTree automatically when vim starts up if no files were specified?
+    " Stick this in your vimrc:
 
-" How can I open NERDTree automatically when vim starts up on opening a directory?
-" autocmd StdinReadPre * let s:std_in=1
-" autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+    autocmd StdinReadPre * let s:std_in=1
+    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 
-" How can I close vim if the only window left open is a NERDTree?
-"Stick this in your vimrc:
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+    " How can I open NERDTree automatically when vim starts up on opening a directory?
+    " autocmd StdinReadPre * let s:std_in=1
+    " autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
 
-" How can I change default arrows?
-" Use these variables in your vimrc. Note that below are default arrow symbols
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
+    " How can I close vim if the only window left open is a NERDTree?
+    "Stick this in your vimrc:
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+    " How can I change default arrows?
+    " Use these variables in your vimrc. Note that below are default arrow symbols
+    let g:NERDTreeDirArrowExpandable = '▸'
+    let g:NERDTreeDirArrowCollapsible = '▾'
+endif 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Git gutter (Git diff)
@@ -661,4 +701,11 @@ endif
 if has("nvim")
     set completeopt=menu,menuone,noselect
     lua require('user.lsp')
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => AutoPairs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("nvim")
+    lua require('user.autopairs')
 endif
