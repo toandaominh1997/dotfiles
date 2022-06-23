@@ -465,6 +465,10 @@ Plug 'preservim/vimux'
 
 Plug 'editorconfig/editorconfig-vim'
 
+
+if has("nvim")
+    Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
+endif
 if has("nvim")
     Plug 'neovim/nvim-lspconfig'
     Plug 'hrsh7th/nvim-cmp'
@@ -703,9 +707,17 @@ if has("nvim")
     lua require('user.lsp')
 endif
 
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => AutoPairs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("nvim")
     lua require('user.autopairs')
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => BufferLine
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("nvim")
+    lua require('user.bufferline')
 endif
