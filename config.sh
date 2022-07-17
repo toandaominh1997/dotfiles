@@ -110,4 +110,6 @@ export ZSH=$HOME/.dotfiles/oh-my-zsh
 $HOME/.dotfiles/oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
 echo 'source $HOME/.dotfiles/tool/zsh/config.zsh' >$HOME/.zshrc
+echo 'Install starship'
+ln -s ~/.dotfiles/tool/starship/starship.toml ~/.config/starship.toml
 
