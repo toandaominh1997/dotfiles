@@ -625,7 +625,7 @@ let g:multi_cursor_quit_key            = '<Esc>'
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("nvim")
     lua require('user.nvim-tree')
-    map <leader>t :NvimTreeFocus<cr>
+    map <C-E> :NvimTreeFocus<cr>
     map <leader>nr :NvimTreeRefresh<cr>
     set splitright
 
