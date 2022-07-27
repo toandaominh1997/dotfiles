@@ -52,16 +52,19 @@ let mapleader = " "
 " Fast saving
 nmap <leader>w :w!<cr>
 
-" :W sudo saves the file 
+" :W sudo saves the file
 " (useful for handling the permission-denied error)
 command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 
 " Avoid garbled characters in Chinese language windows OS
-let $LANG='en' 
+let $LANG='en'
 set langmenu=en
 source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
@@ -76,7 +79,8 @@ if has("win16") || has("win32")
 else
     set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 endif
-"Always show current position
+
+" Always show current position
 set ruler
 
 " Height of the command bar
@@ -85,9 +89,6 @@ set cmdheight=1
 " A buffer becomes hidden when it is abandoned
 set hid
 
-" Show relative line numbers
-set relativenumber
-
 " Configure backspace so it acts as it should act
 set backspace=eol,start,indent
 set whichwrap+=<,>,h,l
@@ -95,23 +96,24 @@ set whichwrap+=<,>,h,l
 " Ignore case when searching
 set ignorecase
 
-" When searching try to be smart about cases 
+" When searching try to be smart about cases
 set smartcase
 
 " Highlight search results
 set hlsearch
 
 " Makes search act like search in modern browsers
-set incsearch 
+set incsearch
 
 " Don't redraw while executing macros (good performance config)
-set lazyredraw 
+set lazyredraw
 
 " For regular expressions turn magic on
 set magic
 
 " Show matching brackets when text indicator is over them
-set showmatch 
+set showmatch
+
 " How many tenths of a second to blink when matching brackets
 set mat=2
 
@@ -129,12 +131,11 @@ endif
 " Add a bit extra margin to the left
 set foldcolumn=1
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Enable syntax highlighting
-syntax enable 
+syntax enable
 
 " Enable 256 colors palette in Gnome Terminal
 if $COLORTERM == 'gnome-terminal'
@@ -184,7 +185,6 @@ set smarttab
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
-set softtabstop=5
 
 " Linebreak on 500 characters
 set lbr
@@ -193,36 +193,6 @@ set tw=500
 set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
-
-
-set mouse+=a
-if has('nvim')
-    set mouse+=nicr
-endif
-
-xnoremap p pgvy
-
-inoremap jj <ESC> :w<CR>
-
-" Persistent undo (i.e vim remembers undo actions even if file is closed and
-" reopened)
-set undofile
-set undolevels=1000   " Maximum number of changes that can be undone
-set undoreload=10000  " Maximum number lines to save for undo on a buffer reload
-set autoread
-
-" Alternate way to save
-nnoremap <C-s> :w<CR>
-" Alternate way to quit and save
-nnoremap <C-q> :wq!<CR>
-
-
-" Better tabbing
-vnoremap < <gv
-vnoremap > >gv
-
-
-
 
 """"""""""""""""""""""""""""""
 " => Visual mode related
@@ -262,8 +232,8 @@ map <leader>h :bprevious<cr>
 map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
-map <leader>tm :tabmove 
-map <leader>t<leader> :tabnext 
+map <leader>tm :tabmove
+map <leader>t<leader> :tabnext
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
@@ -278,7 +248,7 @@ map <leader>te :tabedit <C-r>=expand("%:p:h")<cr>/
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
-" Specify the behavior when switching between buffers 
+" Specify the behavior when switching between buffers
 try
   set switchbuf=useopen,usetab,newtab
   set stal=2
@@ -288,6 +258,7 @@ endtry
 " Return to last edit position when opening files (You want this!)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
+
 """"""""""""""""""""""""""""""
 " => Status line
 """"""""""""""""""""""""""""""
@@ -295,7 +266,7 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 set laststatus=2
 
 " Format the status line
-" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -304,12 +275,32 @@ set laststatus=2
 " Remap VIM 0 to first non-blank character
 map 0 ^
 
-
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
 nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
+
+if has("mac") || has("macunix")
+  nmap <D-j> <M-j>
+  nmap <D-k> <M-k>
+  vmap <D-j> <M-j>
+  vmap <D-k> <M-k>
+endif
+
+" Delete trailing white space on save, useful for some filetypes ;)
+fun! CleanExtraSpaces()
+    let save_cursor = getpos(".")
+    let old_query = getreg('/')
+    silent! %s/\s\+$//e
+    call setpos('.', save_cursor)
+    call setreg('/', old_query)
+endfun
+
+if has("autocmd")
+    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+endif
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Spell checking
@@ -339,42 +330,32 @@ map <leader>x :e ~/buffer.md<cr>
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
 
-""""""""""""""""""""""""""""""
-" => Python section
-""""""""""""""""""""""""""""""
-let python_highlight_all = 1
-au FileType python syn keyword pythonDecorator True None False self
 
-au BufNewFile,BufRead *.jinja set syntax=htmljinja
-au BufNewFile,BufRead *.mako set ft=mako
+" Custom Config
 
-au FileType python map <buffer> F :set foldmethod=indent<cr>
-
-au FileType python inoremap <buffer> $r return 
-au FileType python inoremap <buffer> $i import 
-au FileType python inoremap <buffer> $p print 
-au FileType python inoremap <buffer> $f # --- <esc>a
-au FileType python map <buffer> <leader>1 /class 
-au FileType python map <buffer> <leader>2 /def 
-au FileType python map <buffer> <leader>C ?class 
-au FileType python map <buffer> <leader>D ?def 
-
-""""""""""""""""""""""""""""""
-" => Shell section
-""""""""""""""""""""""""""""""
-set termguicolors
-if exists('$TMUX') 
-    if has('nvim')
-        set termguicolors
-    else
-        set term=screen-256color 
-    endif
+set mouse+=a
+if has('nvim')
+    set mouse+=nicr
 endif
-""""""""""""""""""""""""""""""
-" => Markdown
-""""""""""""""""""""""""""""""
-let vim_markdown_folding_disabled = 1
 
+" Persistent undo (i.e vim remembers undo actions even if file is closed and
+" reopened)
+set undofile
+set undolevels=1000   " Maximum number of changes that can be undone
+set undoreload=10000  " Maximum number lines to save for undo on a buffer reload
+set autoread
+
+" Better tabbing
+vnoremap < <gv
+vnoremap > >gv
+
+xnoremap p pgvy
+
+
+nnoremap <leader>v <C-w>v
+nnoremap <leader>s <C-w>s
+
+set number
 
 filetype off
 
@@ -407,11 +388,6 @@ Plug 'ryanoasis/vim-devicons'
 
 Plug 'karb94/neoscroll.nvim'
 
-" Go Lang
-"Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-" Javascript
-Plug 'pangloss/vim-javascript'
-
 " Fzf
 if has("nvim")
     " Telescope
@@ -441,6 +417,7 @@ else
     Plug 'jiangmiao/auto-pairs'
 endif
 
+Plug 'williamboman/mason.nvim'
 
 Plug 'haya14busa/incsearch.vim'
 
@@ -465,17 +442,22 @@ Plug 'preservim/vimux'
 
 Plug 'editorconfig/editorconfig-vim'
 
+" Tabline
 
 if has("nvim")
     Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
 endif
+
+Plug 'jose-elias-alvarez/null-ls.nvim'
+
+Plug 'windwp/nvim-autopairs'
+
 if has("nvim")
     Plug 'neovim/nvim-lspconfig'
     Plug 'hrsh7th/nvim-cmp'
     Plug 'hrsh7th/cmp-nvim-lsp'
     Plug 'saadparwaiz1/cmp_luasnip'
     Plug 'L3MON4D3/LuaSnip'
-    Plug 'ray-x/lsp_signature.nvim'
 
     " Treesitter
     Plug 'nvim-treesitter/nvim-treesitter', { 'do': ':TSUpdate' }
@@ -642,9 +624,10 @@ let g:multi_cursor_quit_key            = '<Esc>'
 " => Nerd Tree or nvim-tree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("nvim")
-    lua require('user.nvimtree')
-    map <C-t> :NvimTreeFindFileToggle<cr>
+    lua require('user.nvim-tree')
+    map <leader>t :NvimTreeFocus<cr>
     map <leader>nr :NvimTreeRefresh<cr>
+    set splitright
 
     " reference: https://github.com/kyazdani42/nvim-tree.lua/blob/master/doc/nvim-tree-lua.txt
 else
@@ -685,6 +668,7 @@ nnoremap <silent> <leader>d :GitGutterToggle<cr>
 " => telescope
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("nvim")
+    lua require("user.telescope")
     " Using Lua functions
     nnoremap <leader>ff <cmd>lua require('telescope.builtin').find_files()<cr>
     nnoremap <leader>fg <cmd>lua require('telescope.builtin').live_grep()<cr>
@@ -720,4 +704,26 @@ endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if has("nvim")
     lua require('user.bufferline')
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => IndentLine
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("nvim")
+    lua require('user.indentline')
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Mason
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("nvim")
+    lua require('user.mason')
+endif
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Null LS
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("nvim")
+    lua require("user.null-ls")
+    map <leader>lf :lua vim.lsp.buf.formatting_sync()<cr>
+    vmap <leader>lF :lua vim.lsp.buf.range_formatting()<cr>
 endif

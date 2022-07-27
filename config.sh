@@ -23,7 +23,7 @@ if [[ ! -d $HOME/.dotfiles/.tmux/plugins/tpm ]]; then
     git clone https://github.com/tmux-plugins/tpm $HOME/.dotfiles/.tmux/plugins/tpm
 elif [[ $1 == "upgrade" ]]; then
     echo "upgrade tpm"
-    rm -rf $HOME/.dotfiles/.tmux/plugins/tpm  
+    rm -rf $HOME/.dotfiles/.tmux/plugins/tpm
     git clone https://github.com/tmux-plugins/tpm $HOME/.dotfiles/.tmux/plugins/tpm
 else
     echo "tpm is installed"
@@ -38,7 +38,7 @@ if [[ ! -d $HOME/.dotfiles/oh-my-zsh ]]; then
     git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/oh-my-zsh
 elif [[ $1 == "upgrade" ]]; then
     echo "upgrade oh-my-zsh"
-    rm -rf $HOME/.dotfiles/oh-my-zsh  
+    rm -rf $HOME/.dotfiles/oh-my-zsh
     git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/oh-my-zsh
 else
     echo "Oh-my-zsh is installed"
@@ -49,7 +49,7 @@ if [[ ! -d $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k ]]; then
     git clone https://github.com/romkatv/powerlevel10k.git $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k
 elif [[ $1 == "upgrade" ]]; then
     echo "upgrade powerlevel10k"
-    rm -rf $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k 
+    rm -rf $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k
     git clone https://github.com/romkatv/powerlevel10k.git $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k
 else
     echo "Powerlevel10k is installed"
@@ -62,7 +62,7 @@ if [[ ! -d $HOME/.dotfiles/fonts ]]; then
     bash $HOME/.dotfiles/fonts/install.sh DroidSansMono
 elif [[ $1 == "upgrade" ]]; then
     echo "upgrade fonts"
-    rm -rf $HOME/.dotfiles/fonts 
+    rm -rf $HOME/.dotfiles/fonts
     git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
     bash $HOME/.dotfiles/fonts/install.sh DroidSansMono
 else
@@ -95,13 +95,10 @@ fi
 # fzf
 if [[ ! -d $HOME/.dotfiles/fzf ]]; then
     echo "install FZF"
-    git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/fzf
-    $HOME/.dotfiles/fzf/install --all
+    brew install fzf
 elif [[ $1 == "upgrade" ]]; then
     echo "upgrade FZF"
-    rm -rf $HOME/.dotfiles/fzf
-    git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.dotfiles/fzf
-    $HOME/.dotfiles/fzf/install --all
+    brew reinstall fzf
 else
     echo "FZF is installed"
 fi
