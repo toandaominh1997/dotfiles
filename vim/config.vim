@@ -635,7 +635,7 @@ else
     let NERDTreeShowHidden=0
     let NERDTreeIgnore = ['\.pyc$', '__pycache__']
     let g:NERDTreeWinSize=35
-    map <C-t> :NERDTreeToggle<cr>
+    map <C-e> :NERDTreeToggle<cr>
     map <leader>nb :NERDTreeFromBookmark<Space>
     map <leader>nf :NERDTreeFind<cr>
     " How can I open a NERDTree automatically when vim starts up if no files were specified?
