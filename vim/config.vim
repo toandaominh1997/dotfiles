@@ -1,7 +1,3 @@
-if exists('g:vscode')
-    source $HOME/.dotfiles/tool/vim/vscode/settings.vim
-endif
-
 
 " Improve scrolling and redrawing in terminal
 if !has('nvim')
@@ -266,7 +262,7 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 set laststatus=2
 
 " Format the status line
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+" set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -361,10 +357,15 @@ filetype off
 
 call plug#begin('~/.dotfiles/plugged')
 " General coding/editing
-Plug 'itchyny/lightline.vim'
+if has("nvim")
+    Plug 'nvim-lualine/lualine.nvim'
+else
+    Plug 'itchyny/lightline.vim'
+endif
 
 if has("nvim")
     Plug 'numToStr/Comment.nvim'
+    Plug 'JoosepAlviste/nvim-ts-context-commentstring'
 else
     Plug 'preservim/nerdcommenter'
 endif
@@ -445,7 +446,7 @@ Plug 'editorconfig/editorconfig-vim'
 " Tabline
 
 if has("nvim")
-    Plug 'akinsho/bufferline.nvim', { 'tag': 'v2.*' }
+    Plug 'akinsho/bufferline.nvim'
 endif
 
 Plug 'jose-elias-alvarez/null-ls.nvim'
@@ -484,28 +485,35 @@ nnoremap <leader>p "+p
 vnoremap <leader>p "+p
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => lightline
+" => lightline or lualine
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set guifont=DroidSansMono\ Nerd\ Font\ 11
-let g:lightline = {
-      \ 'colorscheme': 'nightfox',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'currentfunction', 'cocstatus', 'readonly', 'filename', 'modified' ] ],
-      \   'right': [ 
-      \              ['lineinfo'],
-      \              ['percent'] ,   
-      \              ['fileformat', 'fileencoding', 'filetype' ]
-      \            ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'FugitiveHead',
-      \   'cocstatus': 'coc#status',
-      \   'currentfunction': 'coc_current_function',
-      \ },
-      \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2"},
-      \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3"},
-      \ }
+if has("nvim")
+    lua require("user.lualine")
+else
+    set guifont=DroidSansMono\ Nerd\ Font\ 11
+    let g:lightline = {
+          \ 'colorscheme': 'nightfox',
+          \ 'active': {
+          \   'left': [ [ 'mode', 'paste' ],
+          \             [ 'gitbranch', 'currentfunction', 'cocstatus', 'readonly', 'filename', 'modified' ] ],
+          \   'right': [ 
+          \              ['lineinfo'],
+          \              ['percent'] ,   
+          \              ['fileformat', 'fileencoding', 'filetype' ]
+          \            ]
+          \ },
+          \ 'component_function': {
+          \   'gitbranch': 'FugitiveHead',
+          \   'cocstatus': 'coc#status',
+          \   'currentfunction': 'coc_current_function',
+          \ },
+          \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2"},
+          \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3"},
+          \ 'enable': {
+          \     'tabline': 0  
+          \ },
+          \ }
+endif
 
 "============================================================================================================================
 "	config easymotion
@@ -574,7 +582,7 @@ map <leader>b :Buffers<CR>
 nnoremap <c-g> :Rg<CR>
 
 let g:fzf_action = {
-  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-T': 'tab split',
   \ 'ctrl-s': 'split',
   \ 'ctrl-v': 'vsplit'
   \}

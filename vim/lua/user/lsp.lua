@@ -47,7 +47,7 @@ local lsp_flags = {
   debounce_text_changes = 150,
 }
 -- Enable some language servers with the additional completion capabilities offered by nvim-cmp
-local servers = { 'clangd', 'rust_analyzer', 'jedi_language_server', 'tsserver', 'gopls'}
+local servers = { 'clangd', 'rust_analyzer', 'jedi_language_server', 'tsserver', 'gopls', 'kotlin_language_server'}
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
     on_attach = on_attach,
