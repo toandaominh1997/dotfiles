@@ -179,8 +179,8 @@ set expandtab
 set smarttab
 
 " 1 tab == 4 spaces
-set shiftwidth=4
-set tabstop=4
+set shiftwidth=2
+set tabstop=2
 
 " Linebreak on 500 characters
 set lbr
@@ -381,13 +381,6 @@ Plug 'tpope/vim-surround'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-unimpaired'
 Plug 'mbbill/undotree'
-" Vim repeat 
-Plug 'tpope/vim-repeat'
-
-Plug 'sheerun/vim-polyglot'
-Plug 'ryanoasis/vim-devicons'
-
-Plug 'karb94/neoscroll.nvim'
 
 " Fzf
 if has("nvim")
@@ -399,17 +392,10 @@ Plug 'junegunn/fzf', { 'dir': '~/.dotfiles/.oh-my-zsh/custom/plugins/fzf', 'do':
 Plug 'junegunn/fzf.vim'
 Plug 'yuki-yano/fzf-preview.vim', { 'branch': 'release/rpc' }
 
-" Solid language pack for vim
-Plug 'sheerun/vim-polyglot'
-
-"Dockerfile
-Plug 'ekalinin/Dockerfile.vim'
-
 " Moving around easier
 Plug 'easymotion/vim-easymotion'
 
 Plug 'terryma/vim-multiple-cursors'
-Plug 'junegunn/vim-easy-align'
 
 " Auto pairs
 if has("nvim")
@@ -441,17 +427,12 @@ Plug 'tpope/vim-fugitive'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'preservim/vimux'
 
-Plug 'editorconfig/editorconfig-vim'
-
 " Tabline
-
 if has("nvim")
     Plug 'akinsho/bufferline.nvim'
 endif
 
 Plug 'jose-elias-alvarez/null-ls.nvim'
-
-Plug 'windwp/nvim-autopairs'
 
 if has("nvim")
     Plug 'neovim/nvim-lspconfig'
@@ -532,17 +513,6 @@ nmap <silent> ;w <Plug>(easymotion-overwin-w)
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
-
-"
-"=============================================================================================================================
-"	config Aligh
-" =============================================================================================================================
-"
-" Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
-
-" Start interactive EasyAlign for a motion/text object (e.g. gaip)
-nmap ga <Plug>(EasyAlign)
 
 "
 " =============================================================================================================================
