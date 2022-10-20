@@ -12,5 +12,4 @@ require "user.plugins"
 require "user.telescope"
 require "user.treesitter"
 require "user.lualine"
-require "user.null-ls"
 
