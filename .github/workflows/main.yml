@@ -28,8 +28,9 @@ jobs:
           bash config.sh upgrade
       - name: Show version
         run: |
-          echo tmux -V
-          echo vim --version
-          echo nvim --version
-          echo node --version
-          echo fzf --version
+          echo $(brew --version)
+          echo $(tmux -V)
+          echo $(vim --version)
+          echo $(nvim --version)
+          echo $(node --version)
+          echo $(fzf --version)

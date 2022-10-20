@@ -96,9 +96,11 @@ fi
 if [[ ! -d $HOME/.dotfiles/fzf ]]; then
     echo "install FZF"
     brew install fzf
+    $(brew --prefix)/opt/fzf/install --all
 elif [[ $1 == "upgrade" ]]; then
     echo "upgrade FZF"
     brew reinstall fzf
+    $(brew --prefix)/opt/fzf/install --all
 else
     echo "FZF is installed"
 fi
