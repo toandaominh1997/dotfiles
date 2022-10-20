@@ -110,10 +110,6 @@ $HOME/.dotfiles/oh-my-zsh/tools/install.sh
 echo 'Complete OH MY ZSH'
 echo 'source $HOME/.dotfiles/tool/zsh/config.zsh' >$HOME/.zshrc
 
-if [[ "$(uname)" == "Darwin" ]]; then
-  echo "Install FZF ALL"
-  /opt/homebrew/opt/fzf/install --all
-fi
 # echo 'Install starship'
 # rm -rf ~/.config/starship.toml
 # ln -s ~/.dotfiles/tool/starship/starship.toml ~/.config/starship.toml
