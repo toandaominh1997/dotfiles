@@ -58,13 +58,13 @@ fi
 # install fonts
 if [[ ! -d $HOME/.dotfiles/fonts ]]; then
     echo "install fonts"
-    git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
-    bash $HOME/.dotfiles/fonts/install.sh DroidSansMono
+    # git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
+    # bash $HOME/.dotfiles/fonts/install.sh DroidSansMono
 elif [[ $1 == "upgrade" ]]; then
     echo "upgrade fonts"
-    rm -rf $HOME/.dotfiles/fonts
-    git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
-    bash $HOME/.dotfiles/fonts/install.sh DroidSansMono
+    # rm -rf $HOME/.dotfiles/fonts
+    # git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git $HOME/.dotfiles/fonts
+    # bash $HOME/.dotfiles/fonts/install.sh DroidSansMono
 else
     echo "fonts is installed"
 fi
