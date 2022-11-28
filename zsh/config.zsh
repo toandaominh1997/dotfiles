@@ -1,6 +1,7 @@
 export ZSH="$HOME/.dotfiles/oh-my-zsh"
 
 POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 DEFAULT_USER=`whoami`
