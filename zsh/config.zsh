@@ -3,7 +3,8 @@ export ZSH="$HOME/.dotfiles/oh-my-zsh"
 POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
 POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
 ZSH_THEME="powerlevel10k/powerlevel10k"
-
+typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_from_right
+typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
 DEFAULT_USER=`whoami`
 
 
