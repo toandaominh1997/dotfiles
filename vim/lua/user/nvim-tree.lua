@@ -9,13 +9,25 @@ if not config_status_ok then
 end
 
 local tree_cb = nvim_tree_config.nvim_tree_callback
+local function open_nvim_tree()
+
+  -- open the tree
+  require("nvim-tree.api").tree.open()
+end
+vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
+
+
 
 nvim_tree.setup {
-  update_focused_file = {
-    enable = true,
-    update_cwd = true,
-  },
+  sort_by = "case_sensitive",
   renderer = {
+  },
+  filters = {
+    dotfiles = true,
+  },
+
+  renderer = {
+    group_empty = true,
     root_folder_modifier = ":t",
     icons = {
       glyphs = {
