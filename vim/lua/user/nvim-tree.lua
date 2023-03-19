@@ -20,10 +20,13 @@ vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree })
 
 nvim_tree.setup {
   sort_by = "case_sensitive",
-  renderer = {
-  },
   filters = {
     dotfiles = true,
+  },
+  update_focused_file = {
+    enable = true,
+    update_root = true,
+
   },
 
   renderer = {
