@@ -4,7 +4,25 @@ if not status_ok then
 end
 
 configs.setup({
-	ensure_installed = { "c", "lua", "python", "javascript", "typescript", "go", "java", "kotlin", "solidity", "vim", "yaml"},
+	ensure_installed = { 
+    "c",
+    "cpp",
+    "css",
+    "dockerfile",
+    "lua", 
+    "python", 
+    "javascript", 
+    "typescript", 
+    "go", 
+    "java",
+    "json",
+    "kotlin",
+    "rust",
+    "scala",
+    "sql",
+    "vim", 
+    "yaml"
+  },
   sync_install = false,
   auto_install = true,
 
