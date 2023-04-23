@@ -4,7 +4,7 @@ local servers = {
 	-- "html",
 	"tsserver",
 	"pyright",
-  -- "kotlin_language_server",
+  -- "java-language-server",
 	-- "bashls",
 	-- "jsonls",
 	-- "yamlls",
