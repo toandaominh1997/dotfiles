@@ -58,8 +58,7 @@ return packer.startup(function(use)
   use { "JoosepAlviste/nvim-ts-context-commentstring" }
 
   -- Telescope
-  use { "nvim-telescope/telescope.nvim" }
-  use { "nvim-lua/plenary.nvim" }
+  use { "nvim-telescope/telescope.nvim", requires = { {'nvim-lua/plenary.nvim'} } }
 
   -- Treesitter
   use { "nvim-treesitter/nvim-treesitter" }
@@ -83,6 +82,7 @@ return packer.startup(function(use)
 	use { "jose-elias-alvarez/null-ls.nvim" } -- for formatters and linters
   use { "RRethy/vim-illuminate" }
 
+  -- Statusline
   use { "nvim-lualine/lualine.nvim" }
 
   use { "kyazdani42/nvim-tree.lua" }
@@ -92,5 +92,7 @@ return packer.startup(function(use)
   if PACKER_BOOTSTRAP then
 		require("packer").sync()
 	end
+  -- Improve startup time 
+  use 'lewis6991/impatient.nvim'
 
 end)

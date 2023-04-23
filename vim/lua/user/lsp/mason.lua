@@ -2,7 +2,7 @@ local servers = {
 	-- "sumneko_lua",
 	-- "cssls",
 	-- "html",
-	-- "tsserver",
+	"tsserver",
 	"pyright",
   -- "kotlin_language_server",
 	-- "bashls",
@@ -11,16 +11,13 @@ local servers = {
 }
 
 local settings = {
-	ui = {
-		border = "none",
-		icons = {
-			package_installed = "◍",
-			package_pending = "◍",
-			package_uninstalled = "◍",
-		},
-	},
-	log_level = vim.log.levels.INFO,
-	max_concurrent_installers = 4,
+  ui = {
+        icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+        }
+  }
 }
 
 require("mason").setup(settings)
