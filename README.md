@@ -16,6 +16,61 @@ bash $HOME/.dotfiles/tool/install.sh upgrade
 ```
 
 ## How to use
+
+### Vim/nvim
+vim cheatsheet: ![https://vim.rtorr.com/](https://vim.rtorr.com/)
+#### Map
+```
+:nmap
+:vmap
+:imap
+```
+
+#### Packer 
+```
+// update package
+:PackerUpdate 
+:PackerInstall
+```
+#### Lsp
+```
+:LspLog
+```
+
+#### Nvim Tree 
+```
+// NvimTreeFocus
+<leader>tt
+```
+#### Telescope
+```
+// find files:
+<leader>ff
+
+// live grep
+<learder>fg
+
+// buffers
+<leader>fb
+
+// Helper 
+<leader>fh
+```
+
+#### Comment
+```
+visual-text > gc
+```
+
+### Tmux 
+tmux cheatsheet: ![https://tmuxcheatsheet.com/](https://tmuxcheatsheet.com/)
+
+- create window
+```
+control + a + c
+```
+
+
 ### Updating oh-my-zsh
 ```
 omz update
