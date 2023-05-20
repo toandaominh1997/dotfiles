@@ -150,7 +150,7 @@ else
   sed -i '' '1s/^/source $HOME\/.dotfiles\/tool\/zsh\/config.zsh\n/' ~/.zshrc
 fi
 
-# Setup tmux
+# Setup TMUX
 if [[ ! -d $HOME/.dotfiles/.tmux/plugins/tpm ]]; then
     echo "install tpm"
     git clone https://github.com/tmux-plugins/tpm $HOME/.dotfiles/.tmux/plugins/tpm
