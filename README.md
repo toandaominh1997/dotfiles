@@ -18,7 +18,7 @@ bash $HOME/.dotfiles/tool/install.sh upgrade
 ## How to use
 
 ### Vim/nvim
-vim cheatsheet: ![https://vim.rtorr.com/](https://vim.rtorr.com/)
+vim cheatsheet: [https://vim.rtorr.com/](https://vim.rtorr.com/)
 #### Map
 ```
 :nmap
@@ -63,7 +63,7 @@ visual-text > gc
 ```
 
 ### Tmux 
-tmux cheatsheet: ![https://tmuxcheatsheet.com/](https://tmuxcheatsheet.com/)
+tmux cheatsheet: [https://tmuxcheatsheet.com/](https://tmuxcheatsheet.com/)
 
 - create window
 ```
