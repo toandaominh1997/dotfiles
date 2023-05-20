@@ -1,4 +1,4 @@
-name: CI
+name: CI dotfiles
 
 on:
   push:
@@ -14,14 +14,12 @@ jobs:
         os: [macos-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v3
-      - name: Install tool
+      - name: Install dotfiles
         run: |
           bash install.sh
-          bash install.sh upgrade
-      - name: Config tool
+      - name: Upgrade package
         run: |
-          bash config.sh
-          bash config.sh upgrade
+          bash install.sh upgrade
       - name: Show version
         run: |
           echo $(brew --version)
@@ -30,3 +28,5 @@ jobs:
           echo $(nvim --version)
           echo $(fzf --version)
           echo $(zsh --version)
+          echo $(helm version)
+          echo $(go version)
