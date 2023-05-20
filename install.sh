@@ -34,6 +34,23 @@ detect_os() {
 }
 has_upgrade="non_upgrade"
 
+# First install brew 
+if command_exists brew; 
+then
+    echo "brew is installed"
+elif [[ "$(uname)" == "Darwin" ]]; 
+then
+    echo "WARNING: \"brew\" command is not found. Install it first"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; 
+then
+    echo "WARNING: \"brew\" command is not found. Install it first"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    ls -l /home/linuxbrew/.linuxbrew/bin/brew
+    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+fi
+
+
 # Install package
 install_package git $has_upgrade
 install_package lazygit $has_upgrade
