@@ -10,7 +10,14 @@ require "user.keymaps"
 require "user.nvim-tree"
 require "user.options"
 require "user.plugins"
+require "user.surround"
 require "user.telescope"
 require "user.treesitter"
 require "user.lualine"
 require "user.impatient"
+
+-- dashboard
+require("user.dashboard")
+
+-- Extensioin
+require("user.mini")

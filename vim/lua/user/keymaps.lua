@@ -24,12 +24,6 @@ keymap("n", "<leader>w", ":w!<cr>", opts)
 keymap("n", "<leader><cr>", ":noh<cr>", opts)
 keymap("n", "<leader>tt", ":NvimTreeFocus<cr>", opts)
 
--- Telescope
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
 
 -- Better window navigation
@@ -80,3 +74,7 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 -- keymap("t", "<C-j>", "<C-\\><C-N><C-w>j", term_opts)
 -- keymap("t", "<C-k>", "<C-\\><C-N><C-w>k", term_opts)
 -- keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
+--
+
+-- Dashboard
+keymap("n", "<leader>d", ":Dashboard<cr>", opts)

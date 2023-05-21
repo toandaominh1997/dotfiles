@@ -21,7 +21,10 @@ configs.setup({
     "scala",
     "sql",
     "vim", 
-    "yaml"
+    "yaml",
+    "terraform",
+    "toml",
+    "starlark"
   },
   sync_install = false,
   auto_install = true,

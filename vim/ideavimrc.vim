@@ -46,3 +46,43 @@ set novisualbell
 set t_vb=
 set tm=500
 
+
+" Mapping 
+" map <leader>fg <Action>(GotoFile)
+
+
+set ideajoin
+set surround
+set easymotion
+
+" Window Navigation
+nnoremap <c-\> :action SplitVertically<CR>
+nnoremap <c--> :action SplitHorizontally<CR>
+nnoremap <c-=> :action Unsplit<CR>
+nnoremap <c-m> :action MoveEditorToOppositeTabGroup<CR>
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <TAB> :action PreviousTab<CR>
+nnoremap <s-TAB> :action NextTab<CR>
+
+" Comment code
+set commentary
+vnoremap gc :action CommentByLineComment<CR>
+" nnoremap <c-r> :action RecentFiles<CR>
+
+
+set NERDTree
+let g:NERDTreeMapActivateNode='l'
+let g:NERDTreeMapJumpParent='h'
+
+" Fast saving
+nmap <leader>w :w!<cr>
+
+" Quick scope
+set quickscope
+
+" Telescope
+nmap <leader>ff :action FindInPath<CR>
+

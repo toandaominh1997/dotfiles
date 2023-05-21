@@ -48,8 +48,9 @@ return packer.startup(function(use)
   use { "christoomey/vim-tmux-navigator" }
 
   -- Colorschemes
-  use { "folke/tokyonight.nvim", commit = "66bfc2e8f754869c7b651f3f47a2ee56ae557764" }
-  use { "lunarvim/darkplus.nvim", commit = "13ef9daad28d3cf6c5e793acfc16ddbf456e1c83" }
+  use { "folke/tokyonight.nvim" }
+  use { "lunarvim/darkplus.nvim" }
+  use { 'navarasu/onedark.nvim' }
 
   -- Indent 
   use { "lukas-reineke/indent-blankline.nvim" }
@@ -60,8 +61,9 @@ return packer.startup(function(use)
   -- Telescope
   use { "nvim-telescope/telescope.nvim", requires = { {'nvim-lua/plenary.nvim'} } }
 
-  -- Treesitter
+  -- Syntax
   use { "nvim-treesitter/nvim-treesitter" }
+  use { "kylechui/nvim-surround" }
 
   -- Cmp
   use { "hrsh7th/nvim-cmp" } -- The completion plugin
@@ -84,10 +86,15 @@ return packer.startup(function(use)
 
   -- Statusline
   use { "nvim-lualine/lualine.nvim" }
-
   use { "kyazdani42/nvim-tree.lua" }
+  use { "akinsho/bufferline.nvim" }
+  use { 'romgrk/barbar.nvim' }
 
-   use { "akinsho/bufferline.nvim" }
+  -- Dashboard 
+  use { 'glepnir/dashboard-nvim', event = 'VimEnter', requires = {'nvim-tree/nvim-web-devicons'} }
+
+  -- Extension
+  use { 'echasnovski/mini.nvim' }
 
   if PACKER_BOOTSTRAP then
 		require("packer").sync()
