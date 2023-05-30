@@ -23,8 +23,8 @@ set -g history-limit 5000                 # boost history
 bind e new-window -n "#{TMUX_CONF_LOCAL}" sh -c '${EDITOR:-vim} "$TMUX_CONF_LOCAL" && "$TMUX_PROGRAM" ${TMUX_SOCKET:+-S "$TMUX_SOCKET"} source "$TMUX_CONF" \; display "$TMUX_CONF_LOCAL sourced"'
 
 # reload configuration
-bind r run '"$TMUX_PROGRAM" ${TMUX_SOCKET:+-S "$TMUX_SOCKET"} source "$TMUX_CONF"' \; display "#{TMUX_CONF} sourced"
-
+# bind r run '"$TMUX_PROGRAM" ${TMUX_SOCKET:+-S "$TMUX_SOCKET"} source "$TMUX_CONF"' \; display "#{TMUX_CONF} sourced"
+bind r source-file ~/.dotfiles/tool/tmux/config.tmux \; display "Reloaded!"
 
 # -- display -------------------------------------------------------------------
 
@@ -184,8 +184,8 @@ set-option -g window-status-activity-style 'bold'
 
 # Reload status every second and set lengths
 set-option -g status-interval 1
-set-option -g status-left-length 32
-set-option -g status-right-length 156
+set-option -g status-left-length 100
+set-option -g status-right-length 100
 
 # Background and foreground colors
 set-option -g status-fg '#abb2bf'
@@ -202,8 +202,8 @@ set-option -g status-right \
 '#[fg=#828997,bg=#282c34,nobold]#{battery_icon} #{battery_percentage} '\
 '#[fg=#828997,bg=#282c34,nobold]'\
 '#[fg=#828997,bg=#282c34,nobold]  %H:%M #[fg=#3b4048,bg=#282c34,nobold]'\
-'#[fg=#abb2bf,bg=#3b4048,nobold] %d %b %Y #[fg=#d0d0d0,bg=#3b4048,nobold]'\
-'#[fg=#282c34,bg=#d0d0d0,bold] #h '
+'#[fg=#abb2bf,bg=#3b4048,nobold] %d %b %Y #[fg=#93a1a1,bg=#657b83,nobold,nounderscore,noitalics]'\
+'#[fg=#15161E,bg=#93a1a1,bold] #h'
 
 set-option -g window-status-current-format \
 '#{?#{==:#I,1},,#[fg=#282c34]#[bg=#61afef]}'\
@@ -221,8 +221,8 @@ set-option -g window-status-format \
 set-option -g status-right \
 '#[fg=#828997,bg=#282c34,nobold]#{battery_icon} #{battery_percentage} '\
 '#[fg=#828997,bg=#282c34,nobold]'\
-'#[fg=#828997,bg=#282c34,nobold]  %H:%M #[fg=#3b4048,bg=#282c34,nobold]'\
-'#[fg=#abb2bf,bg=#3b4048,nobold] %d %b %Y #[fg=#d0d0d0,bg=#3b4048,nobold]'\
+'#[fg=#828997,bg=#282c34,nobold]  %H:%M #[fg=#3b4048,bg=#282c34,nobold]'\
+'#[fg=#abb2bf,bg=#3b4048,nobold] %Y %b %d #[fg=#d0d0d0,bg=#3b4048,nobold]'\
 '#[fg=#282c34,bg=#d0d0d0,bold] #h '
 
 # Plugins
