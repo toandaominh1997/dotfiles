@@ -35,6 +35,8 @@ vim cheatsheet: [https://vim.rtorr.com/](https://vim.rtorr.com/)
 #### Lsp
 ```
 :LspLog
+// change python path
+let g:python3_host_prog = 'path/python'
 ```
 
 #### Nvim Tree 

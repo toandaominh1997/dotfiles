@@ -7,6 +7,7 @@ configs.setup({
 	ensure_installed = { 
     "c",
     "cpp",
+    "html",
     "css",
     "dockerfile",
     "lua", 
@@ -24,7 +25,8 @@ configs.setup({
     "yaml",
     "terraform",
     "toml",
-    "starlark"
+    "starlark",
+
   },
   sync_install = false,
   auto_install = true,
