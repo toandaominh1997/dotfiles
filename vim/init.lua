@@ -1,3 +1,4 @@
+-- reference: https://neovimcraft.com/
 require "user.autopairs"
 require "user.bufferline"
 require "user.colorscheme"
@@ -15,7 +16,7 @@ require "user.telescope"
 require "user.treesitter"
 require "user.lualine"
 require "user.impatient"
-
+require("user.leap")
 -- dashboard
 require("user.dashboard")
 

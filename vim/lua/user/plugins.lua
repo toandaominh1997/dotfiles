@@ -96,6 +96,9 @@ return packer.startup(function(use)
   -- Extension
   use { 'echasnovski/mini.nvim' }
 
+  -- leap
+  use { 'ggandor/leap.nvim' }
+
   if PACKER_BOOTSTRAP then
 		require("packer").sync()
 	end
