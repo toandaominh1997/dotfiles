@@ -1,14 +1,19 @@
 export ZSH="$HOME/.dotfiles/oh-my-zsh"
 
-POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
-POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
-ZSH_THEME="powerlevel10k/powerlevel10k"
-typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_from_right
-typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
-typeset -g POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens'
+
+theme="notstarship"
+if [[ $theme == "starship" ]]; then
+  eval "$(starship init zsh)"
+else 
+  POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+  POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
+  ZSH_THEME="powerlevel10k/powerlevel10k"
+  typeset -g POWERLEVEL9K_SHORTEN_STRATEGY=truncate_from_right
+  typeset -g POWERLEVEL9K_SHORTEN_DIR_LENGTH=1
+  typeset -g POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens'
+fi
+
 DEFAULT_USER=`whoami`
-
-
 
 plugins=(
     git
@@ -34,3 +39,5 @@ export EDITOR='nvim'
 if [[ "$(uname)" == "Darwin" ]]; then
   export PATH=$PATH:/opt/homebrew/bin
 fi
+
+
