@@ -44,6 +44,13 @@ let g:python3_host_prog = 'path/python'
 // NvimTreeFocus
 <leader>tt
 ```
+
+#### Tree Sitter
+
+```
+TSInstall {lang}
+TSUpdate
+```
 #### Telescope
 ```
 // find files:

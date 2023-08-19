@@ -22,3 +22,6 @@ require("user.dashboard")
 
 -- Extensioin
 require("user.mini")
+
+-- reference issues: https://github.com/nvim-tree/nvim-tree.lua/issues/767
+require'nvim-tree'.setup()
