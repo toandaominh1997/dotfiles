@@ -69,6 +69,7 @@ install_package cmake $has_upgrade
 install_package telnet $has_upgrade
 install_package htop $has_upgrade
 install_package httpie $has_upgrade
+install_package thefuck $has_upgrade # ref: https://github.com/nvbn/thefuck
 
 # Programing language
 install_package gcc $has_upgrade
