@@ -22,7 +22,6 @@ vim.g.maplocalleader = " "
 
 keymap("n", "<leader>w", ":w!<cr>", opts)
 keymap("n", "<leader><cr>", ":noh<cr>", opts)
-keymap("n", "<leader>tt", ":NvimTreeFocus<cr>", opts)
 
 
 
@@ -78,3 +77,8 @@ keymap("x", "<A-k>", ":move '<-2<CR>gv-gv", opts)
 
 -- Dashboard
 keymap("n", "<leader>d", ":Dashboard<cr>", opts)
+
+--  NvimTree 
+keymap("n", "<leader>tt", ":NvimTreeFocus<cr>", opts)
+keymap("n", "<leader>nf", ":NvimTreeFindFile<cr>", opts)
+
