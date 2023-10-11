@@ -12,7 +12,7 @@ bash $HOME/.dotfiles/tool/install.sh
 ```
 #### Upgrade dotfiles
 ```bash
-bash $HOME/.dotfiles/tool/install.sh upgrade
+bash $HOME/.dotfiles/tool/install.sh -U
 ```
 
 ## How to use

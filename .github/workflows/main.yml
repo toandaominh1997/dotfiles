@@ -19,7 +19,7 @@ jobs:
           bash install.sh
       - name: Upgrade package
         run: |
-          bash install.sh upgrade
+          bash install.sh -U
       - name: Show version
         run: |
           echo $(brew --version)
