@@ -46,9 +46,13 @@ then
 elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; 
 then
     echo "WARNING: \"brew\" command is not found. Install it first"
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    ls -l /home/linuxbrew/.linuxbrew/bin/brew
-    eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+    # /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # ls -l /home/linuxbrew/.linuxbrew/bin/brew
+    # eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+    git clone https://github.com/Homebrew/brew $HOME/.homebrew
+    eval $($HOME/.homebrew/bin/brew shellenv)
+    brew update --force --quiet
+    chmod -R go-w "$(brew --prefix)/share/zsh"
 fi
 
 
