@@ -16,30 +16,46 @@ fi
 DEFAULT_USER=`whoami`
 
 plugins=(
+    aliases
+    brew
+    bazel
+    copyfile
+    command-not-found
+    common-aliases
+    colored-man-pages
+    docker
+    dotenv
+    extract
+    fzf
     git
     github
+    helm
+    httpie
+    history
+    macos
+    npm
+    kubectl
+    iterm2
+    pip
+    python
+    tmux
+    terraform
+    skaffold
+    vscode
+    ubuntu
+    zsh-interactive-cd
     zsh-syntax-highlighting
     zsh-autosuggestions
     zsh-completions
     zsh-history-substring-search
-    colored-man-pages
-    python
-    vscode
-    command-not-found
-    common-aliases
-    history
-    extract
-    copyfile
-    kubectl
-    dotenv
-    helm
-    httpie
-    )
+    web-search
+)
+source ~/.dotfiles/oh-my-zsh/plugins/zsh-interactive-cd/zsh-interactive-cd.plugin.zsh
 
 source $ZSH/oh-my-zsh.sh
 export EDITOR='nvim'
 if [[ "$(uname)" == "Darwin" ]]; then
-  export PATH=$PATH:/opt/homebrew/bin
+  eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 
