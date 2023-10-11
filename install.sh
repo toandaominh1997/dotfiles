@@ -105,6 +105,30 @@ elif [[ $has_upgrade == "upgrade" ]]; then
 else
     echo "syntax_highlighting is installed"
 fi
+
+# Install zsh-completions
+if [[ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-completions ]]; then
+    echo "install zsh-completions"
+    git clone https://github.com/zsh-users/zsh-completions.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-completions
+elif [[ $has_upgrade == "upgrade" ]]; then
+    echo "upgrade zsh-completions"
+    rm -rf $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-completions
+    git clone https://github.com/zsh-users/zsh-completions.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-completions
+else
+    echo "zsh-completions is installed"
+fi
+# Install zsh-history-substring-search
+if [[ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-history-substring-search ]]; then
+    echo "install zsh-history-substring-search"
+    git clone https://github.com/zsh-users/zsh-history-substring-search.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-history-substring-search
+elif [[ $has_upgrade == "upgrade" ]]; then
+    echo "upgrade zsh-history-substring-search"
+    rm -rf $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-history-substring-search
+    git clone https://github.com/zsh-users/zsh-history-substring-search.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-history-substring-search
+else
+    echo "zsh-history-substring-search is installed"
+fi
+
 # Install oh-my-zsh
 if [[ ! -d $HOME/.dotfiles/oh-my-zsh ]]; then
     echo "install Oh-my-zsh"

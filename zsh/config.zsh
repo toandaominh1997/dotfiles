@@ -20,6 +20,8 @@ plugins=(
     github
     zsh-syntax-highlighting
     zsh-autosuggestions
+    zsh-completions
+    zsh-history-substring-search
     colored-man-pages
     python
     vscode
