@@ -15,8 +15,9 @@ install_package() {
   if command_exists $1
   then
     echo "$1 is installed"
-    if [ $2 == "upgrade" ]
+    if [[ $2 == "upgrade" || $2 == "-U" || $2 == "--upgrade" ]];
     then
+      echo upgrade $1 ...
       brew reinstall $1
     fi
   else
@@ -32,7 +33,7 @@ detect_os() {
   fi
 
 }
-has_upgrade="non_upgrade"
+has_upgrade=$1
 
 # First install brew 
 if command_exists brew; 
@@ -98,7 +99,7 @@ $(brew --prefix)/opt/fzf/install --all
 if [[ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting ]]; then
     echo "install syntax-highlighting"
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-elif [[ $has_upgrade == "upgrade" ]]; then
+elif [[ $has_upgrade == "upgrade" || $has_upgrade == "--upgrade" || $has_upgrade == "-U" ]]; then
     echo "upgrade zsh-syntax-highlighting"
     rm -rf $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-syntax-highlighting
@@ -110,7 +111,7 @@ fi
 if [[ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-completions ]]; then
     echo "install zsh-completions"
     git clone https://github.com/zsh-users/zsh-completions.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-completions
-elif [[ $has_upgrade == "upgrade" ]]; then
+elif [[ $has_upgrade == "upgrade" || $has_upgrade == "--upgrade" || $has_upgrade == "-U" ]]; then
     echo "upgrade zsh-completions"
     rm -rf $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-completions
     git clone https://github.com/zsh-users/zsh-completions.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-completions
@@ -121,7 +122,7 @@ fi
 if [[ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-history-substring-search ]]; then
     echo "install zsh-history-substring-search"
     git clone https://github.com/zsh-users/zsh-history-substring-search.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-history-substring-search
-elif [[ $has_upgrade == "upgrade" ]]; then
+elif [[ $has_upgrade == "upgrade" || $has_upgrade == "--upgrade" || $has_upgrade == "-U" ]]; then
     echo "upgrade zsh-history-substring-search"
     rm -rf $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-history-substring-search
     git clone https://github.com/zsh-users/zsh-history-substring-search.git $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-history-substring-search
@@ -148,7 +149,7 @@ fi
 if [[ ! -d $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-autosuggestions ]]; then
     echo "install autosuggestions"
     git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-autosuggestions
-elif [[ $has_upgrade == "upgrade" ]]; then
+elif [[ $has_upgrade == "upgrade" || $has_upgrade == "--upgrade" || $has_upgrade == "-U" ]]; then
     echo "upgrade zsh-autosuggestions"
     rm -rf $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions $HOME/.dotfiles/oh-my-zsh/custom/plugins/zsh-autosuggestions
@@ -159,7 +160,7 @@ fi
 if [[ ! -d $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k ]]; then
     echo "install powerlevel10k"
     git clone https://github.com/romkatv/powerlevel10k.git $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k
-elif [[ $has_upgrade == "upgrade" ]]; then
+elif [[ $has_upgrade == "upgrade" || $has_upgrade == "--upgrade" || $has_upgrade == "-U" ]]; then
     echo "upgrade powerlevel10k"
     rm -rf $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k
     git clone https://github.com/romkatv/powerlevel10k.git $HOME/.dotfiles/oh-my-zsh/themes/powerlevel10k
