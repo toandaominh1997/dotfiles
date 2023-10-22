@@ -4,26 +4,6 @@ command_exists() {
   hash "$1" &>/dev/null
 }
 
-brew_install() {
-  brew install $1
-}
-
-brew_reinstall() {
-  brew reinstall $1
-}
-install_package() {
-  if command_exists $1
-  then
-    echo "$1 is installed"
-    if [[ $2 == "upgrade" || $2 == "-U" || $2 == "--upgrade" ]];
-    then
-      echo upgrade $1 ...
-      brew reinstall $1
-    fi
-  else
-    brew install $1 
-  fi
-}
 detect_os() {
   if [[ $(uname) == "Darwin" ]];
   then
@@ -33,6 +13,7 @@ detect_os() {
   fi
 
 }
+
 if [ -z "$1" ]; then
 
   has_upgrade="non_upgrade"
@@ -68,7 +49,9 @@ then
   echo "Darwin install cask"
   install_brew_packages ${cask_packages[@]} $has_upgrade "--cask"
 fi
+echo "brew autoremove"
 brew autoremove
+echo "brew cleanup"
 brew cleanup
 
 # Setup Zsh/Oh-my-zsh
