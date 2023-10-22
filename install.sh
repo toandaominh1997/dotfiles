@@ -15,10 +15,17 @@ detect_os() {
 }
 
 if [ -z "$1" ]; then
-
   has_upgrade="non_upgrade"
+  user="non_user"
 else
-  has_upgrade=$1
+  if [[ $1 == "--user" ]];
+  then
+    has_upgrade="non_upgrade"
+    user=$1
+  else
+    has_upgrade=$1
+    user=$2
+  fi
 fi
 
 # First install brew 
@@ -43,8 +50,14 @@ fi
 
 
 source brew/application.sh
-install_brew_packages ${formulae_packages[@]} $has_upgrade "--formulae"
-if [[ $(uname) == "Darwin" ]];
+echo "Install requirement package"
+install_brew_packages ${required_packages[@]} $has_upgrade "--formulae"
+
+if [[ $user == "--user" ]];
+then
+  install_brew_packages ${formulae_packages[@]} $has_upgrade "--formulae"
+fi
+if [[ $(uname) == "Darwin" && $user == "--user" ]];
 then
   echo "Darwin install cask"
   install_brew_packages ${cask_packages[@]} $has_upgrade "--cask"

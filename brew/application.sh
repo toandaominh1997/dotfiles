@@ -37,6 +37,15 @@ install_brew_packages() {
     install_package $package $has_upgrade $formulae
   done
 }
+# required package 
+required_packages=(
+"bash"
+"zsh"
+"tmux"
+"vim"
+"neovim"
+"fzf"
+)
 
 # brew formulae
 formulae_packages=(

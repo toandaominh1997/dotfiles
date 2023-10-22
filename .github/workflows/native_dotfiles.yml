@@ -1,7 +1,7 @@
-name: CI dotfiles
+name: CI native dotfiles
 
 on:
-  push: {}
+  push: { }
 
 jobs:
   build:
@@ -13,10 +13,10 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install dotfiles
         run: |
-          bash install.sh --user
+          bash install.sh
       - name: Upgrade package
         run: |
-          bash install.sh -U --user
+          bash install.sh -U
       - name: Show version
         run: |
           echo $(brew --version)
@@ -25,5 +25,3 @@ jobs:
           echo $(nvim --version)
           echo $(fzf --version)
           echo $(zsh --version)
-          echo $(helm version)
-          echo $(go version)
