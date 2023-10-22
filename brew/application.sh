@@ -15,7 +15,7 @@ install_package() {
     if [[ $has_upgrade == "upgrade" || $has_upgrade == "-U" || $has_upgrade == "--upgrade" ]];
     then
       echo upgrade $package ...
-      brew reinstall $package
+      brew upgrade $package
     fi
   else
     if [[ $formulae == "--cask" ]];
