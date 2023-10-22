@@ -179,4 +179,5 @@ ln -s ~/.dotfiles/tool/vim/lua ~/.config/nvim/lua
 
 #vim +PlugInstall +qall
 #nvim +PlugInstall +qall
+# chsh -s $(brew --prefix)/bin/zsh
 echo "Installed Vim/Nvim configuration successfully ^~^"
