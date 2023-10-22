@@ -33,7 +33,12 @@ detect_os() {
   fi
 
 }
-has_upgrade=$1
+if [ -z "$1" ]; then
+
+  has_upgrade="non_upgrade"
+else
+  has_upgrade=$1
+fi
 
 # First install brew 
 if command_exists brew; 
@@ -56,47 +61,18 @@ then
 fi
 
 
-# Install package
-install_package git $has_upgrade
-install_package lazygit $has_upgrade
-install_package lazydocker $has_upgrade
-install_package gh $has_upgrade
-install_package curl $has_upgrade
-install_package wget $has_upgrade
-install_package vim $has_upgrade
-install_package neovim $has_upgrade
-install_package zsh $has_upgrade
-install_package tmux $has_upgrade
-install_package zsh $has_upgrade
-install_package fish $has_upgrade
-install_package bat $has_upgrade
-install_package cmake $has_upgrade
-install_package telnet $has_upgrade
-install_package htop $has_upgrade
-install_package httpie $has_upgrade
-install_package thefuck $has_upgrade # ref: https://github.com/nvbn/thefuck
-
-# Programing language
-install_package gcc $has_upgrade
-install_package go $has_upgrade
-install_package rust $has_upgrade
-install_package node $has_upgrade
-
-# Devops 
-install_package k9s $has_upgrade
-install_package kubernetes-cli $has_upgrade
-install_package helm $has_upgrade
-install_package terraform $has_upgrade
-install_package ansible $has_upgrade
-
-
-## Install bazel 
-install_package bazelisk $has_upgrade
-### Ln: sudo ln -s /opt/homebrew/bin/bazelisk /usr/local/bin/bazel
+source brew/application.sh
+install_brew_packages ${formulae_packages[@]} $has_upgrade "--formulae"
+if [[ $(uname) == "Darwin" ]];
+then
+  echo "Darwin install cask"
+  install_brew_packages ${cask_packages[@]} $has_upgrade "--cask"
+fi
+brew autoremove
+brew cleanup
 
 # Setup Zsh/Oh-my-zsh
 ## Install fzf
-install_package fzf $has_upgrade
 $(brew --prefix)/opt/fzf/install --all
 
 ## Install syntax-highlighting
