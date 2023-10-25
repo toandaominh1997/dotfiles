@@ -17,12 +17,12 @@ DEFAULT_USER=`whoami`
 
 plugins=(
     aliases
-    brew
     bazel
-    copyfile
+    brew
+    colored-man-pages
     command-not-found
     common-aliases
-    colored-man-pages
+    copyfile
     docker
     dotenv
     extract
@@ -30,25 +30,25 @@ plugins=(
     git
     github
     helm
-    httpie
     history
+    httpie
+    iterm2
+    kubectl
     macos
     npm
-    kubectl
-    iterm2
     pip
     python
-    tmux
-    terraform
     skaffold
-    vscode
+    terraform
+    tmux
     ubuntu
-    zsh-interactive-cd
-    zsh-syntax-highlighting
+    vscode
+    web-search
     zsh-autosuggestions
     zsh-completions
     zsh-history-substring-search
-    web-search
+    zsh-interactive-cd
+    zsh-syntax-highlighting
 )
 source ~/.dotfiles/oh-my-zsh/plugins/zsh-interactive-cd/zsh-interactive-cd.plugin.zsh
 
