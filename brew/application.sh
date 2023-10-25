@@ -97,6 +97,7 @@ cask_packages=(
 "google-cloud-sdk"
 "iterm2"
 "jetbrains-toolbox"
+"messenger"
 "microsoft-edge"
 "microsoft-teams"
 "miniconda"
