@@ -56,6 +56,8 @@ formulae_packages=(
 "bazelisk"
 "cmake"
 "curl"
+"duf"
+"exa"
 "fish"
 "fzf"
 "gcc"
@@ -74,6 +76,7 @@ formulae_packages=(
 "nvm"
 "rust"
 "rust"
+"tldr"
 "telnet"
 "terraform"
 "thefuck"
@@ -82,6 +85,7 @@ formulae_packages=(
 "vim"
 "wget"
 "zsh"
+"zoxide"
 )
 
 # brew cask
