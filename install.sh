@@ -41,16 +41,6 @@ then
 fi
 
 
-source brew/application.sh
-echo "Install requirement package"
-install_brew_packages ${required_packages[@]} $has_upgrade "--formulae"
-
-install_brew_packages ${cask_packages[@]} $has_upgrade "--cask"
-echo "brew autoremove"
-brew autoremove
-echo "brew cleanup"
-brew cleanup
-
 # Setup Zsh/Oh-my-zsh
 ## Install fzf
 $(brew --prefix)/opt/fzf/install --all
@@ -165,3 +155,18 @@ ln -s ~/.dotfiles/tool/vim/lua ~/.config/nvim/lua
 #nvim +PlugInstall +qall
 # chsh -s $(brew --prefix)/bin/zsh
 echo "Installed Vim/Nvim configuration successfully ^~^"
+
+source brew/application.sh
+
+if [[ "$(uname)" == "Darwin" ]]; then
+  echo "Install requirement package"
+  install_brew_packages ${required_packages[@]} $has_upgrade "--formulae"
+  install_brew_packages ${cask_packages[@]} $has_upgrade "--cask"
+elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
+  install_brew_packages ${required_packages[@]} $has_upgrade "--formulae"
+fi
+
+echo "brew autoremove"
+brew autoremove
+echo "brew cleanup"
+brew cleanup
