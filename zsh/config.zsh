@@ -36,7 +36,6 @@ plugins=(
     kubectl
     macos
     npm
-    pip
     python
     skaffold
     terraform

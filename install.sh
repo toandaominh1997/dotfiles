@@ -16,16 +16,8 @@ detect_os() {
 
 if [ -z "$1" ]; then
   has_upgrade="non_upgrade"
-  user="non_user"
 else
-  if [[ $1 == "--user" ]];
-  then
-    has_upgrade="non_upgrade"
-    user=$1
-  else
-    has_upgrade=$1
-    user=$2
-  fi
+  has_upgrade=$1
 fi
 
 # First install brew 
@@ -53,15 +45,7 @@ source brew/application.sh
 echo "Install requirement package"
 install_brew_packages ${required_packages[@]} $has_upgrade "--formulae"
 
-if [[ $user == "--user" ]];
-then
-  install_brew_packages ${formulae_packages[@]} $has_upgrade "--formulae"
-fi
-if [[ $(uname) == "Darwin" && $user == "--user" ]];
-then
-  echo "Darwin install cask"
-  install_brew_packages ${cask_packages[@]} $has_upgrade "--cask"
-fi
+install_brew_packages ${cask_packages[@]} $has_upgrade "--cask"
 echo "brew autoremove"
 brew autoremove
 echo "brew cleanup"
@@ -112,7 +96,7 @@ if [[ ! -d $HOME/.dotfiles/oh-my-zsh ]]; then
     git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/oh-my-zsh
     export ZSH=$HOME/.dotfiles/oh-my-zsh
     $HOME/.dotfiles/oh-my-zsh/tools/install.sh
-elif [[ $1 == "upgrade" ]]; then
+elif [[ $has_upgrade == "upgrade" || $has_upgrade == "--upgrade" || $has_upgrade == "-U" ]]; then
     echo "upgrade oh-my-zsh"
     rm -rf $HOME/.dotfiles/oh-my-zsh
     git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.dotfiles/oh-my-zsh
@@ -156,7 +140,7 @@ fi
 if [[ ! -d $HOME/.dotfiles/.tmux/plugins/tpm ]]; then
     echo "install tpm"
     git clone https://github.com/tmux-plugins/tpm $HOME/.dotfiles/.tmux/plugins/tpm
-elif [[ $1 == "upgrade" ]]; then
+elif [[ $has_upgrade == "upgrade" || $has_upgrade == "--upgrade" || $has_upgrade == "-U" ]]; then
     echo "upgrade tpm"
     rm -rf $HOME/.dotfiles/.tmux/plugins/tpm
     git clone https://github.com/tmux-plugins/tpm $HOME/.dotfiles/.tmux/plugins/tpm
