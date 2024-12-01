@@ -32,5 +32,5 @@ Answer: Let's think step by step."""
         self, user_message: str, model_id: str, messages: List[dict], body: dict
     ) -> Union[str, Generator, Iterator]:
         self.index += 1
-        answer = chain.invoke({"question": user_message})
+        answer = self.chain.invoke({"question": user_message})
         return answer
