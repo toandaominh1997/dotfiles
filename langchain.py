@@ -1,17 +1,13 @@
 from typing import List, Union, Generator, Iterator
 import os 
-import pip
-
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_ollama.llms import OllamaLLM
 
 class Pipeline:
     def __init__(self):
         self.index = 0
 
     async def on_startup(self):
-        pip.main(['install', "langchain"])
-        pip.main(['install', "langchain-ollama"])
-        from langchain_core.prompts import ChatPromptTemplate
-        from langchain_ollama.llms import OllamaLLM
         # This function is called when the server is started.
         template = """Question: {question}
 
