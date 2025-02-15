@@ -305,7 +305,7 @@ setup_vim_nvim() {
   else
     echo "[NVIM] Creating Neovim config directory..."
     git clone https://github.com/NvChad/starter ~/.config/nvim
-    nvim --headless +":Lazy sync" +":sleep 2" +":q"
+    # nvim --headless +":Lazy sync" +":sleep 2" +":q"
 
   fi
 
