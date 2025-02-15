@@ -42,10 +42,8 @@ formulae_packages=(
   bazelisk
   cmake
   curl
-  duf
   docker
   docker-compose
-  exa
   fish
   fzf
   gcc
@@ -63,7 +61,6 @@ formulae_packages=(
   node
   nvm
   rust
-  tldr
   telnet
   terraform
   thefuck
@@ -72,12 +69,10 @@ formulae_packages=(
   vim
   wget
   zsh
-  zoxide
 )
 
 # Brew cask packages (macOS only)
 cask_packages=(
-  adobe-creative-cloud
   alacritty
   alt-tab
   brave-browser
@@ -94,21 +89,15 @@ cask_packages=(
   microsoft-teams
   monitorcontrol
   notion
-  obsidian
   postman
-  rar
   skype
   slack
   spotify
   stats
   sublime-text
   telegram
-  tor-browser
   visual-studio-code
-  visualvm
-  warp
   whatsapp
-  zoom
 )
 
 ###############################################################################
