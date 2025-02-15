@@ -8,11 +8,11 @@ Dotfiles is installed by running one of the following commands in your terminal.
 #### Install dotfiles
 ```bash
 git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/tool
-bash $HOME/.dotfiles/tool/install.sh --user
+bash $HOME/.dotfiles/tool/setup.sh
 ```
 #### Upgrade dotfiles
 ```bash
-bash $HOME/.dotfiles/tool/install.sh --user -U
+bash $HOME/.dotfiles/tool/setup.sh -U
 ```
 
 ## How to use
