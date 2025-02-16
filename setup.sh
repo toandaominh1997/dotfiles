@@ -42,8 +42,8 @@ formulae_packages=(
   bazelisk
   cmake
   curl
-  docker
-  docker-compose
+  # docker
+  # docker-compose
   fish
   fzf
   gcc
