@@ -90,7 +90,6 @@ cask_packages=(
   monitorcontrol
   notion
   postman
-  skype
   slack
   spotify
   stats
