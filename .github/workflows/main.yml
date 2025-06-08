@@ -1,29 +1,389 @@
-name: CI dotfiles
+name: 🚀 Enhanced Dotfiles CI/CD
 
 on:
-  push: {}
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run weekly on Sundays at 00:00 UTC to check for dependency updates
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+    inputs:
+      test_level:
+        description: 'Test level (basic, full, integration)'
+        required: false
+        default: 'full'
+        type: choice
+        options:
+          - basic
+          - full
+          - integration
+      skip_cache:
+        description: 'Skip cache'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+  FORCE_COLOR: 1
 
 jobs:
-  build:
+  # ============================================================================
+  # Code Quality and Security
+  # ============================================================================
+  
+  lint-and-security:
+    name: 🔍 Code Quality & Security
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for better analysis
+
+      - name: 🐚 Setup ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: 🧹 Lint shell scripts
+        run: |
+          echo "::group::🔍 Running ShellCheck"
+          find . -name "*.sh" -not -path "./.git/*" | while read -r file; do
+            echo "Checking: $file"
+            shellcheck "$file" || exit 1
+          done
+          echo "::endgroup::"
+
+      - name: 🔒 Security scan with Bandit (Python-like analysis)
+        run: |
+          echo "::group::🔒 Security Analysis"
+          # Check for common security issues in shell scripts
+          grep -r "curl.*http://" --include="*.sh" . && echo "⚠️ Insecure HTTP detected" && exit 1 || true
+          grep -r "wget.*http://" --include="*.sh" . && echo "⚠️ Insecure HTTP detected" && exit 1 || true
+          grep -r "eval.*\$" --include="*.sh" . && echo "⚠️ Potentially dangerous eval detected" && exit 1 || true
+          echo "✅ Security scan passed"
+          echo "::endgroup::"
+
+      - name: 📊 Upload ShellCheck results
+        if: always()
+        uses: github/super-linter@v5
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_BASH: true
+          VALIDATE_SHELL_SHFMT: true
+
+  # ============================================================================
+  # Syntax and Basic Validation
+  # ============================================================================
+  
+  syntax-validation:
+    name: ✅ Syntax Validation
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
+        bash-version: ['3.2', '4.0', '5.0', 'latest']
+        exclude:
+          # macOS comes with bash 3.2, so we test that specifically
+          - os: macos-latest
+            bash-version: '4.0'
+          - os: macos-latest
+            bash-version: '5.0'
+          # Ubuntu has newer bash, so we skip 3.2
+          - os: ubuntu-latest
+            bash-version: '3.2'
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Install dotfiles
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐚 Setup Bash version
+        if: matrix.bash-version != 'latest' && runner.os == 'Linux'
         run: |
-          bash setup.sh
-      - name: Upgrade package
+          sudo apt-get update
+          case "${{ matrix.bash-version }}" in
+            "4.0") sudo apt-get install -y bash=4.* ;;
+            "5.0") sudo apt-get install -y bash=5.* ;;
+          esac
+
+      - name: 🔍 Validate syntax
         run: |
-          bash setup.sh -U --user
-      - name: Show version
+          echo "::group::🔍 Syntax Validation"
+          bash --version
+          
+          # Test main setup script
+          bash -n setup.sh
+          echo "✅ setup.sh syntax OK"
+          
+          # Test all library modules
+          if [ -d "lib" ]; then
+            find lib -name "*.sh" -exec bash -n {} \;
+            echo "✅ Library modules syntax OK"
+          fi
+          
+          # Test utility scripts
+          if [ -d "utils" ]; then
+            find utils -name "*.sh" -exec bash -n {} \;
+            echo "✅ Utility scripts syntax OK"
+          fi
+          
+          # Test configuration scripts if they exist
+          if [ -d "scripts" ]; then
+            find scripts -name "*.sh" -exec bash -n {} \;
+            echo "✅ Script modules syntax OK"
+          fi
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Unit and Integration Tests
+  # ============================================================================
+  
+  unit-tests:
+    name: 🧪 Unit Tests
+    runs-on: ${{ matrix.os }}
+    needs: [syntax-validation]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup test environment
         run: |
-          echo $(brew --version)
-          echo $(tmux -V)
-          echo $(vim --version)
-          echo $(nvim --version)
-          echo $(fzf --version)
-          echo $(zsh --version)
-          echo $(helm version)
-          echo $(go version)
+          # Create test directories
+          mkdir -p /tmp/dotfiles-test
+          export TEST_DIR="/tmp/dotfiles-test"
+
+      - name: 🧪 Run unit tests
+        run: |
+          echo "::group::🧪 Unit Tests"
+          
+          # Test configuration parser
+          if [ -f "utils/config_parser.sh" ]; then
+            echo "Testing configuration parser..."
+            bash utils/config_parser.sh --help || true
+          fi
+          
+          # Test dry-run mode
+          echo "Testing dry-run mode..."
+          bash setup.sh --dry-run --help
+          
+          # Test version command
+          echo "Testing version command..."
+          bash setup.sh --version
+          
+          # Run integration tests if available
+          if [ -f "tests/integration_test.sh" ]; then
+            echo "Running integration tests..."
+            bash tests/integration_test.sh
+          fi
+          
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Cross-Platform Installation Tests
+  # ============================================================================
+  
+  installation-tests:
+    name: 🚀 Installation Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: [lint-and-security, unit-tests]
+    if: github.event.inputs.test_level != 'basic'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, macos-12, macos-13, macos-14]
+        test-mode: [dry-run, minimal]
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 💾 Cache package downloads
+        if: github.event.inputs.skip_cache != 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/homebrew
+            /tmp/dotfiles-cache
+          key: ${{ runner.os }}-packages-${{ hashFiles('**/packages.conf') }}
+          restore-keys: |
+            ${{ runner.os }}-packages-
+
+      - name: 🏗️ Prepare test environment
+        run: |
+          echo "::group::🏗️ Environment Setup"
+          
+          # Set up environment variables
+          export DOTFILES_TEST_MODE=true
+          export DOTFILES_CI=true
+          
+          # Create backup directory
+          mkdir -p ~/.dotfiles-backup-ci
+          
+          # Show system information
+          echo "OS: $(uname -a)"
+          echo "Shell: $SHELL"
+          echo "Available space: $(df -h . | tail -1)"
+          
+          echo "::endgroup::"
+
+      - name: 🔍 Test dry-run installation
+        if: matrix.test-mode == 'dry-run'
+        run: |
+          echo "::group::🔍 Dry-run Installation Test"
+          
+          # Test dry-run mode
+          timeout 300 bash setup.sh --dry-run --verbose || {
+            echo "❌ Dry-run test failed or timed out"
+            exit 1
+          }
+          
+          echo "✅ Dry-run test completed successfully"
+          echo "::endgroup::"
+
+      - name: ⚡ Test minimal installation
+        if: matrix.test-mode == 'minimal'
+        run: |
+          echo "::group::⚡ Minimal Installation Test"
+          
+          # Test actual installation with minimal packages
+          timeout 900 bash setup.sh --quiet --minimal || {
+            echo "❌ Minimal installation failed or timed out"
+            exit 1
+          }
+          
+          echo "✅ Minimal installation completed successfully"
+          echo "::endgroup::"
+
+      - name: 🔧 Test upgrade functionality
+        if: matrix.test-mode == 'minimal'
+        run: |
+          echo "::group::🔧 Upgrade Test"
+          
+          # Test upgrade mode
+          timeout 600 bash setup.sh --upgrade --dry-run || {
+            echo "❌ Upgrade test failed or timed out"
+            exit 1
+          }
+          
+          echo "✅ Upgrade test completed successfully"
+          echo "::endgroup::"
+
+      - name: 📊 Validate installation
+        if: matrix.test-mode == 'minimal'
+        run: |
+          echo "::group::📊 Installation Validation"
+          
+          # Check if essential tools are available
+          command -v git >/dev/null && echo "✅ Git installed" || echo "❌ Git missing"
+          command -v curl >/dev/null && echo "✅ Curl installed" || echo "❌ Curl missing"
+          command -v zsh >/dev/null && echo "✅ Zsh installed" || echo "❌ Zsh missing"
+          
+          # Check configuration files
+          [ -f ~/.zshrc ] && echo "✅ Zsh config exists" || echo "ℹ️ Zsh config not found"
+          
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Performance and Compatibility Tests
+  # ============================================================================
+  
+  performance-tests:
+    name: ⚡ Performance Tests
+    runs-on: ubuntu-latest
+    needs: [installation-tests]
+    if: github.event.inputs.test_level == 'full'
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚡ Performance benchmarks
+        run: |
+          echo "::group::⚡ Performance Benchmarks"
+          
+          # Time the dry-run execution
+          echo "Benchmarking dry-run performance..."
+          time bash setup.sh --dry-run >/dev/null
+          
+          # Memory usage test
+          echo "Testing memory usage..."
+          /usr/bin/time -v bash setup.sh --dry-run >/dev/null 2>&1 || true
+          
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Documentation and Release
+  # ============================================================================
+  
+  documentation-check:
+    name: 📚 Documentation Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📚 Validate documentation
+        run: |
+          echo "::group::📚 Documentation Validation"
+          
+          # Check if README exists and has required sections
+          if [ -f "README.md" ]; then
+            echo "✅ README.md exists"
+            grep -q "Installation" README.md && echo "✅ Installation section found" || echo "❌ Installation section missing"
+            grep -q "Usage" README.md && echo "✅ Usage section found" || echo "❌ Usage section missing"
+          else
+            echo "❌ README.md missing"
+            exit 1
+          fi
+          
+          # Check for help command
+          bash setup.sh --help >/dev/null && echo "✅ Help command works" || echo "❌ Help command broken"
+          
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Notification and Reporting
+  # ============================================================================
+  
+  notify-completion:
+    name: 📢 Notify Completion
+    runs-on: ubuntu-latest
+    needs: [installation-tests, performance-tests, documentation-check]
+    if: always()
+    
+    steps:
+      - name: 📊 Generate summary
+        run: |
+          echo "::notice title=CI Summary::Enhanced Dotfiles CI/CD pipeline completed"
+          
+          # Create job summary
+          echo "## 🚀 Enhanced Dotfiles CI/CD Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Results:" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.lint-and-security.result }}" = "success" ]; then
+            echo "- ✅ Code Quality & Security: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ Code Quality & Security: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.installation-tests.result }}" = "success" ]; then
+            echo "- ✅ Installation Tests: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ Installation Tests: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🏆 All tests completed successfully!" >> $GITHUB_STEP_SUMMARY

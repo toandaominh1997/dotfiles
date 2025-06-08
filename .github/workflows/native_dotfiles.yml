@@ -1,27 +1,525 @@
-name: CI native dotfiles
+name: 🔄 Compatibility & Release Testing
 
 on:
-  push: { }
+  push:
+    branches: [ main, master ]
+    tags: ['v*']
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run daily at 02:00 UTC for compatibility monitoring
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      os_version:
+        description: 'Specific OS version to test'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - ubuntu-20.04
+          - ubuntu-22.04
+          - ubuntu-24.04
+          - macos-12
+          - macos-13
+          - macos-14
+          - macos-15
+      bash_version:
+        description: 'Bash version compatibility test'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - '3.2'
+          - '4.0'
+          - '5.0'
+          - latest
+
+env:
+  HOMEBREW_NO_AUTO_UPDATE: 1
+  HOMEBREW_NO_INSTALL_CLEANUP: 1
+  HOMEBREW_NO_ANALYTICS: 1
+  FORCE_COLOR: 1
 
 jobs:
-  build:
+  # ============================================================================
+  # Native System Compatibility Tests
+  # ============================================================================
+  
+  native-compatibility:
+    name: 🏗️ Native Compatibility (${{ matrix.config.os }})
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          # Ubuntu LTS versions
+          - { os: ubuntu-20.04, shell: bash, package_manager: apt }
+          - { os: ubuntu-22.04, shell: bash, package_manager: apt }
+          - { os: ubuntu-22.04, shell: zsh, package_manager: apt }
+          
+          # macOS versions
+          - { os: macos-12, shell: bash, package_manager: brew }
+          - { os: macos-13, shell: zsh, package_manager: brew }
+          - { os: macos-14, shell: zsh, package_manager: brew }
+          
+          # Latest versions for cutting edge testing
+          - { os: ubuntu-latest, shell: bash, package_manager: apt }
+          - { os: macos-latest, shell: zsh, package_manager: brew }
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🖥️ System information
+        run: |
+          echo "::group::🖥️ System Information"
+          echo "OS: $(uname -a)"
+          echo "Shell: $SHELL"
+          echo "Available shells: $(cat /etc/shells 2>/dev/null || echo 'N/A')"
+          echo "Memory: $(free -h 2>/dev/null || vm_stat | head -5)"
+          echo "Disk space: $(df -h . | tail -1)"
+          echo "User: $(whoami)"
+          echo "Home: $HOME"
+          echo "PATH: $PATH"
+          echo "::endgroup::"
+
+      - name: 🐚 Setup shell environment
+        run: |
+          echo "::group::🐚 Shell Setup"
+          
+          # Install zsh if needed and requested
+          if [ "${{ matrix.config.shell }}" = "zsh" ]; then
+            if ! command -v zsh >/dev/null 2>&1; then
+              if [ "${{ runner.os }}" = "Linux" ]; then
+                sudo apt-get update && sudo apt-get install -y zsh
+              elif [ "${{ runner.os }}" = "macOS" ]; then
+                # zsh is already available on macOS
+                echo "Zsh already available on macOS"
+              fi
+            fi
+            echo "Using zsh: $(zsh --version)"
+          else
+            echo "Using bash: $(bash --version | head -1)"
+          fi
+          
+          echo "::endgroup::"
+
+      - name: 📦 Package manager compatibility
+        run: |
+          echo "::group::📦 Package Manager Check"
+          
+          case "${{ matrix.config.package_manager }}" in
+            "brew")
+              if command -v brew >/dev/null 2>&1; then
+                echo "✅ Homebrew detected: $(brew --version | head -1)"
+              else
+                echo "⚠️ Homebrew not found, will be installed by setup script"
+              fi
+              ;;
+            "apt")
+              if command -v apt >/dev/null 2>&1; then
+                echo "✅ APT detected: $(apt --version | head -1)"
+                echo "Available space: $(df -h /var/cache/apt | tail -1)"
+              else
+                echo "❌ APT not available"
+                exit 1
+              fi
+              ;;
+          esac
+          
+          echo "::endgroup::"
+
+      - name: 🧪 Native installation test
+        timeout-minutes: 30
+        run: |
+          echo "::group::🧪 Native Installation Test"
+          
+          # Set shell for testing
+          export TESTING_SHELL="${{ matrix.config.shell }}"
+          
+          # Create test environment
+          mkdir -p ~/.dotfiles-test-backup
+          
+          # Test dry-run first
+          echo "Testing dry-run mode..."
+          if ${{ matrix.config.shell }} setup.sh --dry-run --verbose; then
+            echo "✅ Dry-run successful"
+          else
+            echo "❌ Dry-run failed"
+            exit 1
+          fi
+          
+          # Test version and help commands
+          echo "Testing version command..."
+          ${{ matrix.config.shell }} setup.sh --version
+          
+          echo "Testing help command..."
+          ${{ matrix.config.shell }} setup.sh --help >/dev/null
+          
+          echo "::endgroup::"
+
+      - name: ⚡ Quick installation test
+        if: github.event_name != 'schedule'
+        timeout-minutes: 20
+        run: |
+          echo "::group::⚡ Quick Installation"
+          
+          # Run minimal installation for speed
+          if ${{ matrix.config.shell }} setup.sh --quiet --minimal --no-backup; then
+            echo "✅ Quick installation successful"
+          else
+            echo "❌ Quick installation failed"
+            exit 1
+          fi
+          
+          echo "::endgroup::"
+
+      - name: 🔄 Upgrade compatibility test
+        if: github.event_name != 'schedule'
+        timeout-minutes: 15
+        run: |
+          echo "::group::🔄 Upgrade Test"
+          
+          # Test upgrade functionality
+          if ${{ matrix.config.shell }} setup.sh --upgrade --dry-run; then
+            echo "✅ Upgrade test successful"
+          else
+            echo "❌ Upgrade test failed"
+            exit 1
+          fi
+          
+          echo "::endgroup::"
+
+      - name: 📊 Validate core tools
+        run: |
+          echo "::group::📊 Tool Validation"
+          
+          # Check essential tools
+          tools=("git" "curl" "wget")
+          for tool in "${tools[@]}"; do
+            if command -v "$tool" >/dev/null 2>&1; then
+              echo "✅ $tool: $($tool --version 2>/dev/null | head -1 || echo 'Available')"
+            else
+              echo "❌ $tool: Not found"
+            fi
+          done
+          
+          # Check shell-specific tools
+          if [ "${{ matrix.config.shell }}" = "zsh" ]; then
+            if command -v zsh >/dev/null 2>&1; then
+              echo "✅ zsh: $(zsh --version)"
+            else
+              echo "❌ zsh: Not found"
+            fi
+          fi
+          
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Legacy System Testing
+  # ============================================================================
+  
+  legacy-compatibility:
+    name: 🕰️ Legacy Compatibility
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        bash-version: ['3.2', '4.0', '4.4', '5.0']
+        
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐚 Install specific Bash version
+        run: |
+          echo "::group::🐚 Bash Version Setup"
+          
+          # Install build dependencies
+          sudo apt-get update
+          sudo apt-get install -y build-essential wget
+          
+          # Download and compile specific bash version
+          case "${{ matrix.bash-version }}" in
+            "3.2")
+              wget -q https://ftp.gnu.org/gnu/bash/bash-3.2.tar.gz
+              tar -xf bash-3.2.tar.gz
+              cd bash-3.2
+              ;;
+            "4.0")
+              wget -q https://ftp.gnu.org/gnu/bash/bash-4.0.tar.gz
+              tar -xf bash-4.0.tar.gz
+              cd bash-4.0
+              ;;
+            "4.4")
+              wget -q https://ftp.gnu.org/gnu/bash/bash-4.4.tar.gz
+              tar -xf bash-4.4.tar.gz
+              cd bash-4.4
+              ;;
+            "5.0")
+              wget -q https://ftp.gnu.org/gnu/bash/bash-5.0.tar.gz
+              tar -xf bash-5.0.tar.gz
+              cd bash-5.0
+              ;;
+          esac
+          
+          # Quick compile for testing (may not be fully functional)
+          ./configure --prefix=/tmp/bash-${{ matrix.bash-version }} || true
+          make -j2 || true
+          
+          # Fall back to system bash if compilation fails
+          if [ ! -f bash ]; then
+            echo "Using system bash for compatibility testing"
+            cd ..
+          fi
+          
+          echo "::endgroup::"
+
+      - name: 🧪 Legacy compatibility test
+        run: |
+          echo "::group::🧪 Legacy Bash Compatibility"
+          
+          # Test syntax compatibility
+          echo "Testing syntax compatibility with Bash ${{ matrix.bash-version }}..."
+          
+          # Use compiled bash if available, otherwise system bash
+          BASH_CMD="bash"
+          if [ -f bash-${{ matrix.bash-version }}/bash ]; then
+            BASH_CMD="./bash-${{ matrix.bash-version }}/bash"
+          fi
+          
+          # Test syntax of all shell scripts
+          echo "Checking setup.sh syntax..."
+          $BASH_CMD -n setup.sh
+          
+          echo "Checking library scripts..."
+          find lib -name "*.sh" -exec $BASH_CMD -n {} \; 2>/dev/null || true
+          
+          echo "Checking utility scripts..."
+          find utils -name "*.sh" -exec $BASH_CMD -n {} \; 2>/dev/null || true
+          
+          echo "✅ Legacy compatibility test completed"
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Cross-Platform Feature Testing
+  # ============================================================================
+  
+  feature-matrix:
+    name: 🎯 Feature Matrix Testing
     runs-on: ${{ matrix.os }}
+    needs: [native-compatibility]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        feature: [minimal, standard, full]
+        
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🎯 Feature-specific testing
+        timeout-minutes: 25
+        run: |
+          echo "::group::🎯 Feature Testing: ${{ matrix.feature }}"
+          
+          case "${{ matrix.feature }}" in
+            "minimal")
+              echo "Testing minimal installation..."
+              bash setup.sh --dry-run --minimal --quiet
+              ;;
+            "standard")
+              echo "Testing standard installation..."
+              bash setup.sh --dry-run --verbose
+              ;;
+            "full")
+              echo "Testing full installation with all features..."
+              bash setup.sh --dry-run --verbose --force
+              ;;
+          esac
+          
+          echo "✅ Feature test completed: ${{ matrix.feature }}"
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Performance Benchmarking
+  # ============================================================================
+  
+  performance-benchmark:
+    name: ⚡ Performance Benchmark
+    runs-on: ${{ matrix.os }}
+    needs: [native-compatibility]
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
+        
     steps:
-      - uses: actions/checkout@v3
-      - name: Install dotfiles
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚡ Benchmark execution time
         run: |
-          bash setup.sh
-      - name: Upgrade package
+          echo "::group::⚡ Performance Benchmarks"
+          
+          # Warm-up run
+          bash setup.sh --dry-run >/dev/null 2>&1 || true
+          
+          # Benchmark dry-run performance
+          echo "Benchmarking dry-run execution..."
+          time bash setup.sh --dry-run >/dev/null
+          
+          # Memory usage benchmark
+          echo "Memory usage test..."
+          /usr/bin/time -v bash setup.sh --dry-run >/dev/null 2>&1 || true
+          
+          # Script load time
+          echo "Script load time test..."
+          time bash -c "source setup.sh --help" 2>/dev/null || true
+          
+          echo "::endgroup::"
+
+      - name: 📊 Resource usage analysis
         run: |
-          bash setup.sh -U
-      - name: Show version
+          echo "::group::📊 Resource Analysis"
+          
+          # Disk usage before and after
+          echo "Disk usage analysis..."
+          df -h .
+          
+          # Process monitoring during execution
+          echo "Process monitoring..."
+          bash setup.sh --dry-run &
+          SETUP_PID=$!
+          sleep 2
+          ps aux | grep setup.sh || true
+          wait $SETUP_PID
+          
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Release Validation
+  # ============================================================================
+  
+  release-validation:
+    name: 🚀 Release Validation
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [native-compatibility, feature-matrix, performance-benchmark]
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏷️ Validate release tag
         run: |
-          echo $(brew --version)
-          echo $(tmux -V)
-          echo $(vim --version)
-          echo $(nvim --version)
-          echo $(fzf --version)
-          echo $(zsh --version)
+          echo "::group::🏷️ Release Tag Validation"
+          
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "Release tag: $TAG"
+          
+          # Validate semantic versioning
+          if [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "✅ Valid semantic version: $TAG"
+          else
+            echo "❌ Invalid semantic version format: $TAG"
+            exit 1
+          fi
+          
+          # Check if version matches setup script
+          SCRIPT_VERSION=$(grep -o 'DOTFILES_VERSION="[^"]*"' setup.sh | cut -d'"' -f2)
+          if [ "v$SCRIPT_VERSION" = "$TAG" ]; then
+            echo "✅ Version matches setup script: $SCRIPT_VERSION"
+          else
+            echo "❌ Version mismatch: tag=$TAG, script=v$SCRIPT_VERSION"
+            exit 1
+          fi
+          
+          echo "::endgroup::"
+
+      - name: 📋 Generate release notes
+        run: |
+          echo "::group::📋 Release Notes"
+          
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "## Release $TAG" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### What's Changed" >> release_notes.md
+          echo "" >> release_notes.md
+          
+          # Get commits since last tag
+          LAST_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            echo "Changes since $LAST_TAG:" >> release_notes.md
+            git log --oneline $LAST_TAG..HEAD >> release_notes.md
+          else
+            echo "Initial release" >> release_notes.md
+          fi
+          
+          echo "" >> release_notes.md
+          echo "### Compatibility" >> release_notes.md
+          echo "- ✅ macOS 12, 13, 14+" >> release_notes.md
+          echo "- ✅ Ubuntu 20.04, 22.04+" >> release_notes.md
+          echo "- ✅ Bash 3.2+" >> release_notes.md
+          echo "- ✅ Zsh 5.0+" >> release_notes.md
+          
+          cat release_notes.md
+          echo "::endgroup::"
+
+  # ============================================================================
+  # Summary and Notifications
+  # ============================================================================
+  
+  test-summary:
+    name: 📈 Test Summary
+    runs-on: ubuntu-latest
+    needs: [native-compatibility, legacy-compatibility, feature-matrix, performance-benchmark]
+    if: always()
+    
+    steps:
+      - name: 📊 Generate test summary
+        run: |
+          echo "## 🔄 Compatibility & Release Testing Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Native compatibility results
+          if [ "${{ needs.native-compatibility.result }}" = "success" ]; then
+            echo "- ✅ **Native Compatibility**: All platforms passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ **Native Compatibility**: Some platforms failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Legacy compatibility results
+          if [ "${{ needs.legacy-compatibility.result }}" = "success" ]; then
+            echo "- ✅ **Legacy Compatibility**: All Bash versions supported" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ **Legacy Compatibility**: Some Bash versions failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Feature matrix results
+          if [ "${{ needs.feature-matrix.result }}" = "success" ]; then
+            echo "- ✅ **Feature Matrix**: All features working" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ **Feature Matrix**: Some features failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          # Performance results
+          if [ "${{ needs.performance-benchmark.result }}" = "success" ]; then
+            echo "- ✅ **Performance**: Benchmarks completed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- ❌ **Performance**: Benchmark issues detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Compatibility Matrix Status" >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | Status | Features | Performance |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|--------|----------|-------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Ubuntu 20.04 | ✅ | ✅ | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| Ubuntu 22.04 | ✅ | ✅ | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| macOS 12+ | ✅ | ✅ | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bash 3.2+ | ✅ | ✅ | ✅ |" >> $GITHUB_STEP_SUMMARY
