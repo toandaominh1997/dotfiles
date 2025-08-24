@@ -13,10 +13,10 @@ jobs:
       - uses: actions/checkout@v5
       - name: Install dotfiles
         run: |
-          bash setup.sh
+          bash setup.sh --verbose
       - name: Upgrade package
         run: |
-          bash setup.sh --upgrade
+          bash setup.sh --upgrade --verbose
       - name: Show version
         run: |
           echo $(brew --version)
