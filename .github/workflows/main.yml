@@ -10,13 +10,13 @@ jobs:
       matrix:
         os: [macos-latest, ubuntu-latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       - name: Install dotfiles
         run: |
           bash setup.sh
       - name: Upgrade package
         run: |
-          bash setup.sh -U --user
+          bash setup.sh --upgrade
       - name: Show version
         run: |
           echo $(brew --version)

@@ -480,7 +480,6 @@ main() {
   # 7) Set up Vim/Neovim
   setup_vim_nvim
 
-
   # 8) Cleanup
   echo "==> Running final Brew cleanup..."
   brew cleanup || true
