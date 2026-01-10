@@ -85,7 +85,6 @@ formulae_packages=(
 cask_packages=(
   alt-tab
   brave-browser
-  cloudflare-warp
   discord
   docker
   git-credential-manager
