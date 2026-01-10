@@ -52,7 +52,6 @@ formulae_packages=(
   duf
   docker
   docker-compose
-  exa
   fish
   fzf
   gcc
@@ -446,7 +445,6 @@ main() {
 
   # Show script info
   log_info "Upgrade: $UPGRADE_MODE"
-  log_info "Verbose: $VERBOSE"
 
   local upgrade_flag="$has_upgrade"
   local os_type
