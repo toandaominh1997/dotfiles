@@ -30,21 +30,21 @@ VERBOSE=false
 FORCE=false
 has_upgrade="non_upgrade"
 
-# Required brew formula packages
+# Required brew formula packages (must be installed)
 required_packages=(
   bash
   fzf
+  git
   neovim
   tmux
   vim
   zsh
 )
 
-# Additional brew formula packages
+# Additional brew formula packages (optional)
 formulae_packages=(
   ansible
   awscli
-  bash
   bat
   bazelisk
   cmake
@@ -53,10 +53,8 @@ formulae_packages=(
   docker
   docker-compose
   fish
-  fzf
   gcc
   gh
-  git
   go
   helm
   htop
@@ -65,7 +63,6 @@ formulae_packages=(
   kubernetes-cli
   lazydocker
   lazygit
-  neovim
   node
   nvm
   rust
@@ -73,11 +70,8 @@ formulae_packages=(
   telnet
   terraform
   thefuck
-  tmux
   unzip
-  vim
   wget
-  zsh
   zoxide
 )
 
@@ -326,14 +320,19 @@ install_or_upgrade_repo() {
   local repo_name="$3"
 
   if [[ -d "$dest_path" ]]; then
-    echo "[ZSH] $repo_name already installed at $dest_path."
+    log_info "$repo_name already installed at $dest_path."
     if [[ "$UPGRADE_MODE" == true ]]; then
-      log_info "Upgrading $repo_name..."  
-      execute_command "(cd \"$dest_path\" && git pull --rebase --autostash)" "Upgrade $repo_name"
+      log_info "Upgrading $repo_name..."
+      if ! execute_command "(cd \"$dest_path\" && git pull --rebase --autostash)" "Upgrade $repo_name"; then
+        log_warn "Failed to upgrade $repo_name, continuing..."
+      fi
     fi
   else
     log_info "Installing $repo_name..."
-    execute_command "git clone \"$repo_url\" \"$dest_path\"" "Clone $repo_name"
+    if ! execute_command "git clone --depth 1 \"$repo_url\" \"$dest_path\"" "Clone $repo_name"; then
+      log_error "Failed to clone $repo_name"
+      return 1
+    fi
     log_success "Successfully installed $repo_name"
   fi
 }
@@ -362,11 +361,20 @@ setup_oh_my_zsh() {
 # Ensure a line exists in ~/.zshrc to source a custom config (if desired)
 ensure_custom_config_in_zshrc() {
   local custom_config_line="source \$HOME/.dotfiles/tool/zsh/config.zsh"
-  if ! grep -qxF "$custom_config_line" "$HOME/.zshrc" &>/dev/null; then
-    echo "[ZSH] Adding custom config to ~/.zshrc"
+
+  # Create .zshrc if it doesn't exist
+  if [[ ! -f "$HOME/.zshrc" ]]; then
+    log_info "Creating new .zshrc"
+    touch "$HOME/.zshrc"
+  fi
+
+  if ! grep -qF "source \$HOME/.dotfiles/tool/zsh/config.zsh" "$HOME/.zshrc" 2>/dev/null; then
+    log_info "Adding custom config to ~/.zshrc"
+    echo "" >> "$HOME/.zshrc"
+    echo "# Dotfiles custom configuration" >> "$HOME/.zshrc"
     echo "$custom_config_line" >> "$HOME/.zshrc"
   else
-    echo "[ZSH] Custom config already sourced in ~/.zshrc"
+    log_info "Custom config already sourced in ~/.zshrc"
   fi
 }
 # Setup or upgrade Zsh plugins and themes
@@ -408,8 +416,15 @@ setup_tmux() {
   log_info "Setting up Tmux plugin manager (TPM)"
   install_or_upgrade_repo \
     "$TMUX_PLUGIN_MANAGER_REPO" \
-    "$DOTFILES_DIR/.tmux/plugins/tpm" \
+    "$HOME/.tmux/plugins/tpm" \
     "tmux-plugin-manager"
+
+  # Backup existing tmux config if it exists and is not a symlink
+  if [[ -f "$HOME/.tmux.conf" && ! -L "$HOME/.tmux.conf" ]]; then
+    log_info "Backing up existing .tmux.conf"
+    execute_command "cp \"$HOME/.tmux.conf\" \"$HOME/.tmux.conf.backup.$(date +%Y%m%d_%H%M%S)\"" "Backup .tmux.conf"
+  fi
+
   # Setup tmux configuration
   local tmux_config="source $DOTFILES_DIR/tool/tmux/config.tmux"
   execute_command "echo \"$tmux_config\" > \"$HOME/.tmux.conf\"" "Create .tmux.conf"
@@ -420,6 +435,12 @@ setup_tmux() {
 setup_vim_nvim() {
   log_info "Setting up Vim and Neovim..."
 
+  # Backup existing vim config if it exists
+  if [[ -f "$HOME/.vimrc" && ! -L "$HOME/.vimrc" ]]; then
+    log_info "Backing up existing .vimrc"
+    execute_command "cp \"$HOME/.vimrc\" \"$HOME/.vimrc.backup.$(date +%Y%m%d_%H%M%S)\"" "Backup .vimrc"
+  fi
+
   # Setup Vim
   local vim_config="source $DOTFILES_DIR/tool/vim/config.vim"
   execute_command "echo \"$vim_config\" > \"$HOME/.vimrc\"" "Create .vimrc"
@@ -427,13 +448,16 @@ setup_vim_nvim() {
   # Ensure Neovim config directory
   NVIM_DIR="$HOME/.config/nvim"
   if [[ -d "$NVIM_DIR" ]]; then
-    echo "[NVIM] Neovim config directory already exists."
+    log_info "Neovim config directory already exists."
+    if [[ "$UPGRADE_MODE" == true ]]; then
+      log_info "Upgrading NvChad..."
+      execute_command "(cd \"$NVIM_DIR\" && git pull --rebase --autostash)" "Upgrade NvChad"
+    fi
   else
-    echo "[NVIM] Creating Neovim config directory..."
-    git clone https://github.com/NvChad/starter ~/.config/nvim
-
+    log_info "Installing NvChad..."
+    execute_command "git clone --depth 1 https://github.com/NvChad/starter \"$NVIM_DIR\"" "Clone NvChad"
+    log_success "NvChad installed successfully"
   fi
-
 }
 
 main() {
@@ -477,10 +501,21 @@ main() {
   setup_vim_nvim
 
   # 8) Cleanup
-  echo "==> Running final Brew cleanup..."
+  log_info "==> Running final Brew cleanup..."
   brew cleanup || true
 
-  echo "==> Dotfiles setup complete!"
+  log_success "==> Dotfiles setup complete!"
+  log_info ""
+  log_info "Next steps:"
+  log_info "  1. Restart your terminal or run: source ~/.zshrc"
+  log_info "  2. Open tmux and press 'prefix + I' to install tmux plugins"
+  log_info "  3. Open nvim and run :PlugInstall for vim plugins"
+  log_info ""
+  log_info "Configuration files:"
+  log_info "  - Zsh:  ~/.zshrc"
+  log_info "  - Tmux: ~/.tmux.conf"
+  log_info "  - Vim:  ~/.vimrc"
+  log_info "  - Nvim: ~/.config/nvim"
 
 }
 

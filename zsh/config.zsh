@@ -1,10 +1,19 @@
 export ZSH="$HOME/.dotfiles/oh-my-zsh"
 
+# Theme configuration
+# Set to "starship" to use starship prompt, or "powerlevel10k" for powerlevel10k
+DOTFILES_THEME="${DOTFILES_THEME:-powerlevel10k}"
 
-theme="notstarship"
-if [[ $theme == "starship" ]]; then
-  eval "$(starship init zsh)"
-else 
+if [[ "$DOTFILES_THEME" == "starship" ]]; then
+  if command -v starship &> /dev/null; then
+    eval "$(starship init zsh)"
+  else
+    echo "Warning: starship not found, falling back to powerlevel10k"
+    DOTFILES_THEME="powerlevel10k"
+  fi
+fi
+
+if [[ "$DOTFILES_THEME" == "powerlevel10k" ]]; then
   POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
   POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
   ZSH_THEME="powerlevel10k/powerlevel10k"
@@ -13,7 +22,7 @@ else
   typeset -g POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens'
 fi
 
-DEFAULT_USER=`whoami`
+DEFAULT_USER=$(whoami)
 
 plugins=(
     aliases
@@ -39,7 +48,6 @@ plugins=(
     python
     skaffold
     terraform
-    tmux
     ubuntu
     vscode
     web-search
@@ -49,12 +57,30 @@ plugins=(
     zsh-interactive-cd
     zsh-syntax-highlighting
 )
-source ~/.dotfiles/oh-my-zsh/plugins/zsh-interactive-cd/zsh-interactive-cd.plugin.zsh
 
-source $ZSH/oh-my-zsh.sh
+# Load zsh-interactive-cd plugin if available
+if [[ -f ~/.dotfiles/oh-my-zsh/plugins/zsh-interactive-cd/zsh-interactive-cd.plugin.zsh ]]; then
+  source ~/.dotfiles/oh-my-zsh/plugins/zsh-interactive-cd/zsh-interactive-cd.plugin.zsh
+fi
+
+# Source Oh-My-Zsh
+if [[ -f "$ZSH/oh-my-zsh.sh" ]]; then
+  source "$ZSH/oh-my-zsh.sh"
+else
+  echo "Warning: Oh-My-Zsh not found at $ZSH"
+fi
+
+# Editor configuration
 export EDITOR='nvim'
+export VISUAL='nvim'
+
+# Homebrew setup for macOS
 if [[ "$(uname)" == "Darwin" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  if [[ -f "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -f "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
 fi
 
 

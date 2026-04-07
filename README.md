@@ -12,7 +12,9 @@ bash $HOME/.dotfiles/tool/setup.sh
 ```
 #### Upgrade dotfiles
 ```bash
-bash $HOME/.dotfiles/tool/setup.sh -U
+bash $HOME/.dotfiles/tool/setup.sh --upgrade
+# or
+bash $HOME/.dotfiles/tool/setup.sh -u
 ```
 
 ## How to use
