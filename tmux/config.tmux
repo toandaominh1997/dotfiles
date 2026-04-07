@@ -89,7 +89,7 @@ bind -r C-l next-window     # select next window
 bind Tab last-window        # move to last active window
 
 # toggle mouse
-bind m if-shell "tmux show-options -g mouse | grep -q 'on'" \
+bind m if -F "#{mouse}" \
     "set-option -g mouse off; display 'Mouse: OFF'" \
     "set-option -g mouse on;  display 'Mouse: ON'"
 
