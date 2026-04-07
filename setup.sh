@@ -15,6 +15,7 @@ OH_MY_ZSH_REPO="https://github.com/robbyrussell/oh-my-zsh.git"
 ZSH_AUTOSUGGESTIONS_REPO="https://github.com/zsh-users/zsh-autosuggestions"
 POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
 TMUX_PLUGIN_MANAGER_REPO="https://github.com/tmux-plugins/tpm"
+LAZYVIM_REPO="https://github.com/LazyVim/starter.git"
 
 # Dotfiles directories
 DOTFILES_DIR="$HOME/.dotfiles"
@@ -123,7 +124,10 @@ log_error() {
 }
 
 log_debug() {
-    [[ "$VERBOSE" == true ]] && echo -e "\033[0;36m[DEBUG]\033[0m $1"
+    if [[ "$VERBOSE" == true ]]; then
+      echo -e "\033[0;36m[DEBUG]\033[0m $1"
+    fi
+    return 0
 }
 
 log_success() {
@@ -141,7 +145,13 @@ command_exists() {
 
 package_exists() {
     local package="$1"
-    brew list "$package" &>/dev/null || command_exists "$package"
+    local type="${2:---formula}"
+
+    if [[ "$type" == "--cask" ]]; then
+      brew list --cask "$package" &>/dev/null
+    else
+      brew list --formula "$package" &>/dev/null || command_exists "$package"
+    fi
 }
 
 detect_os() {
@@ -215,20 +225,22 @@ parse_arguments() {
 execute_command() {
     local cmd="$1"
     local description="$2"
-    
+
     if [[ "$DRY_RUN" == true ]]; then
         log_info "[DRY-RUN] Would execute: $description"
         log_debug "Command: $cmd"
         return 0
     fi
+
     log_debug "Executing: $cmd"
-    if ! eval "$cmd"; then
+    if eval "$cmd"; then
+        return 0
+    else
         local exit_code=$?
         log_error "Command failed: $description"
         log_error "Failed command: $cmd"
         return $exit_code
     fi
-    return 0
 }
 
 
@@ -263,7 +275,7 @@ install_or_upgrade_package() {
   local type="$2"   # e.g. "--formula" or "--cask"
   local is_required="${3:-false}" # "upgrade" or "non_upgrade"
 
-  if package_exists "$package"; then
+  if package_exists "$package" "$type"; then
     log_info "$package is already installed."
     if [[ "$UPGRADE_MODE" == true ]]; then
       log_info "Upgrading $package..."
@@ -279,7 +291,7 @@ install_or_upgrade_package() {
       exit 1
     else
       log_warn "Failed to install optional package: $package"
-      return 0
+      return 1
     fi
   fi
   log_success "Successfully installed $package"
@@ -299,7 +311,7 @@ process_packages() {
   for package in "${packages[@]}"; do
     log_info "Install $package"
     if install_or_upgrade_package "$package" "$type" "$is_required"; then
-      success_count+=1
+      ((success_count+=1))
     else
       failed_packages+=("$package")
     fi
@@ -307,8 +319,12 @@ process_packages() {
   log_info "Successfully installed $success_count packages"
   log_info "Failed to install ${#failed_packages[@]} packages"
   if [[ ${#failed_packages[@]} -gt 0 ]]; then
-    log_error "Failed to install the following packages: ${failed_packages[*]}"
-    exit 1
+    if [[ "$is_required" == true ]]; then
+      log_error "Failed to install the following required packages: ${failed_packages[*]}"
+      exit 1
+    else
+      log_warn "Failed to install the following optional packages: ${failed_packages[*]}"
+    fi
   fi
 }
 
@@ -446,17 +462,41 @@ setup_vim_nvim() {
   execute_command "echo \"$vim_config\" > \"$HOME/.vimrc\"" "Create .vimrc"
 
   # Ensure Neovim config directory
-  NVIM_DIR="$HOME/.config/nvim"
-  if [[ -d "$NVIM_DIR" ]]; then
-    log_info "Neovim config directory already exists."
-    if [[ "$UPGRADE_MODE" == true ]]; then
-      log_info "Upgrading NvChad..."
-      execute_command "(cd \"$NVIM_DIR\" && git pull --rebase --autostash)" "Upgrade NvChad"
+  local nvim_dir="$HOME/.config/nvim"
+  local nvim_data_dir="$HOME/.local/share/nvim"
+  local lazyvim_lock_file="$nvim_dir/lazy-lock.json"
+  local lazyvim_init_marker='require("config.lazy")'
+
+  local has_lazyvim_config=false
+  if [[ -f "$lazyvim_lock_file" ]] || grep -qF "$lazyvim_init_marker" "$nvim_dir/init.lua" 2>/dev/null; then
+    has_lazyvim_config=true
+  fi
+
+  if [[ -d "$nvim_dir" ]] && [[ -n "$(ls -A "$nvim_dir" 2>/dev/null)" ]]; then
+    if [[ "$has_lazyvim_config" == true ]]; then
+      log_info "LazyVim is already installed."
+      if [[ "$UPGRADE_MODE" == true ]]; then
+        if [[ -d "$nvim_dir/.git" ]]; then
+          log_info "Upgrading LazyVim starter..."
+          execute_command "(cd \"$nvim_dir\" && git pull --rebase --autostash)" "Upgrade LazyVim starter"
+        else
+          log_info "Skipping LazyVim starter git update (no .git metadata)."
+        fi
+        log_info "Syncing LazyVim plugins..."
+        execute_command "nvim --headless '+Lazy! sync' '+qa'" "Sync LazyVim plugins"
+      fi
+    else
+      log_warn "Existing Neovim config found at $nvim_dir. Skipping LazyVim installation to avoid overwriting your config."
+      log_warn "Remove or back up $nvim_dir and rerun setup.sh to install LazyVim."
     fi
   else
-    log_info "Installing NvChad..."
-    execute_command "git clone --depth 1 https://github.com/NvChad/starter \"$NVIM_DIR\"" "Clone NvChad"
-    log_success "NvChad installed successfully"
+    log_info "Installing LazyVim..."
+    execute_command "rm -rf \"$nvim_dir\"" "Remove empty Neovim config directory"
+    execute_command "git clone \"$LAZYVIM_REPO\" \"$nvim_dir\"" "Clone LazyVim starter"
+    execute_command "rm -rf \"$nvim_dir/.git\"" "Remove LazyVim starter git metadata"
+    execute_command "rm -rf \"$nvim_data_dir\"" "Remove existing Neovim data for clean LazyVim bootstrap"
+    execute_command "nvim --headless '+Lazy! sync' '+qa'" "Install LazyVim plugins"
+    log_success "LazyVim installed successfully"
   fi
 }
 
@@ -509,7 +549,7 @@ main() {
   log_info "Next steps:"
   log_info "  1. Restart your terminal or run: source ~/.zshrc"
   log_info "  2. Open tmux and press 'prefix + I' to install tmux plugins"
-  log_info "  3. Open nvim and run :PlugInstall for vim plugins"
+  log_info "  3. Open nvim and run :Lazy sync if plugins are not installed"
   log_info ""
   log_info "Configuration files:"
   log_info "  - Zsh:  ~/.zshrc"

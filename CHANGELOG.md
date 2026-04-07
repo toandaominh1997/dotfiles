@@ -25,7 +25,7 @@ All notable changes to this dotfiles project will be documented in this file.
 - Theme selection now uses environment variable instead of hardcoded string
 - Improved Oh-My-Zsh source with existence check
 - Better Homebrew detection for both Intel and Apple Silicon Macs
-- Improved NvChad installation with upgrade support
+- Improved LazyVim installation with upgrade support
 - Better logging throughout setup script
 
 ### Fixed
@@ -33,7 +33,7 @@ All notable changes to this dotfiles project will be documented in this file.
 - Copy/paste in tmux when using iTerm2 on macOS
 - Missing .zshrc file creation if it doesn't exist
 - Git clone operations now use `--depth 1` for faster installation
-- Upgrade mode now properly updates NvChad configuration
+- Upgrade mode now properly updates LazyVim configuration
 
 ### Removed
 - 200+ lines of commented-out code from tmux/config.tmux

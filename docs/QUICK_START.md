@@ -50,10 +50,11 @@ bash setup.sh --upgrade
    vim +PlugInstall +qall
    ```
 
-4. **Configure Neovim** (if using NvChad):
+4. **Configure Neovim** (if using LazyVim):
    ```bash
    nvim
-   # Wait for plugins to install automatically
+   # Wait for LazyVim to finish installing plugins
+   # Run :Lazy sync manually if needed
    ```
 
 ## Customization
