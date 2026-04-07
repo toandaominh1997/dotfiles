@@ -3,10 +3,10 @@
 
 # -- general -------------------------------------------------------------------
 
-set -g default-terminal "screen-256color"
+set -g default-terminal "tmux-256color"
 
 setw -g xterm-keys on
-set -s escape-time 10                     # faster command sequences
+set -s escape-time 0                      # faster command sequences (0ms for neovim)
 set -sg repeat-time 600                   # increase repeat timeout
 set -s focus-events on
 
@@ -17,7 +17,7 @@ set -q -g status-utf8 on                  # expect UTF-8 (tmux < 2.2)
 setw -q -g utf8 on
 
 set-option -g mouse on
-set -g history-limit 5000                 # boost history
+set -g history-limit 50000                # boost history
 
 # edit configuration
 bind e new-window -n "#{TMUX_CONF_LOCAL}" sh -c '${EDITOR:-vim} "$TMUX_CONF_LOCAL" && "$TMUX_PROGRAM" ${TMUX_SOCKET:+-S "$TMUX_SOCKET"} source "$TMUX_CONF" \; display "$TMUX_CONF_LOCAL sourced"'
@@ -38,8 +38,6 @@ set -g set-titles on          # set terminal title
 
 set -g display-panes-time 800 # slightly longer pane indicators display time
 set -g display-time 1000      # slightly longer status messages display time
-
-set -g status-interval 10     # redraw status line every 10 seconds
 
 # clear both screen and history
 bind -n C-l send-keys C-l \; run 'sleep 0.2' \; clear-history
@@ -150,22 +148,25 @@ bind-key C run "tmux split-window -l 1 'bash -ci \"tms -ask\"'"
 # Switch/kill sessions with fzf (tms is defined in bashrc)
 bind-key S run "tmux split-window -l 10 'bash -ci tms'"
 
-# Colors 
+# Colors
 
-# Note: this terminfo comes with ncurses (it is needed for colored undecurl to
-# work). It should be located at: /usr/share/terminfo/t/tmux-256color
-# If it isn't reinstall ncurses
-set-option -g default-terminal "screen-256color"
+# Note: tmux-256color terminfo comes with ncurses (/usr/share/terminfo/t/tmux-256color).
+# It enables true color, undercurl, clipboard (OSC 52), and mouse events in iTerm2.
+# If missing, reinstall ncurses.
 
-# Define terminal overrides (note that when adding terminal overrides we use a
-# generic `*` catchall because `tmux info` doesn't report `tmux-256color` even
-# with the above default-terminal setting).
-# Enable 24-bit color support (check if this works via `tmux info | grep Tc`)
+# Clear accumulated overrides from previous source-file reloads, then set once.
+set-option -s terminal-overrides ""
 set-option -s -a terminal-overrides ",*:Tc"
-# Add Undercurl (test it with `printf '\e[4:3mUndercurl\n\e[0m'`)
 set-option -s -a terminal-overrides ',*:Smulx=\E[4::%p1%dm'
-# Add colored undercurl (test it with `printf '\e[4:3;58:2:255:100:0mUndercurl\n\e[0m'`)
 set-option -s -a terminal-overrides ',*:Setulc=\E[58::2::%p1%{65536}%/%d::%p1%{256}%/%{255}%&%d::%p1%{255}%&%d%;m'
+set-option -s -a terminal-overrides ',*:Ms=\E]52;c;%p2%s\007'
+set-option -s -a terminal-overrides ',*:XT'
+
+# Enable mouse support in terminal-features for xterm-compatible terminals (iTerm2)
+set-option -s terminal-features ""
+set-option -s -a terminal-features "xterm*:clipboard:ccolour:cstyle:focus:title:mouse:extkeys"
+set-option -s -a terminal-features "screen*:title"
+set-option -s -a terminal-features "rxvt*:ignorefkeys"
 
 # Pane border (use same color for active and foreground)
 set-option -g pane-border-style 'fg=#282c34'
@@ -197,6 +198,7 @@ set-option -g @tpm_plugins ' \
     tmux-plugins/tmux-battery \
     tmux-plugins/tmux-resurrect \
     tmux-plugins/tmux-continuum \
+    wfxr/tmux-fzf-url \
 '
 
 # Install plugins if not installed
@@ -252,7 +254,6 @@ if-shell 'test "$(uname)" = "Darwin"' \
 
 # Enable clipboard integration (iTerm2 / OSC 52)
 set-option -g set-clipboard on
-set-option -ag terminal-overrides ',*:Ms=\\E]52;c;%p2%s\\007'
 
 # local config
 if-shell "[ -f ~/.tmux.conf.local ]" 'source ~/.tmux.conf.local'

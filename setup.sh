@@ -423,8 +423,32 @@ setup_zsh_plugins() {
   # powerlevel10k
   install_or_upgrade_repo \
     "$POWERLEVEL10K_REPO" \
-    "$OH_MY_ZSH_DIR/themes/powerlevel10k" \
+    "$OH_MY_ZSH_DIR/custom/themes/powerlevel10k" \
     "Powerlevel10k"
+}
+
+# Symlink .p10k.zsh from dotfiles into home directory
+setup_p10k_config() {
+  local src="$DOTFILES_DIR/tool/zsh/.p10k.zsh"
+  local dest="$HOME/.p10k.zsh"
+
+  if [[ ! -f "$src" ]]; then
+    log_warn ".p10k.zsh not found at $src, skipping symlink"
+    return 0
+  fi
+
+  if [[ -L "$dest" ]]; then
+    log_info "~/.p10k.zsh symlink already exists"
+    return 0
+  fi
+
+  if [[ -f "$dest" ]]; then
+    log_info "Backing up existing ~/.p10k.zsh"
+    execute_command "mv \"$dest\" \"${dest}.backup.$(date +%Y%m%d_%H%M%S)\"" "Backup .p10k.zsh"
+  fi
+
+  execute_command "ln -sf \"$src\" \"$dest\"" "Symlink .p10k.zsh"
+  log_success "Linked .p10k.zsh -> $dest"
 }
 
 # Setup Tmux plugin manager (TPM)
@@ -530,6 +554,7 @@ main() {
   # 4) Set up Oh My Zsh & plugins
   setup_oh_my_zsh
   setup_zsh_plugins
+  setup_p10k_config
 
   # # 5) Add custom Zsh config to ~/.zshrc (if desired)
   ensure_custom_config_in_zshrc
