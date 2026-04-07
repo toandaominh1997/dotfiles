@@ -89,7 +89,9 @@ bind -r C-l next-window     # select next window
 bind Tab last-window        # move to last active window
 
 # toggle mouse
-bind m run "cut -c3- '#{TMUX_CONF}' | sh -s _toggle_mouse"
+bind m if-shell "tmux show-options -g mouse | grep -q 'on'" \
+    "set-option -g mouse off; display 'Mouse: OFF'" \
+    "set-option -g mouse on;  display 'Mouse: ON'"
 
 # -- copy mode -----------------------------------------------------------------
 
@@ -248,16 +250,8 @@ if-shell 'test "$(uname)" = "Darwin"' \
     'bind P run-shell "xclip -o -sel clip | tmux load-buffer - && tmux paste-buffer"; \
      bind p run-shell "xclip -o -sel clip | tmux load-buffer - && tmux paste-buffer"'
 
-# Enable clipboard integration for iTerm2
+# Enable clipboard integration (iTerm2 / OSC 52)
 set-option -g set-clipboard on
-
-# Allow terminal to set clipboard (iTerm2 support)
-set-option -ag terminal-overrides ',*:Ms=\\E]52;c;%p2%s\\007'
-
-# Enable clipboard integration for iTerm2
-set-option -g set-clipboard on
-
-# Allow terminal to set clipboard (iTerm2 support)
 set-option -ag terminal-overrides ',*:Ms=\\E]52;c;%p2%s\\007'
 
 # local config
