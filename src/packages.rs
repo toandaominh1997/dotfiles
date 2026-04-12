@@ -1,27 +1,72 @@
 use crate::utils::{command_exists, detect_os, execute_command, log_error, log_info, log_success};
-use std::process::{Command, Stdio};
 use std::fs::File;
 use std::io::BufReader;
+use std::process::{Command, Stdio};
 
 const BREW_INSTALL_URL: &str = "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh";
 
-pub const REQUIRED_PACKAGES: &[&str] = &[
-    "bash", "fzf", "git", "neovim", "tmux", "vim", "zsh"
-];
+pub const REQUIRED_PACKAGES: &[&str] = &["bash", "fzf", "git", "neovim", "tmux", "vim", "zsh"];
 
 pub const FORMULAE_PACKAGES: &[&str] = &[
-    "ansible", "awscli", "bat", "bazelisk", "cmake", "curl", "duf", "docker",
-    "docker-compose", "fish", "gcc", "gh", "go", "helm", "htop", "httpie", "k9s",
-    "kubernetes-cli", "lazydocker", "lazygit", "node", "nvm", "rust", "tldr",
-    "telnet", "terraform", "thefuck", "unzip", "wget", "zoxide"
+    "ansible",
+    "awscli",
+    "bat",
+    "bazelisk",
+    "cmake",
+    "curl",
+    "duf",
+    "docker",
+    "docker-compose",
+    "fish",
+    "gcc",
+    "gh",
+    "go",
+    "helm",
+    "htop",
+    "httpie",
+    "k9s",
+    "kubernetes-cli",
+    "lazydocker",
+    "lazygit",
+    "node",
+    "nvm",
+    "rust",
+    "tldr",
+    "telnet",
+    "terraform",
+    "thefuck",
+    "unzip",
+    "wget",
+    "zoxide",
 ];
 
 pub const CASK_PACKAGES: &[&str] = &[
-    "alt-tab", "brave-browser", "discord", "docker", "git-credential-manager",
-    "google-chrome", "google-cloud-sdk", "iterm2", "jetbrains-toolbox", "messenger",
-    "microsoft-edge", "microsoft-teams", "monitorcontrol", "notion", "obsidian",
-    "postman", "rar", "slack", "spotify", "stats", "sublime-text", "telegram",
-    "tor-browser", "visual-studio-code", "whatsapp", "zoom"
+    "alt-tab",
+    "brave-browser",
+    "discord",
+    "docker",
+    "git-credential-manager",
+    "google-chrome",
+    "google-cloud-sdk",
+    "iterm2",
+    "jetbrains-toolbox",
+    "messenger",
+    "microsoft-edge",
+    "microsoft-teams",
+    "monitorcontrol",
+    "notion",
+    "obsidian",
+    "postman",
+    "rar",
+    "slack",
+    "spotify",
+    "stats",
+    "sublime-text",
+    "telegram",
+    "tor-browser",
+    "visual-studio-code",
+    "whatsapp",
+    "zoom",
 ];
 
 use serde::Deserialize;
@@ -36,7 +81,7 @@ struct PackageConfig {
 pub fn get_packages_from_json(array_name: &str, default_packages: &[&str]) -> Vec<String> {
     let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
     let config_path = format!("{}/.dotfiles/tool/config/packages.json", home);
-    
+
     let file = match File::open(&config_path) {
         Ok(f) => f,
         Err(_) => return default_packages.iter().map(|s| s.to_string()).collect(),
@@ -77,27 +122,50 @@ fn package_exists(package: &str, pkg_type: &str) -> bool {
 
     if pkg_manager == "brew" {
         if pkg_type == "--cask" {
-            Command::new("brew").args(["list", "--cask", package])
-                .stdout(Stdio::null()).stderr(Stdio::null()).status()
-                .map(|s| s.success()).unwrap_or(false)
+            Command::new("brew")
+                .args(["list", "--cask", package])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status()
+                .map(|s| s.success())
+                .unwrap_or(false)
         } else {
-            Command::new("brew").args(["list", "--formula", package])
-                .stdout(Stdio::null()).stderr(Stdio::null()).status()
-                .map(|s| s.success()).unwrap_or(false)
+            Command::new("brew")
+                .args(["list", "--formula", package])
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status()
+                .map(|s| s.success())
+                .unwrap_or(false)
                 || command_exists(package)
         }
     } else if pkg_manager == "apt-get" {
-        Command::new("dpkg").args(["-s", package])
-            .stdout(Stdio::null()).stderr(Stdio::null()).status()
-            .map(|s| s.success()).unwrap_or(false) || command_exists(package)
+        Command::new("dpkg")
+            .args(["-s", package])
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+            || command_exists(package)
     } else if pkg_manager == "dnf" {
-        Command::new("rpm").args(["-q", package])
-            .stdout(Stdio::null()).stderr(Stdio::null()).status()
-            .map(|s| s.success()).unwrap_or(false) || command_exists(package)
+        Command::new("rpm")
+            .args(["-q", package])
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+            || command_exists(package)
     } else if pkg_manager == "pacman" {
-        Command::new("pacman").args(["-Qs", package])
-            .stdout(Stdio::null()).stderr(Stdio::null()).status()
-            .map(|s| s.success()).unwrap_or(false) || command_exists(package)
+        Command::new("pacman")
+            .args(["-Qs", package])
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()
+            .map(|s| s.success())
+            .unwrap_or(false)
+            || command_exists(package)
     } else {
         command_exists(package)
     }
@@ -117,11 +185,14 @@ pub fn init_pkg_manager(upgrade_mode: bool, dry_run: bool, verbose: bool) {
         } else {
             execute_command(
                 &format!("/bin/bash -c \"$(curl -fsSL {})\"", BREW_INSTALL_URL),
-                "Install Homebrew", dry_run, verbose
+                "Install Homebrew",
+                dry_run,
+                verbose,
             );
             if os_type != "macos" {
                 let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
-                let path = if std::path::Path::new(&format!("{}/.homebrew/bin/brew", home)).exists() {
+                let path = if std::path::Path::new(&format!("{}/.homebrew/bin/brew", home)).exists()
+                {
                     format!("{}/.homebrew/bin/brew", home)
                 } else if std::path::Path::new("/home/linuxbrew/.linuxbrew/bin/brew").exists() {
                     "/home/linuxbrew/.linuxbrew/bin/brew".to_string()
@@ -129,16 +200,36 @@ pub fn init_pkg_manager(upgrade_mode: bool, dry_run: bool, verbose: bool) {
                     "".to_string()
                 };
                 if !path.is_empty() {
-                    execute_command(&format!("eval \"$({} shellenv)\"", path), "Eval brew shellenv", dry_run, verbose);
+                    execute_command(
+                        &format!("eval \"$({} shellenv)\"", path),
+                        "Eval brew shellenv",
+                        dry_run,
+                        verbose,
+                    );
                 }
-                execute_command("brew update --force --quiet", "Brew update", dry_run, verbose);
-                execute_command("chmod -R go-w \"$(brew --prefix)/share/zsh\"", "Brew fix permissions", dry_run, verbose);
+                execute_command(
+                    "brew update --force --quiet",
+                    "Brew update",
+                    dry_run,
+                    verbose,
+                );
+                execute_command(
+                    "chmod -R go-w \"$(brew --prefix)/share/zsh\"",
+                    "Brew fix permissions",
+                    dry_run,
+                    verbose,
+                );
             }
         }
     } else if pkg_manager == "apt-get" {
         log_info("==> Initializing APT...");
         if upgrade_mode {
-            execute_command("sudo apt-get update && sudo apt-get upgrade -y", "Update APT", dry_run, verbose);
+            execute_command(
+                "sudo apt-get update && sudo apt-get upgrade -y",
+                "Update APT",
+                dry_run,
+                verbose,
+            );
         } else {
             execute_command("sudo apt-get update", "Update APT", dry_run, verbose);
         }
@@ -150,9 +241,19 @@ pub fn init_pkg_manager(upgrade_mode: bool, dry_run: bool, verbose: bool) {
     } else if pkg_manager == "pacman" {
         log_info("==> Initializing Pacman...");
         if upgrade_mode {
-            execute_command("sudo pacman -Syu --noconfirm", "Update Pacman", dry_run, verbose);
+            execute_command(
+                "sudo pacman -Syu --noconfirm",
+                "Update Pacman",
+                dry_run,
+                verbose,
+            );
         } else {
-            execute_command("sudo pacman -Sy", "Update Pacman database", dry_run, verbose);
+            execute_command(
+                "sudo pacman -Sy",
+                "Update Pacman database",
+                dry_run,
+                verbose,
+            );
         }
     }
 }
@@ -160,7 +261,12 @@ pub fn init_pkg_manager(upgrade_mode: bool, dry_run: bool, verbose: bool) {
 use rayon::prelude::*;
 
 pub fn process_packages(
-    packages: &[String], pkg_type: &str, is_required: bool, upgrade_mode: bool, dry_run: bool, verbose: bool
+    packages: &[String],
+    pkg_type: &str,
+    is_required: bool,
+    upgrade_mode: bool,
+    dry_run: bool,
+    verbose: bool,
 ) {
     if packages.is_empty() {
         return;
@@ -203,9 +309,16 @@ pub fn process_packages(
     if upgrade_mode && !to_upgrade.is_empty() {
         log_info(&format!("Upgrading {} packages...", to_upgrade.len()));
         let cmd = if pkg_manager == "brew" {
-            format!("brew upgrade {} {} 2>/dev/null || true", pkg_type, to_upgrade.join(" "))
+            format!(
+                "brew upgrade {} {} 2>/dev/null || true",
+                pkg_type,
+                to_upgrade.join(" ")
+            )
         } else if pkg_manager == "apt-get" {
-            format!("sudo apt-get install --only-upgrade -y {}", to_upgrade.join(" "))
+            format!(
+                "sudo apt-get install --only-upgrade -y {}",
+                to_upgrade.join(" ")
+            )
         } else if pkg_manager == "dnf" {
             format!("sudo dnf upgrade -y {}", to_upgrade.join(" "))
         } else if pkg_manager == "pacman" {
