@@ -121,7 +121,11 @@ process_packages() {
     local install_cmd=""
 
     if [[ "$pkg_manager" == "brew" ]]; then
-      install_cmd="brew install $type ${to_install[*]}"
+      local adopt_flag=""
+      if [[ "$type" == "--cask" ]]; then
+        adopt_flag="--adopt "
+      fi
+      install_cmd="brew install $type $adopt_flag${to_install[*]}"
     elif [[ "$pkg_manager" == "apt-get" ]]; then
       install_cmd="sudo apt-get install -y ${to_install[*]}"
     elif [[ "$pkg_manager" == "dnf" ]]; then
@@ -131,11 +135,36 @@ process_packages() {
     fi
 
     if ! execute_command "$install_cmd" "Install packages"; then
-      if [[ "$is_required" == true ]]; then
-        log_error "Failed to install required packages."
-        exit 1
+      log_error "Batch installation failed. Attempting individual installation..."
+      local failed_pkgs=()
+      for pkg in "${to_install[@]}"; do
+        local single_cmd=""
+        if [[ "$pkg_manager" == "brew" ]]; then
+          local adopt_flag=""
+          if [[ "$type" == "--cask" ]]; then
+            adopt_flag="--adopt "
+          fi
+          single_cmd="brew install $type $adopt_flag$pkg"
+        elif [[ "$pkg_manager" == "apt-get" ]]; then
+          single_cmd="sudo apt-get install -y $pkg"
+        elif [[ "$pkg_manager" == "dnf" ]]; then
+          single_cmd="sudo dnf install -y $pkg"
+        elif [[ "$pkg_manager" == "pacman" ]]; then
+          single_cmd="sudo pacman -S --noconfirm $pkg"
+        fi
+        
+        if ! execute_command "$single_cmd" "Install $pkg"; then
+          failed_pkgs+=("$pkg")
+        fi
+      done
+      
+      if [[ ${#failed_pkgs[@]} -gt 0 ]]; then
+        log_error "Failed to install the following packages: ${failed_pkgs[*]}"
+        if [[ "$is_required" == true ]]; then
+          exit 1
+        fi
       else
-        log_warn "Failed to install optional packages."
+        log_success "Successfully installed packages individually."
       fi
     else
       log_success "Successfully installed packages."
