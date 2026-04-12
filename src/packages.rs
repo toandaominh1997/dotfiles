@@ -1,7 +1,7 @@
 use crate::utils::{command_exists, detect_os, execute_command, log_error, log_info, log_success, log_warn};
 use std::process::{Command, Stdio};
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::BufReader;
 
 const BREW_INSTALL_URL: &str = "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh";
 
@@ -24,39 +24,40 @@ pub const CASK_PACKAGES: &[&str] = &[
     "tor-browser", "visual-studio-code", "whatsapp", "zoom"
 ];
 
-pub fn get_packages_from_setup_sh(array_name: &str, default_packages: &[&str]) -> Vec<String> {
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+struct PackageConfig {
+    required_packages: Option<Vec<String>>,
+    formulae_packages: Option<Vec<String>>,
+    cask_packages: Option<Vec<String>>,
+}
+
+pub fn get_packages_from_json(array_name: &str, default_packages: &[&str]) -> Vec<String> {
     let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
-    let setup_sh_path = format!("{}/.dotfiles/tool/lib/packages.sh", home);
+    let config_path = format!("{}/.dotfiles/tool/config/packages.json", home);
     
-    let file = match File::open(&setup_sh_path) {
+    let file = match File::open(&config_path) {
         Ok(f) => f,
         Err(_) => return default_packages.iter().map(|s| s.to_string()).collect(),
     };
 
     let reader = BufReader::new(file);
-    let mut in_array = false;
-    let mut packages = Vec::new();
-    let target_declaration = format!("{}=(", array_name);
+    let config: PackageConfig = match serde_json::from_reader(reader) {
+        Ok(c) => c,
+        Err(_) => return default_packages.iter().map(|s| s.to_string()).collect(),
+    };
 
-    for line in reader.lines().map_while(Result::ok) {
-        let trimmed = line.trim();
-        
-        if in_array {
-            if trimmed == ")" {
-                break;
-            }
-            if !trimmed.is_empty() && !trimmed.starts_with('#') {
-                packages.push(trimmed.to_string());
-            }
-        } else if trimmed == target_declaration {
-            in_array = true;
-        }
-    }
+    let pkgs = match array_name {
+        "required_packages" => config.required_packages,
+        "formulae_packages" => config.formulae_packages,
+        "cask_packages" => config.cask_packages,
+        _ => None,
+    };
 
-    if packages.is_empty() {
-        default_packages.iter().map(|s| s.to_string()).collect()
-    } else {
-        packages
+    match pkgs {
+        Some(p) if !p.is_empty() => p,
+        _ => default_packages.iter().map(|s| s.to_string()).collect(),
     }
 }
 

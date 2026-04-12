@@ -1,77 +1,29 @@
 #!/usr/bin/env bash
 
-# Required brew formula packages (must be installed)
-# NOTE: The rust 'dotup' CLI dynamically parses these arrays. Do not alter the syntax of the array declaration.
-required_packages=(
-  bash
-  fzf
-  git
-  neovim
-  tmux
-  vim
-  zsh
-)
+# Load packages dynamically from JSON config
+CONFIG_FILE="$SCRIPT_DIR/config/packages.json"
 
-# Additional brew formula packages (optional)
-formulae_packages=(
-  ansible
-  awscli
-  bat
-  bazelisk
-  cmake
-  curl
-  duf
-  docker
-  docker-compose
-  fish
-  gcc
-  gh
-  go
-  helm
-  htop
-  httpie
-  k9s
-  kubernetes-cli
-  lazydocker
-  lazygit
-  node
-  nvm
-  rust
-  tldr
-  telnet
-  terraform
-  thefuck
-  unzip
-  wget
-  zoxide
-)
+parse_json_array() {
+    local key="$1"
+    if command -v python3 >/dev/null 2>&1; then
+        python3 -c "import json, sys; data=json.load(sys.stdin); print('\n'.join(data.get('$key', [])))" < "$CONFIG_FILE"
+    else
+        echo -e "\033[0;31m[ERROR]\033[0m Python 3 is required to parse the JSON configuration." >&2
+        exit 1
+    fi
+}
 
-# Brew cask packages (macOS only)
-cask_packages=(
-  alt-tab
-  brave-browser
-  discord
-  docker
-  git-credential-manager
-  google-chrome
-  google-cloud-sdk
-  iterm2
-  jetbrains-toolbox
-  messenger
-  microsoft-edge
-  microsoft-teams
-  monitorcontrol
-  notion
-  obsidian
-  postman
-  rar
-  slack
-  spotify
-  stats
-  sublime-text
-  telegram
-  tor-browser
-  visual-studio-code
-  whatsapp
-  zoom
-)
+required_packages=()
+while IFS= read -r line; do
+  [[ -n "$line" ]] && required_packages+=("$line")
+done < <(parse_json_array "required_packages")
+
+formulae_packages=()
+while IFS= read -r line; do
+  [[ -n "$line" ]] && formulae_packages+=("$line")
+done < <(parse_json_array "formulae_packages")
+
+cask_packages=()
+while IFS= read -r line; do
+  [[ -n "$line" ]] && cask_packages+=("$line")
+done < <(parse_json_array "cask_packages")
