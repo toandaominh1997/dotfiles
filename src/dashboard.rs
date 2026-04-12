@@ -18,23 +18,29 @@ pub fn show_dashboard() {
 
         println!(
             "{}",
-            "==============================================="
-                .cyan()
-                .bold()
+            r#"
+    ____        __               
+   / __ \____  / /___  ______    
+  / / / / __ \/ __/ / / / __ \   
+ / /_/ / /_/ / /_/ /_/ / /_/ /   
+/_____/\____/\__/\__,_/ .___/    
+                     /_/         
+            "#
+            .magenta()
+            .bold()
         );
         println!(
             "{}",
-            "            Dotup System Dashboard             "
-                .green()
-                .bold()
+            "       System Metrics Dashboard       ".green().bold()
         );
         println!(
             "{}",
-            "==============================================="
-                .cyan()
-                .bold()
+            "======================================".bright_black()
         );
-        println!("{}", "Press Ctrl+C to exit".dimmed());
+        println!(
+            "{}\n",
+            "         Press Ctrl+C to exit         ".bright_black()
+        );
 
         // CPU
         println!("\n[{}]", "CPU Usage".yellow().bold());

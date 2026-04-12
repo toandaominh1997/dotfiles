@@ -102,38 +102,36 @@ fn run_all(upgrade_mode: bool, dry_run: bool, verbose: bool) {
 
 fn interactive_menu(mut upgrade_mode: bool, dry_run: bool, verbose: bool) {
     let selections = &[
-        "Install Everything (Default)",
-        "Install Homebrew & Packages",
-        "Setup Zsh & Themes",
-        "Setup Tmux",
-        "Setup Vim & Neovim",
-        "Install Fonts",
-        "System Dashboard",
-        "Upgrade Existing Setup",
-        "Quit",
+        "🚀 Install Everything (Default)",
+        "📦 Install Homebrew & Packages",
+        "🐚 Setup Zsh & Themes",
+        "💻 Setup Tmux",
+        "📝 Setup Vim & Neovim",
+        "🔤 Install Fonts",
+        "📈 System Dashboard",
+        "🔄 Upgrade Existing Setup",
+        "❌ Quit",
     ];
 
     loop {
-        print!("\x1B[2J\x1B[1;1H");
+        print!("{esc}[2J{esc}[1;1H", esc = 27 as char);
 
         println!(
             "{}",
-            "==============================================="
-                .cyan()
-                .bold()
+            r#"
+    ____        __               
+   / __ \____  / /___  ______    
+  / / / / __ \/ __/ / / / __ \   
+ / /_/ / /_/ / /_/ /_/ / /_/ /   
+/_____/\____/\__/\__,_/ .___/    
+                     /_/         
+            "#
+            .cyan()
+            .bold()
         );
-        println!(
-            "{}",
-            "            Dotfiles Setup Script              "
-                .green()
-                .bold()
-        );
-        println!(
-            "{}",
-            "==============================================="
-                .cyan()
-                .bold()
-        );
+        println!("{}", "    Dotfiles Setup & Manager      ".green().bold());
+        println!("{}", "====================================".bright_black());
+        println!();
 
         let selection = Select::with_theme(&ColorfulTheme::default())
             .with_prompt("Please select an option")

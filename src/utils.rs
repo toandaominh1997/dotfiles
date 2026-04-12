@@ -2,25 +2,25 @@ use colored::*;
 use std::process::{Command, Stdio};
 
 pub fn log_info(msg: &str) {
-    println!("{} {}", "[INFO]".blue(), msg);
+    println!("{} {}", "ℹ".blue().bold(), msg);
 }
 
 pub fn log_warn(msg: &str) {
-    println!("{} {}", "[WARN]".yellow().bold(), msg);
+    println!("{} {}", "⚠".yellow().bold(), msg);
 }
 
 pub fn log_error(msg: &str) {
-    eprintln!("{} {}", "[ERROR]".red(), msg);
+    eprintln!("{} {}", "✖".red().bold(), msg);
 }
 
 pub fn log_debug(msg: &str, verbose: bool) {
     if verbose {
-        println!("{} {}", "[DEBUG]".cyan(), msg);
+        println!("{} {}", "⚙".cyan(), msg.dimmed());
     }
 }
 
 pub fn log_success(msg: &str) {
-    println!("{} {}", "[SUCCESS]".green(), msg);
+    println!("{} {}", "✔".green().bold(), msg);
 }
 
 pub fn detect_os() -> String {
