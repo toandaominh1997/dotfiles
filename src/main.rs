@@ -14,7 +14,7 @@ use std::process::Command;
 use packages::{process_packages, CASK_PACKAGES, FORMULAE_PACKAGES, REQUIRED_PACKAGES};
 use utils::{detect_os, log_error, log_info, log_success};
 
-const SCRIPT_VERSION: &str = "2.0.0";
+const SCRIPT_VERSION: &str = "2.1.0";
 
 #[derive(Parser, Debug)]
 #[command(author, version = SCRIPT_VERSION, about = "Dotfiles Setup Script", long_about = None)]
