@@ -29,6 +29,7 @@ UPGRADE_MODE=false
 DRY_RUN=false
 VERBOSE=false
 FORCE=false
+AUTO_MODE=false
 has_upgrade="non_upgrade"
 
 # Required brew formula packages (must be installed)
@@ -171,11 +172,13 @@ OPTIONS:
     -d, --dry-run      Show what would be installed without making changes
     -v, --verbose      Enable verbose output
     -f, --force        Force installation even if already present
+    -a, --auto         Run automatically without interactive menu
     -h, --help         Show this help message
     --version          Show script version
 
 EXAMPLES:
-    $0                 # Basic installation
+    $0                 # Basic installation (Interactive)
+    $0 --auto          # Basic installation (Non-interactive)
     $0 --upgrade       # Upgrade existing packages
     $0 --dry-run       # Preview what would be installed
     $0 -v --upgrade    # Verbose upgrade mode
@@ -202,6 +205,10 @@ parse_arguments() {
                 ;;
             -f|--force)
                 FORCE=true
+                shift
+                ;;
+            -a|--auto)
+                AUTO_MODE=true
                 shift
                 ;;
             -h|--help)
@@ -524,52 +531,96 @@ setup_vim_nvim() {
   fi
 }
 
-main() {
-
-  # Parse command line arguments
-  parse_arguments "$@"
-
-  # Show script info
-  log_info "Upgrade: $UPGRADE_MODE"
-
-  local upgrade_flag="$has_upgrade"
+run_packages() {
   local os_type
   os_type="$(detect_os)"
-
-  # Install Homebrew if not present
   log_info "==> Installing Homebrew..."
   install_homebrew
 
-  # Brew formulae
   process_packages "--formula" "$UPGRADE_MODE" true "${required_packages[@]}"
-
   process_packages "--formula" "$UPGRADE_MODE" false "${formulae_packages[@]}"
 
-  # 3) Brew casks (macOS only)
   if [[ "$os_type" == "macos" ]]; then
-  echo "==> Installing macOS Brew cask packages..."
-  process_packages "--cask" "$UPGRADE_MODE" false "${cask_packages[@]}"
-  fi 
+    echo "==> Installing macOS Brew cask packages..."
+    process_packages "--cask" "$UPGRADE_MODE" false "${cask_packages[@]}"
+  fi
+}
 
-  # 4) Set up Oh My Zsh & plugins
+run_zsh() {
   setup_oh_my_zsh
   setup_zsh_plugins
   setup_p10k_config
-
-  # # 5) Add custom Zsh config to ~/.zshrc (if desired)
   ensure_custom_config_in_zshrc
+}
 
-  # 6) Set up Tmux
+install_fonts() {
+  log_info "==> Installing Nerd Fonts (MesloLGS NF)..."
+
+  local os_type
+  os_type="$(detect_os)"
+  local font_dir
+
+  if [[ "$os_type" == "macos" ]]; then
+    font_dir="$HOME/Library/Fonts"
+  else
+    font_dir="$HOME/.local/share/fonts"
+  fi
+
+  if [[ ! -d "$font_dir" ]]; then
+    mkdir -p "$font_dir"
+  fi
+
+  local base_url="https://github.com/romkatv/powerlevel10k-media/raw/master"
+  local fonts=(
+    "MesloLGS%20NF%20Regular.ttf"
+    "MesloLGS%20NF%20Bold.ttf"
+    "MesloLGS%20NF%20Italic.ttf"
+    "MesloLGS%20NF%20Bold%20Italic.ttf"
+  )
+
+  local pids=()
+  local downloaded=0
+
+  for font_file in "${fonts[@]}"; do
+    local decoded_font="${font_file//%20/ }"
+    local font_path="$font_dir/$decoded_font"
+
+    if [[ -f "$font_path" ]]; then
+      log_info "Font already exists: $decoded_font"
+      continue
+    fi
+
+    log_info "Downloading $decoded_font..."
+    curl -fsSL "$base_url/$font_file" -o "$font_path" &
+    pids+=($!)
+    ((downloaded++))
+  done
+
+  if [[ ${#pids[@]} -gt 0 ]]; then
+    for pid in "${pids[@]}"; do
+      wait "$pid" || log_warn "A font download failed"
+    done
+    log_success "Fonts downloaded successfully."
+  fi
+
+  if [[ "$downloaded" -gt 0 && "$os_type" == "linux" ]] && command_exists fc-cache; then
+    log_info "Updating font cache..."
+    fc-cache -f -v >/dev/null 2>&1
+  fi
+}
+
+run_all() {
+  run_packages
+  install_fonts
+  run_zsh
   setup_tmux
-
-  # 7) Set up Vim/Neovim
   setup_vim_nvim
 
-  # 8) Cleanup
   log_info "==> Running final Brew cleanup..."
   brew cleanup || true
 
   log_success "==> Dotfiles setup complete!"
+  
   log_info ""
   log_info "Next steps:"
   log_info "  1. Restart your terminal or run: source ~/.zshrc"
@@ -581,7 +632,83 @@ main() {
   log_info "  - Tmux: ~/.tmux.conf"
   log_info "  - Vim:  ~/.vimrc"
   log_info "  - Nvim: ~/.config/nvim"
+}
 
+interactive_menu() {
+  while true; do
+    clear
+    echo -e "\033[1;36m===============================================\033[0m"
+    echo -e "\033[1;32m            Dotfiles Setup Script              \033[0m"
+    echo -e "\033[1;36m===============================================\033[0m"
+    echo "Please select an option:"
+    echo "  1) Install Everything (Default)"
+    echo "  2) Install Homebrew & Packages"
+    echo "  3) Setup Zsh & Themes"
+    echo "  4) Setup Tmux"
+    echo "  5) Setup Vim & Neovim"
+    echo "  6) Install Fonts"
+    echo "  7) Upgrade Existing Setup"
+    echo "  q) Quit"
+    echo -e "\033[1;36m===============================================\033[0m"
+    read -p "Enter your choice [1]: " choice
+    choice=${choice:-1}
+    
+    case $choice in
+      1)
+        run_all
+        break
+        ;;
+      2)
+        run_packages
+        read -p "Press Enter to continue..."
+        ;;
+      3)
+        run_zsh
+        read -p "Press Enter to continue..."
+        ;;
+      4)
+        setup_tmux
+        read -p "Press Enter to continue..."
+        ;;
+      5)
+        setup_vim_nvim
+        read -p "Press Enter to continue..."
+        ;;
+      6)
+        install_fonts
+        read -p "Press Enter to continue..."
+        ;;
+      7)
+        UPGRADE_MODE=true
+        has_upgrade="upgrade"
+        run_all
+        break
+        ;;
+      q|Q)
+        log_info "Exiting..."
+        exit 0
+        ;;
+      *)
+        log_error "Invalid choice"
+        sleep 1
+        ;;
+    esac
+  done
+}
+
+main() {
+
+  # Parse command line arguments
+  parse_arguments "$@"
+
+  # Show script info
+  log_info "Upgrade: $UPGRADE_MODE"
+
+  if [[ "$AUTO_MODE" == true ]]; then
+    run_all
+  else
+    interactive_menu
+  fi
 }
 
 main "$@"

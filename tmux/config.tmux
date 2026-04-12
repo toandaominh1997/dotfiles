@@ -195,6 +195,7 @@ if "test ! -d ~/.tmux/plugins/tpm" \
 set-option -g @tpm_plugins ' \
     tmux-plugins/tpm \
     tmux-plugins/tmux-copycat \
+    tmux-plugins/tmux-yank \
     tmux-plugins/tmux-battery \
     tmux-plugins/tmux-resurrect \
     tmux-plugins/tmux-continuum \
@@ -233,27 +234,14 @@ set-option -g @extrakto_copy_key "ctrl-y"
 # Initialize TMUX plugin manager (this must be the last line of the conf file)
 run-shell '~/.tmux/plugins/tpm/tpm'
 
-
-# Copy to system clipboard as in vim (both with y and the default `Enter` mappings)
-# macOS with iTerm2 integration
-if-shell 'test "$(uname)" = "Darwin"' \
-    'bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "pbcopy"; \
-     bind -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "pbcopy"; \
-     bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "pbcopy"' \
-    'bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"; \
-     bind -T copy-mode-vi Enter send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"; \
-     bind -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "xclip -i -f -selection primary | xclip -i -selection clipboard"'
-
-# Paste from system clipboard
-# Use Cmd+V in iTerm2 or prefix+P/p in tmux
-if-shell 'test "$(uname)" = "Darwin"' \
-    'bind P run-shell "pbpaste | tmux load-buffer - && tmux paste-buffer"; \
-     bind p run-shell "pbpaste | tmux load-buffer - && tmux paste-buffer"' \
-    'bind P run-shell "xclip -o -sel clip | tmux load-buffer - && tmux paste-buffer"; \
-     bind p run-shell "xclip -o -sel clip | tmux load-buffer - && tmux paste-buffer"'
-
 # Enable clipboard integration (iTerm2 / OSC 52)
 set-option -g set-clipboard on
+
+# Paste from system clipboard
+# Use Cmd+V in iTerm2 or prefix+p in tmux
+if-shell 'test "$(uname)" = "Darwin"' \
+    'bind P run-shell "pbpaste | tmux load-buffer - && tmux paste-buffer"; \
+     bind p run-shell "pbpaste | tmux load-buffer - && tmux paste-buffer"'
 
 # local config
 if-shell "[ -f ~/.tmux.conf.local ]" 'source ~/.tmux.conf.local'
