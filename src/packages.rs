@@ -26,7 +26,7 @@ pub const CASK_PACKAGES: &[&str] = &[
 
 pub fn get_packages_from_setup_sh(array_name: &str, default_packages: &[&str]) -> Vec<String> {
     let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
-    let setup_sh_path = format!("{}/.dotfiles/tool/setup.sh", home);
+    let setup_sh_path = format!("{}/.dotfiles/tool/lib/packages.sh", home);
     
     let file = match File::open(&setup_sh_path) {
         Ok(f) => f,
