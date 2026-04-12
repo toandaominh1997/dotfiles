@@ -11,7 +11,7 @@ use colored::*;
 use std::process::Command;
 
 use packages::{
-    install_homebrew, process_packages, CASK_PACKAGES, FORMULAE_PACKAGES, REQUIRED_PACKAGES,
+    process_packages, CASK_PACKAGES, FORMULAE_PACKAGES, REQUIRED_PACKAGES,
 };
 use utils::{detect_os, log_info, log_success, log_error};
 
@@ -43,8 +43,7 @@ struct Args {
 
 fn run_packages(upgrade_mode: bool, dry_run: bool, verbose: bool) {
     let os_type = detect_os();
-    log_info("==> Installing Homebrew...");
-    install_homebrew(upgrade_mode, dry_run, verbose);
+    packages::init_pkg_manager(upgrade_mode, dry_run, verbose);
 
     let required = packages::get_packages_from_json("required_packages", REQUIRED_PACKAGES);
     let formulae = packages::get_packages_from_json("formulae_packages", FORMULAE_PACKAGES);

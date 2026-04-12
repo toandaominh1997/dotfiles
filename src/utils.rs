@@ -23,12 +23,23 @@ pub fn log_success(msg: &str) {
     println!("{} {}", "[SUCCESS]".green(), msg);
 }
 
-pub fn detect_os() -> &'static str {
+pub fn detect_os() -> String {
     if cfg!(target_os = "macos") {
-        "macos"
-    } else {
-        "linux"
+        return "macos".to_string();
     }
+    
+    if let Ok(content) = std::fs::read_to_string("/etc/os-release") {
+        let content_lower = content.to_lowercase();
+        if content_lower.contains("id_like=debian") || content_lower.contains("id=ubuntu") || content_lower.contains("id=debian") {
+            return "debian".to_string();
+        } else if content_lower.contains("id_like=arch") || content_lower.contains("id=arch") {
+            return "arch".to_string();
+        } else if content_lower.contains("id_like=rhel") || content_lower.contains("id_like=fedora") || content_lower.contains("id=fedora") {
+            return "redhat".to_string();
+        }
+    }
+    
+    "linux".to_string()
 }
 
 pub fn command_exists(cmd: &str) -> bool {

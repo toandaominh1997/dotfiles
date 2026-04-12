@@ -23,7 +23,7 @@ AUTO_MODE=false
 # Source modular components (Aligns perfectly with Rust src/* modules)
 source "$SCRIPT_DIR/lib/utils.sh"
 source "$SCRIPT_DIR/lib/packages.sh"
-source "$SCRIPT_DIR/lib/brew.sh"
+source "$SCRIPT_DIR/lib/pkg_manager.sh"
 source "$SCRIPT_DIR/lib/zsh.sh"
 source "$SCRIPT_DIR/lib/tmux.sh"
 source "$SCRIPT_DIR/lib/vim.sh"

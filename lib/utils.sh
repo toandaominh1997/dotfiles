@@ -29,7 +29,23 @@ command_exists() {
 detect_os() {
   case "$(uname)" in
     Darwin) echo "macos" ;;
-    *)      echo "linux" ;;
+    Linux)
+      if [[ -f /etc/os-release ]]; then
+        . /etc/os-release
+        if [[ "${ID_LIKE:-}" == *"debian"* || "${ID:-}" == *"ubuntu"* || "${ID:-}" == *"debian"* ]]; then
+          echo "debian"
+          return
+        elif [[ "${ID_LIKE:-}" == *"arch"* || "${ID:-}" == *"arch"* ]]; then
+          echo "arch"
+          return
+        elif [[ "${ID_LIKE:-}" == *"rhel"* || "${ID_LIKE:-}" == *"fedora"* || "${ID:-}" == *"fedora"* ]]; then
+          echo "redhat"
+          return
+        fi
+      fi
+      echo "linux"
+      ;;
+    *) echo "unknown" ;;
   esac
 }
 

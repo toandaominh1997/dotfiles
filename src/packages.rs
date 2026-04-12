@@ -61,51 +61,98 @@ pub fn get_packages_from_json(array_name: &str, default_packages: &[&str]) -> Ve
     }
 }
 
-fn package_exists(package: &str, pkg_type: &str) -> bool {
-    if pkg_type == "--cask" {
-        Command::new("brew").args(["list", "--cask", package])
-            .stdout(Stdio::null()).stderr(Stdio::null()).status()
-            .map(|s| s.success()).unwrap_or(false)
-    } else {
-        Command::new("brew").args(["list", "--formula", package])
-            .stdout(Stdio::null()).stderr(Stdio::null()).status()
-            .map(|s| s.success()).unwrap_or(false)
-            || command_exists(package)
+pub fn get_pkg_manager(os_type: &str) -> &'static str {
+    match os_type {
+        "macos" => "brew",
+        "debian" => "apt-get",
+        "redhat" => "dnf",
+        "arch" => "pacman",
+        _ => "brew",
     }
 }
 
-pub fn install_homebrew(upgrade_mode: bool, dry_run: bool, verbose: bool) {
-    if command_exists("brew") {
-        log_info("Homebrew is already installed.");
-        if upgrade_mode {
-            execute_command("brew update", "Update Homebrew", dry_run, verbose);
-            log_info("End update homebrew");
+fn package_exists(package: &str, pkg_type: &str) -> bool {
+    let os_type = detect_os();
+    let pkg_manager = get_pkg_manager(&os_type);
+
+    if pkg_manager == "brew" {
+        if pkg_type == "--cask" {
+            Command::new("brew").args(["list", "--cask", package])
+                .stdout(Stdio::null()).stderr(Stdio::null()).status()
+                .map(|s| s.success()).unwrap_or(false)
+        } else {
+            Command::new("brew").args(["list", "--formula", package])
+                .stdout(Stdio::null()).stderr(Stdio::null()).status()
+                .map(|s| s.success()).unwrap_or(false)
+                || command_exists(package)
         }
+    } else if pkg_manager == "apt-get" {
+        Command::new("dpkg").args(["-s", package])
+            .stdout(Stdio::null()).stderr(Stdio::null()).status()
+            .map(|s| s.success()).unwrap_or(false) || command_exists(package)
+    } else if pkg_manager == "dnf" {
+        Command::new("rpm").args(["-q", package])
+            .stdout(Stdio::null()).stderr(Stdio::null()).status()
+            .map(|s| s.success()).unwrap_or(false) || command_exists(package)
+    } else if pkg_manager == "pacman" {
+        Command::new("pacman").args(["-Qs", package])
+            .stdout(Stdio::null()).stderr(Stdio::null()).status()
+            .map(|s| s.success()).unwrap_or(false) || command_exists(package)
     } else {
-        execute_command(
-            &format!("/bin/bash -c \"$(curl -fsSL {})\"", BREW_INSTALL_URL),
-            "Install Homebrew", dry_run, verbose
-        );
+        command_exists(package)
+    }
+}
 
-        if detect_os() == "linux" {
-            let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
-            let linuxbrew_home = format!("{}/.homebrew/bin/brew", home);
-            let linuxbrew_sys = "/home/linuxbrew/.linuxbrew/bin/brew";
+pub fn init_pkg_manager(upgrade_mode: bool, dry_run: bool, verbose: bool) {
+    let os_type = detect_os();
+    let pkg_manager = get_pkg_manager(&os_type);
 
-            let path = if std::path::Path::new(&linuxbrew_home).exists() {
-                linuxbrew_home
-            } else if std::path::Path::new(linuxbrew_sys).exists() {
-                linuxbrew_sys.to_string()
-            } else {
-                "".to_string()
-            };
-
-            if !path.is_empty() {
-                execute_command(&format!("eval \"$({} shellenv)\"", path), "Eval brew shellenv", dry_run, verbose);
+    if pkg_manager == "brew" {
+        log_info("==> Initializing Homebrew...");
+        if command_exists("brew") {
+            log_info("Homebrew is already installed.");
+            if upgrade_mode {
+                execute_command("brew update", "Update Homebrew", dry_run, verbose);
             }
-
-            execute_command("brew update --force --quiet", "Brew update", dry_run, verbose);
-            execute_command("chmod -R go-w \"$(brew --prefix)/share/zsh\"", "Brew fix permissions", dry_run, verbose);
+        } else {
+            execute_command(
+                &format!("/bin/bash -c \"$(curl -fsSL {})\"", BREW_INSTALL_URL),
+                "Install Homebrew", dry_run, verbose
+            );
+            if os_type != "macos" {
+                let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
+                let path = if std::path::Path::new(&format!("{}/.homebrew/bin/brew", home)).exists() {
+                    format!("{}/.homebrew/bin/brew", home)
+                } else if std::path::Path::new("/home/linuxbrew/.linuxbrew/bin/brew").exists() {
+                    "/home/linuxbrew/.linuxbrew/bin/brew".to_string()
+                } else {
+                    "".to_string()
+                };
+                if !path.is_empty() {
+                    execute_command(&format!("eval \"$({} shellenv)\"", path), "Eval brew shellenv", dry_run, verbose);
+                }
+                execute_command("brew update --force --quiet", "Brew update", dry_run, verbose);
+                execute_command("chmod -R go-w \"$(brew --prefix)/share/zsh\"", "Brew fix permissions", dry_run, verbose);
+            }
+        }
+    } else if pkg_manager == "apt-get" {
+        log_info("==> Initializing APT...");
+        if upgrade_mode {
+            execute_command("sudo apt-get update && sudo apt-get upgrade -y", "Update APT", dry_run, verbose);
+        } else {
+            execute_command("sudo apt-get update", "Update APT", dry_run, verbose);
+        }
+    } else if pkg_manager == "dnf" {
+        log_info("==> Initializing DNF...");
+        if upgrade_mode {
+            execute_command("sudo dnf upgrade -y", "Update DNF", dry_run, verbose);
+        }
+    } else if pkg_manager == "pacman" {
+        log_info("==> Initializing Pacman...");
+        if upgrade_mode {
+            execute_command("sudo pacman -Syu --noconfirm", "Update Pacman", dry_run, verbose);
+        } else {
+            execute_command("sudo pacman -Sy", "Update Pacman database", dry_run, verbose);
         }
     }
 }
@@ -113,20 +160,39 @@ pub fn install_homebrew(upgrade_mode: bool, dry_run: bool, verbose: bool) {
 pub fn install_or_upgrade_package(
     package: &str, pkg_type: &str, is_required: bool, upgrade_mode: bool, dry_run: bool, verbose: bool
 ) -> bool {
+    let os_type = detect_os();
+    let pkg_manager = get_pkg_manager(&os_type);
+
     if package_exists(package, pkg_type) {
         log_info(&format!("{} is already installed.", package));
         if upgrade_mode {
             log_info(&format!("Upgrading {}...", package));
-            execute_command(
-                &format!("brew upgrade \"{}\" 2>/dev/null || true", package),
-                &format!("Upgrade {}", package), dry_run, verbose
-            );
+            if pkg_manager == "brew" {
+                execute_command(&format!("brew upgrade \"{}\" 2>/dev/null || true", package), &format!("Upgrade {}", package), dry_run, verbose);
+            } else if pkg_manager == "apt-get" {
+                execute_command(&format!("sudo apt-get install --only-upgrade -y \"{}\"", package), &format!("Upgrade {}", package), dry_run, verbose);
+            } else if pkg_manager == "dnf" {
+                execute_command(&format!("sudo dnf upgrade -y \"{}\"", package), &format!("Upgrade {}", package), dry_run, verbose);
+            } else if pkg_manager == "pacman" {
+                execute_command(&format!("sudo pacman -S --noconfirm \"{}\"", package), &format!("Upgrade {}", package), dry_run, verbose);
+            }
         }
         return true;
     }
 
     log_info(&format!("Installing {}...", package));
-    let cmd = format!("brew install {} \"{}\"", pkg_type, package);
+    let cmd = if pkg_manager == "brew" {
+        format!("brew install {} \"{}\"", pkg_type, package)
+    } else if pkg_manager == "apt-get" {
+        format!("sudo apt-get install -y \"{}\"", package)
+    } else if pkg_manager == "dnf" {
+        format!("sudo dnf install -y \"{}\"", package)
+    } else if pkg_manager == "pacman" {
+        format!("sudo pacman -S --noconfirm \"{}\"", package)
+    } else {
+        "".to_string()
+    };
+
     if !execute_command(&cmd, &format!("Install {}", package), dry_run, verbose) {
         if is_required {
             log_error(&format!("Failed to install required package: {}", package));
