@@ -90,84 +90,75 @@ init_pkg_manager() {
   fi
 }
 
-install_or_upgrade_package() {
-  local package="$1"
-  local type="$2"   # e.g. "--formula" or "--cask"
-  local is_required="${3:-false}"
-  local os_type
-  os_type="$(detect_os)"
-  local pkg_manager
-  pkg_manager="$(get_pkg_manager "$os_type")"
-
-  if package_exists "$package" "$type"; then
-    log_info "$package is already installed."
-    if [[ "$UPGRADE_MODE" == true ]]; then
-      log_info "Upgrading $package..."
-      if [[ "$pkg_manager" == "brew" ]]; then
-        execute_command "brew upgrade \"$package\" 2>/dev/null || true" "Upgrade $package via brew"
-      elif [[ "$pkg_manager" == "apt-get" ]]; then
-        execute_command "sudo apt-get install --only-upgrade -y \"$package\"" "Upgrade $package via apt"
-      elif [[ "$pkg_manager" == "dnf" ]]; then
-        execute_command "sudo dnf upgrade -y \"$package\"" "Upgrade $package via dnf"
-      elif [[ "$pkg_manager" == "pacman" ]]; then
-        execute_command "sudo pacman -S --noconfirm \"$package\"" "Upgrade $package via pacman"
-      fi
-    fi
-    return 0
-  fi
-
-  log_info "Installing $package..."
-  local install_cmd=""
-
-  if [[ "$pkg_manager" == "brew" ]]; then
-    install_cmd="brew install $type \"$package\""
-  elif [[ "$pkg_manager" == "apt-get" ]]; then
-    install_cmd="sudo apt-get install -y \"$package\""
-  elif [[ "$pkg_manager" == "dnf" ]]; then
-    install_cmd="sudo dnf install -y \"$package\""
-  elif [[ "$pkg_manager" == "pacman" ]]; then
-    install_cmd="sudo pacman -S --noconfirm \"$package\""
-  fi
-
-  if ! execute_command "$install_cmd" "Install $package"; then
-    if [[ "$is_required" == true ]]; then
-      log_error "Failed to install required package: $package"
-      exit 1
-    else
-      log_warn "Failed to install optional package: $package"
-      return 1
-    fi
-  fi
-  log_success "Successfully installed $package"
-}
-
 process_packages() {
   local type="$1"
   local is_required="$2"
   shift 2
   local packages=("$@")
 
-  local failed_packages=()
-  local success_count=0
+  if [[ ${#packages[@]} -eq 0 ]]; then
+    return 0
+  fi
+
+  local to_install=()
+  local to_upgrade=()
 
   for package in "${packages[@]}"; do
-    log_info "Install $package"
-    if install_or_upgrade_package "$package" "$type" "$is_required"; then
-      ((success_count+=1))
+    if package_exists "$package" "$type"; then
+      to_upgrade+=("$package")
     else
-      failed_packages+=("$package")
+      to_install+=("$package")
     fi
   done
-  log_info "Successfully installed $success_count packages"
-  
-  if [[ ${#failed_packages[@]} -gt 0 ]]; then
-    log_warn "Failed to install ${#failed_packages[@]} packages"
-    if [[ "$is_required" == true ]]; then
-      log_error "Failed to install the following required packages: ${failed_packages[*]}"
-      exit 1
-    else
-      log_warn "Failed to install the following optional packages: ${failed_packages[*]}"
+
+  local os_type
+  os_type="$(detect_os)"
+  local pkg_manager
+  pkg_manager="$(get_pkg_manager "$os_type")"
+
+  if [[ ${#to_install[@]} -gt 0 ]]; then
+    log_info "Installing ${#to_install[@]} packages..."
+    local install_cmd=""
+
+    if [[ "$pkg_manager" == "brew" ]]; then
+      install_cmd="brew install $type ${to_install[*]}"
+    elif [[ "$pkg_manager" == "apt-get" ]]; then
+      install_cmd="sudo apt-get install -y ${to_install[*]}"
+    elif [[ "$pkg_manager" == "dnf" ]]; then
+      install_cmd="sudo dnf install -y ${to_install[*]}"
+    elif [[ "$pkg_manager" == "pacman" ]]; then
+      install_cmd="sudo pacman -S --noconfirm ${to_install[*]}"
     fi
+
+    if ! execute_command "$install_cmd" "Install packages"; then
+      if [[ "$is_required" == true ]]; then
+        log_error "Failed to install required packages."
+        exit 1
+      else
+        log_warn "Failed to install optional packages."
+      fi
+    else
+      log_success "Successfully installed packages."
+    fi
+  else
+    log_info "All packages are already installed."
+  fi
+
+  if [[ "$UPGRADE_MODE" == true && ${#to_upgrade[@]} -gt 0 ]]; then
+    log_info "Upgrading ${#to_upgrade[@]} packages..."
+    local upgrade_cmd=""
+
+    if [[ "$pkg_manager" == "brew" ]]; then
+      upgrade_cmd="brew upgrade $type ${to_upgrade[*]} 2>/dev/null || true"
+    elif [[ "$pkg_manager" == "apt-get" ]]; then
+      upgrade_cmd="sudo apt-get install --only-upgrade -y ${to_upgrade[*]}"
+    elif [[ "$pkg_manager" == "dnf" ]]; then
+      upgrade_cmd="sudo dnf upgrade -y ${to_upgrade[*]}"
+    elif [[ "$pkg_manager" == "pacman" ]]; then
+      upgrade_cmd="sudo pacman -S --noconfirm ${to_upgrade[*]}"
+    fi
+
+    execute_command "$upgrade_cmd" "Upgrade packages"
   fi
 }
 

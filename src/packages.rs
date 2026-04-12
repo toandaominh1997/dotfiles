@@ -1,4 +1,4 @@
-use crate::utils::{command_exists, detect_os, execute_command, log_error, log_info, log_success, log_warn};
+use crate::utils::{command_exists, detect_os, execute_command, log_error, log_info, log_success};
 use std::process::{Command, Stdio};
 use std::fs::File;
 use std::io::BufReader;
@@ -157,81 +157,64 @@ pub fn init_pkg_manager(upgrade_mode: bool, dry_run: bool, verbose: bool) {
     }
 }
 
-pub fn install_or_upgrade_package(
-    package: &str, pkg_type: &str, is_required: bool, upgrade_mode: bool, dry_run: bool, verbose: bool
-) -> bool {
-    let os_type = detect_os();
-    let pkg_manager = get_pkg_manager(&os_type);
-
-    if package_exists(package, pkg_type) {
-        log_info(&format!("{} is already installed.", package));
-        if upgrade_mode {
-            log_info(&format!("Upgrading {}...", package));
-            if pkg_manager == "brew" {
-                execute_command(&format!("brew upgrade \"{}\" 2>/dev/null || true", package), &format!("Upgrade {}", package), dry_run, verbose);
-            } else if pkg_manager == "apt-get" {
-                execute_command(&format!("sudo apt-get install --only-upgrade -y \"{}\"", package), &format!("Upgrade {}", package), dry_run, verbose);
-            } else if pkg_manager == "dnf" {
-                execute_command(&format!("sudo dnf upgrade -y \"{}\"", package), &format!("Upgrade {}", package), dry_run, verbose);
-            } else if pkg_manager == "pacman" {
-                execute_command(&format!("sudo pacman -S --noconfirm \"{}\"", package), &format!("Upgrade {}", package), dry_run, verbose);
-            }
-        }
-        return true;
-    }
-
-    log_info(&format!("Installing {}...", package));
-    let cmd = if pkg_manager == "brew" {
-        format!("brew install {} \"{}\"", pkg_type, package)
-    } else if pkg_manager == "apt-get" {
-        format!("sudo apt-get install -y \"{}\"", package)
-    } else if pkg_manager == "dnf" {
-        format!("sudo dnf install -y \"{}\"", package)
-    } else if pkg_manager == "pacman" {
-        format!("sudo pacman -S --noconfirm \"{}\"", package)
-    } else {
-        "".to_string()
-    };
-
-    if !execute_command(&cmd, &format!("Install {}", package), dry_run, verbose) {
-        if is_required {
-            log_error(&format!("Failed to install required package: {}", package));
-            std::process::exit(1);
-        } else {
-            log_warn(&format!("Failed to install optional package: {}", package));
-            return false;
-        }
-    }
-    
-    log_success(&format!("Successfully installed {}", package));
-    true
-}
+use rayon::prelude::*;
 
 pub fn process_packages(
     packages: &[String], pkg_type: &str, is_required: bool, upgrade_mode: bool, dry_run: bool, verbose: bool
 ) {
-    let mut failed_packages = Vec::new();
-    let mut success_count = 0;
-
-    for pkg in packages {
-        log_info(&format!("Install {}", pkg));
-        if install_or_upgrade_package(pkg, pkg_type, is_required, upgrade_mode, dry_run, verbose) {
-            success_count += 1;
-        } else {
-            failed_packages.push(pkg.clone());
-        }
+    if packages.is_empty() {
+        return;
     }
 
-    log_info(&format!("Successfully installed {} packages", success_count));
-    log_info(&format!("Failed to install {} packages", failed_packages.len()));
+    let os_type = detect_os();
+    let pkg_manager = get_pkg_manager(&os_type);
 
-    if !failed_packages.is_empty() {
-        if is_required {
-            log_error(&format!("Failed to install the following required packages: {:?}", failed_packages));
-            std::process::exit(1);
+    let (to_install, to_upgrade): (Vec<String>, Vec<String>) = packages
+        .into_par_iter()
+        .map(|pkg| pkg.clone())
+        .partition(|pkg| !package_exists(pkg, pkg_type));
+
+    if !to_install.is_empty() {
+        log_info(&format!("Installing {} packages...", to_install.len()));
+        let cmd = if pkg_manager == "brew" {
+            format!("brew install {} {}", pkg_type, to_install.join(" "))
+        } else if pkg_manager == "apt-get" {
+            format!("sudo apt-get install -y {}", to_install.join(" "))
+        } else if pkg_manager == "dnf" {
+            format!("sudo dnf install -y {}", to_install.join(" "))
+        } else if pkg_manager == "pacman" {
+            format!("sudo pacman -S --noconfirm {}", to_install.join(" "))
         } else {
-            log_warn(&format!("Failed to install the following optional packages: {:?}", failed_packages));
+            "".to_string()
+        };
+
+        if !execute_command(&cmd, "Install packages", dry_run, verbose) {
+            log_error("Failed to install packages.");
+            if is_required {
+                std::process::exit(1);
+            }
+        } else {
+            log_success("Successfully installed packages.");
         }
+    } else {
+        log_info("All packages are already installed.");
+    }
+
+    if upgrade_mode && !to_upgrade.is_empty() {
+        log_info(&format!("Upgrading {} packages...", to_upgrade.len()));
+        let cmd = if pkg_manager == "brew" {
+            format!("brew upgrade {} {} 2>/dev/null || true", pkg_type, to_upgrade.join(" "))
+        } else if pkg_manager == "apt-get" {
+            format!("sudo apt-get install --only-upgrade -y {}", to_upgrade.join(" "))
+        } else if pkg_manager == "dnf" {
+            format!("sudo dnf upgrade -y {}", to_upgrade.join(" "))
+        } else if pkg_manager == "pacman" {
+            format!("sudo pacman -S --noconfirm {}", to_upgrade.join(" "))
+        } else {
+            "".to_string()
+        };
+
+        execute_command(&cmd, "Upgrade packages", dry_run, verbose);
     }
 }
 
