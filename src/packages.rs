@@ -234,3 +234,17 @@ pub fn process_packages(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_get_pkg_manager() {
+        assert_eq!(get_pkg_manager("macos"), "brew");
+        assert_eq!(get_pkg_manager("debian"), "apt-get");
+        assert_eq!(get_pkg_manager("redhat"), "dnf");
+        assert_eq!(get_pkg_manager("arch"), "pacman");
+        assert_eq!(get_pkg_manager("unknown_os"), "brew");
+    }
+}

@@ -53,6 +53,9 @@ pub fn command_exists(cmd: &str) -> bool {
         .unwrap_or(false)
 }
 
+use indicatif::{ProgressBar, ProgressStyle};
+use std::time::Duration;
+
 pub fn execute_command(cmd: &str, description: &str, dry_run: bool, verbose: bool) -> bool {
     if dry_run {
         log_info(&format!("[DRY-RUN] Would execute: {}", description));
@@ -61,8 +64,33 @@ pub fn execute_command(cmd: &str, description: &str, dry_run: bool, verbose: boo
     }
 
     log_debug(&format!("Executing: {}", cmd), verbose);
+
+    let pb = if !verbose {
+        let pb = ProgressBar::new_spinner();
+        pb.enable_steady_tick(Duration::from_millis(100));
+        pb.set_style(
+            ProgressStyle::default_spinner()
+                .tick_strings(&["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+                .template("{spinner:.cyan} {msg}")
+                .unwrap(),
+        );
+        pb.set_message(format!("{}...", description));
+        Some(pb)
+    } else {
+        None
+    };
     
-    match Command::new("bash").arg("-c").arg(cmd).status() {
+    let output = if verbose {
+        Command::new("bash").arg("-c").arg(cmd).status()
+    } else {
+        Command::new("bash").arg("-c").arg(cmd).stdout(Stdio::null()).stderr(Stdio::null()).status()
+    };
+
+    if let Some(pb) = pb {
+        pb.finish_and_clear();
+    }
+
+    match output {
         Ok(status) if status.success() => true,
         _ => {
             log_error(&format!("Command failed: {}", description));

@@ -128,7 +128,7 @@ pub fn setup_p10k_config(dry_run: bool, verbose: bool) {
     log_success(&format!("Linked .p10k.zsh -> {}", dest));
 }
 
-pub fn ensure_custom_config_in_zshrc(dry_run: bool, verbose: bool) {
+pub fn ensure_custom_config_in_zshrc(dry_run: bool, _verbose: bool) {
     let zshrc_path = format!("{}/.zshrc", get_home_dir());
     let custom_config_line = "source $HOME/.dotfiles/tool/zsh/config.zsh";
 

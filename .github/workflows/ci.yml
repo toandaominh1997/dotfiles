@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Shellcheck
+        run: shellcheck setup.sh lib/*.sh
+
+  rust-build-test:
+    name: Rust Build & Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Cargo Check
+        run: cargo check --verbose
+      - name: Cargo Test
+        run: cargo test --verbose
+      - name: Cargo Build Release
+        run: cargo build --release --verbose
