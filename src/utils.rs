@@ -60,6 +60,7 @@ pub fn command_exists(cmd: &str) -> bool {
 }
 
 use indicatif::{ProgressBar, ProgressStyle};
+use std::io::{BufRead, BufReader};
 use std::time::Duration;
 
 pub fn execute_command(cmd: &str, description: &str, dry_run: bool, verbose: bool) -> bool {
@@ -71,39 +72,62 @@ pub fn execute_command(cmd: &str, description: &str, dry_run: bool, verbose: boo
 
     log_debug(&format!("Executing: {}", cmd), verbose);
 
-    let pb = if !verbose {
-        let pb = ProgressBar::new_spinner();
-        pb.enable_steady_tick(Duration::from_millis(100));
-        pb.set_style(
-            ProgressStyle::default_spinner()
-                .tick_strings(&["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
-                .template("{spinner:.cyan} {msg}")
-                .unwrap(),
-        );
-        pb.set_message(format!("{}...", description));
-        Some(pb)
-    } else {
-        None
-    };
-
-    let output = if verbose {
-        Command::new("bash").arg("-c").arg(cmd).status()
-    } else {
-        Command::new("bash")
-            .arg("-c")
-            .arg(cmd)
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .status()
-    };
-
-    if let Some(pb) = pb {
-        pb.finish_and_clear();
+    if verbose {
+        let status = Command::new("bash").arg("-c").arg(cmd).status();
+        return match status {
+            Ok(s) if s.success() => true,
+            _ => {
+                log_error(&format!("Command failed: {}", description));
+                log_error(&format!("Failed command: {}", cmd));
+                false
+            }
+        };
     }
 
-    match output {
-        Ok(status) if status.success() => true,
-        _ => {
+    let pb = ProgressBar::new_spinner();
+    pb.enable_steady_tick(Duration::from_millis(100));
+    pb.set_style(
+        ProgressStyle::default_spinner()
+            .tick_strings(&["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+            .template("{spinner:.cyan} {msg}")
+            .unwrap(),
+    );
+    pb.set_message(format!("{}...", description));
+
+    let mut child = Command::new("bash")
+        .arg("-c")
+        .arg(format!("{} 2>&1", cmd))
+        .stdout(Stdio::piped())
+        .stderr(Stdio::null())
+        .stdin(Stdio::null())
+        .spawn()
+        .unwrap_or_else(|e| panic!("Failed to spawn command: {}", e));
+
+    if let Some(stdout) = child.stdout.take() {
+        let reader = BufReader::new(stdout);
+        for line in reader.lines() {
+            if let Ok(line) = line {
+                let trimmed = line.trim();
+                if !trimmed.is_empty() {
+                    let mut msg = trimmed.to_string();
+                    if msg.len() > 60 {
+                        msg.truncate(57);
+                        msg.push_str("...");
+                    }
+                    pb.set_message(format!("{} - {}", description, msg));
+                }
+            }
+        }
+    }
+
+    let status = child
+        .wait()
+        .unwrap_or_else(|e| panic!("Failed to wait on child: {}", e));
+    pb.finish_and_clear();
+
+    match status.success() {
+        true => true,
+        false => {
             log_error(&format!("Command failed: {}", description));
             log_error(&format!("Failed command: {}", cmd));
             false
