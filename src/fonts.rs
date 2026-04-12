@@ -1,11 +1,11 @@
-use crate::utils::{command_exists, detect_os, log_info, log_success, log_warn};
+use crate::utils::{command_exists, detect_os, execute_command, log_info, log_success, log_warn};
 use crate::zsh::get_home_dir;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use rayon::prelude::*;
 use std::path::Path;
 use std::process::Command;
 
-pub fn install_fonts() {
+pub fn install_fonts(dry_run: bool, verbose: bool) {
     log_info("==> Installing Nerd Fonts (MesloLGS NF)...");
 
     let os_type = detect_os();
@@ -16,7 +16,7 @@ pub fn install_fonts() {
         format!("{}/.local/share/fonts", home_dir)
     };
 
-    if !Path::new(&font_dir).exists() {
+    if !Path::new(&font_dir).exists() && !dry_run {
         std::fs::create_dir_all(&font_dir).unwrap_or_default();
     }
 
@@ -43,16 +43,34 @@ pub fn install_fonts() {
                 return 0;
             }
 
-            let pb = m.add(ProgressBar::new_spinner());
-            pb.set_style(sty.clone());
-            pb.enable_steady_tick(std::time::Duration::from_millis(100));
-            pb.set_message(format!("Downloading {}", decoded_font));
+            if dry_run {
+                log_info(&format!("[DRY-RUN] Would download: {}", decoded_font));
+                return 1;
+            }
+
+            let pb = if !verbose {
+                let pb = m.add(ProgressBar::new_spinner());
+                pb.set_style(sty.clone());
+                pb.enable_steady_tick(std::time::Duration::from_millis(100));
+                pb.set_message(format!("Downloading {}", decoded_font));
+                Some(pb)
+            } else {
+                log_info(&format!("Downloading {}", decoded_font));
+                None
+            };
 
             let output = Command::new("curl")
-                .args(["-fsSL", &format!("{}/{}", base_url, font_file), "-o", &font_path])
+                .args([
+                    "-fsSL",
+                    &format!("{}/{}", base_url, font_file),
+                    "-o",
+                    &font_path,
+                ])
                 .output();
 
-            pb.finish_and_clear();
+            if let Some(pb) = pb {
+                pb.finish_and_clear();
+            }
 
             match output {
                 Ok(status) if status.status.success() => 1,
@@ -72,6 +90,25 @@ pub fn install_fonts() {
 
     if downloaded > 0 && os_type == "linux" && command_exists("fc-cache") {
         log_info("Updating font cache...");
-        let _ = Command::new("fc-cache").args(["-f", "-v"]).output();
+        execute_command("fc-cache -f -v >/dev/null 2>&1", "Update font cache", dry_run, verbose);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serial_test::serial;
+    use std::env;
+    use tempfile::tempdir;
+
+    #[test]
+    #[serial]
+    fn test_install_fonts_dry_run() {
+        let dir = tempdir().unwrap();
+        env::set_var("HOME", dir.path());
+        
+        install_fonts(true, false);
+        
+        env::remove_var("HOME");
     }
 }

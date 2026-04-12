@@ -24,7 +24,10 @@ pub fn setup_tmux(upgrade_mode: bool, dry_run: bool, verbose: bool) {
             if !metadata.file_type().is_symlink() {
                 log_info("Backing up existing .tmux.conf");
                 execute_command(
-                    &format!("cp \"{}\" \"{}.backup.$(date +%Y%m%d_%H%M%S)\"", tmux_conf, tmux_conf),
+                    &format!(
+                        "cp \"{}\" \"{}.backup.$(date +%Y%m%d_%H%M%S)\"",
+                        tmux_conf, tmux_conf
+                    ),
                     "Backup .tmux.conf",
                     dry_run,
                     verbose,
@@ -41,4 +44,23 @@ pub fn setup_tmux(upgrade_mode: bool, dry_run: bool, verbose: bool) {
         verbose,
     );
     log_success("Tmux configuration updated");
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serial_test::serial;
+    use std::env;
+    use tempfile::tempdir;
+
+    #[test]
+    #[serial]
+    fn test_setup_tmux_dry_run() {
+        let dir = tempdir().unwrap();
+        env::set_var("HOME", dir.path());
+        
+        setup_tmux(false, true, false);
+        
+        env::remove_var("HOME");
+    }
 }

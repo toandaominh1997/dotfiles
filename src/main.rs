@@ -1,19 +1,18 @@
-mod utils;
-mod packages;
-mod zsh;
-mod tmux;
-mod vim;
+mod dashboard;
 mod fonts;
+mod packages;
+mod tmux;
+mod utils;
+mod vim;
+mod zsh;
 
 use clap::Parser;
-use dialoguer::{theme::ColorfulTheme, Select};
 use colored::*;
+use dialoguer::{theme::ColorfulTheme, Select};
 use std::process::Command;
 
-use packages::{
-    process_packages, CASK_PACKAGES, FORMULAE_PACKAGES, REQUIRED_PACKAGES,
-};
-use utils::{detect_os, log_info, log_success, log_error};
+use packages::{process_packages, CASK_PACKAGES, FORMULAE_PACKAGES, REQUIRED_PACKAGES};
+use utils::{detect_os, log_error, log_info, log_success};
 
 const SCRIPT_VERSION: &str = "2.0.0";
 
@@ -39,6 +38,10 @@ struct Args {
     /// Run automatically without interactive menu
     #[arg(short = 'a', long)]
     auto: bool,
+
+    /// Show system metrics dashboard
+    #[arg(long)]
+    dashboard: bool,
 }
 
 fn run_packages(upgrade_mode: bool, dry_run: bool, verbose: bool) {
@@ -50,7 +53,14 @@ fn run_packages(upgrade_mode: bool, dry_run: bool, verbose: bool) {
     let casks = packages::get_packages_from_json("cask_packages", CASK_PACKAGES);
 
     process_packages(&required, "--formula", true, upgrade_mode, dry_run, verbose);
-    process_packages(&formulae, "--formula", false, upgrade_mode, dry_run, verbose);
+    process_packages(
+        &formulae,
+        "--formula",
+        false,
+        upgrade_mode,
+        dry_run,
+        verbose,
+    );
 
     if os_type == "macos" {
         println!("==> Installing macOS Brew cask packages...");
@@ -67,7 +77,7 @@ fn run_zsh(upgrade_mode: bool, dry_run: bool, verbose: bool) {
 
 fn run_all(upgrade_mode: bool, dry_run: bool, verbose: bool) {
     run_packages(upgrade_mode, dry_run, verbose);
-    fonts::install_fonts();
+    fonts::install_fonts(dry_run, verbose);
     run_zsh(upgrade_mode, dry_run, verbose);
     tmux::setup_tmux(upgrade_mode, dry_run, verbose);
     vim::setup_vim_nvim(upgrade_mode, dry_run, verbose);
@@ -98,6 +108,7 @@ fn interactive_menu(mut upgrade_mode: bool, dry_run: bool, verbose: bool) {
         "Setup Tmux",
         "Setup Vim & Neovim",
         "Install Fonts",
+        "System Dashboard",
         "Upgrade Existing Setup",
         "Quit",
     ];
@@ -105,16 +116,31 @@ fn interactive_menu(mut upgrade_mode: bool, dry_run: bool, verbose: bool) {
     loop {
         print!("\x1B[2J\x1B[1;1H");
 
-        println!("{}", "===============================================".cyan().bold());
-        println!("{}", "            Dotfiles Setup Script              ".green().bold());
-        println!("{}", "===============================================".cyan().bold());
+        println!(
+            "{}",
+            "==============================================="
+                .cyan()
+                .bold()
+        );
+        println!(
+            "{}",
+            "            Dotfiles Setup Script              "
+                .green()
+                .bold()
+        );
+        println!(
+            "{}",
+            "==============================================="
+                .cyan()
+                .bold()
+        );
 
         let selection = Select::with_theme(&ColorfulTheme::default())
             .with_prompt("Please select an option")
             .default(0)
             .items(&selections[..])
             .interact()
-            .unwrap_or(7);
+            .unwrap_or(8);
 
         match selection {
             0 => {
@@ -138,15 +164,18 @@ fn interactive_menu(mut upgrade_mode: bool, dry_run: bool, verbose: bool) {
                 wait_for_enter();
             }
             5 => {
-                fonts::install_fonts();
+                fonts::install_fonts(dry_run, verbose);
                 wait_for_enter();
             }
             6 => {
+                dashboard::show_dashboard();
+            }
+            7 => {
                 upgrade_mode = true;
                 run_all(upgrade_mode, dry_run, verbose);
                 break;
             }
-            7 => {
+            8 => {
                 log_info("Exiting...");
                 std::process::exit(0);
             }
@@ -170,6 +199,11 @@ fn main() {
     let args = Args::parse();
 
     log_info(&format!("Upgrade: {}", args.upgrade));
+
+    if args.dashboard {
+        dashboard::show_dashboard();
+        return;
+    }
 
     if args.auto {
         run_all(args.upgrade, args.dry_run, args.verbose);
