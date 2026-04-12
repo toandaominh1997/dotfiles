@@ -55,14 +55,14 @@ ensure_custom_config_in_zshrc() {
   fi
 
   if ! grep -qF "source \"$SCRIPT_DIR/zsh/config.zsh\"" "$HOME/.zshrc" 2>/dev/null; then
-    log_info "Adding custom config to ~/.zshrc"
+    log_info "Adding custom config to $HOME/.zshrc"
     {
       echo ""
       echo "# Dotfiles custom configuration"
       echo "$custom_config_line"
     } >> "$HOME/.zshrc"
   else
-    log_info "Custom config already sourced in ~/.zshrc"
+    log_info "Custom config already sourced in $HOME/.zshrc"
   fi
 }
 
@@ -86,12 +86,12 @@ setup_p10k_config() {
   fi
 
   if [[ -L "$dest" ]]; then
-    log_info "~/.p10k.zsh symlink already exists"
+    log_info "$HOME/.p10k.zsh symlink already exists"
     return 0
   fi
 
   if [[ -f "$dest" ]]; then
-    log_info "Backing up existing ~/.p10k.zsh"
+    log_info "Backing up existing $HOME/.p10k.zsh"
     execute_command "mv \"$dest\" \"${dest}.backup.$(date +%Y%m%d_%H%M%S)\"" "Backup .p10k.zsh"
   fi
 

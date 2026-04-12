@@ -196,11 +196,14 @@ run_packages() {
   os_type="$(detect_os)"
   init_pkg_manager "$os_type"
 
+  # shellcheck disable=SC2154
   process_packages "--formula" true "${required_packages[@]}"
+  # shellcheck disable=SC2154
   process_packages "--formula" false "${formulae_packages[@]}"
 
   if [[ "$os_type" == "macos" ]]; then
     log_info "==> Installing macOS Brew cask packages..."
+    # shellcheck disable=SC2154
     process_packages "--cask" false "${cask_packages[@]}"
   fi
 }

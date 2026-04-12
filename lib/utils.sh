@@ -31,6 +31,7 @@ detect_os() {
     Darwin) echo "macos" ;;
     Linux)
       if [[ -f /etc/os-release ]]; then
+        # shellcheck disable=SC1091
         . /etc/os-release
         if [[ "${ID_LIKE:-}" == *"debian"* || "${ID:-}" == *"ubuntu"* || "${ID:-}" == *"debian"* ]]; then
           echo "debian"

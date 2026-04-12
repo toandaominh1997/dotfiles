@@ -9,8 +9,10 @@ set -euo pipefail
 trap 'echo -e "\n\033[0;31m[ERROR]\033[0m Setup interrupted by user. Exiting..."; exit 1' INT
 
 readonly SCRIPT_VERSION="2.1.0"
-readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly SCRIPT_DIR
+DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+readonly DOTFILES_DIR
 readonly OH_MY_ZSH_DIR="$DOTFILES_DIR/oh-my-zsh"
 
 # Global flags
@@ -108,15 +110,15 @@ run_all() {
   
   echo ""
   log_info "Next steps:"
-  log_info "  1. Restart your terminal or run: source ~/.zshrc"
+  log_info "  1. Restart your terminal or run: source $HOME/.zshrc"
   log_info "  2. Open tmux and press 'prefix + I' to install tmux plugins"
   log_info "  3. Open nvim and run :Lazy sync if plugins are not installed"
   echo ""
   log_info "Configuration files:"
-  log_info "  - Zsh:  ~/.zshrc"
-  log_info "  - Tmux: ~/.tmux.conf"
-  log_info "  - Vim:  ~/.vimrc"
-  log_info "  - Nvim: ~/.config/nvim"
+  log_info "  - Zsh:  $HOME/.zshrc"
+  log_info "  - Tmux: $HOME/.tmux.conf"
+  log_info "  - Vim:  $HOME/.vimrc"
+  log_info "  - Nvim: $HOME/.config/nvim"
 }
 
 interactive_menu() {
