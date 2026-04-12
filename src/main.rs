@@ -46,12 +46,16 @@ fn run_packages(upgrade_mode: bool, dry_run: bool, verbose: bool) {
     log_info("==> Installing Homebrew...");
     install_homebrew(upgrade_mode, dry_run, verbose);
 
-    process_packages(REQUIRED_PACKAGES, "--formula", true, upgrade_mode, dry_run, verbose);
-    process_packages(FORMULAE_PACKAGES, "--formula", false, upgrade_mode, dry_run, verbose);
+    let required = packages::get_packages_from_setup_sh("required_packages", REQUIRED_PACKAGES);
+    let formulae = packages::get_packages_from_setup_sh("formulae_packages", FORMULAE_PACKAGES);
+    let casks = packages::get_packages_from_setup_sh("cask_packages", CASK_PACKAGES);
+
+    process_packages(&required, "--formula", true, upgrade_mode, dry_run, verbose);
+    process_packages(&formulae, "--formula", false, upgrade_mode, dry_run, verbose);
 
     if os_type == "macos" {
         println!("==> Installing macOS Brew cask packages...");
-        process_packages(CASK_PACKAGES, "--cask", false, upgrade_mode, dry_run, verbose);
+        process_packages(&casks, "--cask", false, upgrade_mode, dry_run, verbose);
     }
 }
 

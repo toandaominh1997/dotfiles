@@ -1,5 +1,7 @@
 use crate::utils::{command_exists, detect_os, execute_command, log_error, log_info, log_success, log_warn};
 use std::process::{Command, Stdio};
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 const BREW_INSTALL_URL: &str = "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh";
 
@@ -21,6 +23,42 @@ pub const CASK_PACKAGES: &[&str] = &[
     "postman", "rar", "slack", "spotify", "stats", "sublime-text", "telegram",
     "tor-browser", "visual-studio-code", "whatsapp", "zoom"
 ];
+
+pub fn get_packages_from_setup_sh(array_name: &str, default_packages: &[&str]) -> Vec<String> {
+    let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
+    let setup_sh_path = format!("{}/.dotfiles/tool/setup.sh", home);
+    
+    let file = match File::open(&setup_sh_path) {
+        Ok(f) => f,
+        Err(_) => return default_packages.iter().map(|s| s.to_string()).collect(),
+    };
+
+    let reader = BufReader::new(file);
+    let mut in_array = false;
+    let mut packages = Vec::new();
+    let target_declaration = format!("{}=(", array_name);
+
+    for line in reader.lines().map_while(Result::ok) {
+        let trimmed = line.trim();
+        
+        if in_array {
+            if trimmed == ")" {
+                break;
+            }
+            if !trimmed.is_empty() && !trimmed.starts_with('#') {
+                packages.push(trimmed.to_string());
+            }
+        } else if trimmed == target_declaration {
+            in_array = true;
+        }
+    }
+
+    if packages.is_empty() {
+        default_packages.iter().map(|s| s.to_string()).collect()
+    } else {
+        packages
+    }
+}
 
 fn package_exists(package: &str, pkg_type: &str) -> bool {
     if pkg_type == "--cask" {
@@ -103,7 +141,7 @@ pub fn install_or_upgrade_package(
 }
 
 pub fn process_packages(
-    packages: &[&str], pkg_type: &str, is_required: bool, upgrade_mode: bool, dry_run: bool, verbose: bool
+    packages: &[String], pkg_type: &str, is_required: bool, upgrade_mode: bool, dry_run: bool, verbose: bool
 ) {
     let mut failed_packages = Vec::new();
     let mut success_count = 0;
@@ -113,7 +151,7 @@ pub fn process_packages(
         if install_or_upgrade_package(pkg, pkg_type, is_required, upgrade_mode, dry_run, verbose) {
             success_count += 1;
         } else {
-            failed_packages.push(*pkg);
+            failed_packages.push(pkg.clone());
         }
     }
 
