@@ -58,9 +58,9 @@ mod tests {
     fn test_setup_tmux_dry_run() {
         let dir = tempdir().unwrap();
         env::set_var("HOME", dir.path());
-        
+
         setup_tmux(false, true, false);
-        
+
         env::remove_var("HOME");
     }
 }

@@ -283,7 +283,13 @@ pub fn process_packages(
     if !to_install.is_empty() {
         log_info(&format!("Installing {} packages...", to_install.len()));
         let cmd = if pkg_manager == "brew" {
-            format!("brew install {} {}", pkg_type, to_install.join(" "))
+            let adopt_flag = if pkg_type == "--cask" { " --adopt" } else { "" };
+            format!(
+                "brew install {}{} {}",
+                pkg_type,
+                adopt_flag,
+                to_install.join(" ")
+            )
         } else if pkg_manager == "apt-get" {
             format!("sudo apt-get install -y {}", to_install.join(" "))
         } else if pkg_manager == "dnf" {
@@ -295,9 +301,35 @@ pub fn process_packages(
         };
 
         if !execute_command(&cmd, "Install packages", dry_run, verbose) {
-            log_error("Failed to install packages.");
-            if is_required {
-                std::process::exit(1);
+            log_error("Batch installation failed. Attempting individual installation...");
+            let mut failed_pkgs = Vec::new();
+            for pkg in &to_install {
+                let single_cmd = if pkg_manager == "brew" {
+                    let adopt_flag = if pkg_type == "--cask" { " --adopt" } else { "" };
+                    format!("brew install {}{} {}", pkg_type, adopt_flag, pkg)
+                } else if pkg_manager == "apt-get" {
+                    format!("sudo apt-get install -y {}", pkg)
+                } else if pkg_manager == "dnf" {
+                    format!("sudo dnf install -y {}", pkg)
+                } else if pkg_manager == "pacman" {
+                    format!("sudo pacman -S --noconfirm {}", pkg)
+                } else {
+                    "".to_string()
+                };
+                if !execute_command(&single_cmd, &format!("Install {}", pkg), dry_run, verbose) {
+                    failed_pkgs.push(pkg.clone());
+                }
+            }
+            if !failed_pkgs.is_empty() {
+                log_error(&format!(
+                    "Failed to install the following packages: {:?}",
+                    failed_pkgs
+                ));
+                if is_required {
+                    std::process::exit(1);
+                }
+            } else {
+                log_success("Successfully installed packages individually.");
             }
         } else {
             log_success("Successfully installed packages.");

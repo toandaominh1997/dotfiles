@@ -90,7 +90,12 @@ pub fn install_fonts(dry_run: bool, verbose: bool) {
 
     if downloaded > 0 && os_type == "linux" && command_exists("fc-cache") {
         log_info("Updating font cache...");
-        execute_command("fc-cache -f -v >/dev/null 2>&1", "Update font cache", dry_run, verbose);
+        execute_command(
+            "fc-cache -f -v >/dev/null 2>&1",
+            "Update font cache",
+            dry_run,
+            verbose,
+        );
     }
 }
 
@@ -106,9 +111,9 @@ mod tests {
     fn test_install_fonts_dry_run() {
         let dir = tempdir().unwrap();
         env::set_var("HOME", dir.path());
-        
+
         install_fonts(true, false);
-        
+
         env::remove_var("HOME");
     }
 }

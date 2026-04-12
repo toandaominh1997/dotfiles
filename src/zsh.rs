@@ -218,13 +218,13 @@ mod tests {
     fn test_zsh_directories() {
         let dir = tempdir().unwrap();
         env::set_var("HOME", dir.path());
-        
+
         let home = get_home_dir();
         assert_eq!(home, dir.path().to_str().unwrap());
-        
+
         let dotfiles = get_dotfiles_dir();
         assert_eq!(dotfiles, format!("{}/.dotfiles", home));
-        
+
         env::remove_var("HOME");
     }
 
@@ -233,13 +233,13 @@ mod tests {
     fn test_zsh_functions_dry_run() {
         let dir = tempdir().unwrap();
         env::set_var("HOME", dir.path());
-        
+
         // These should not modify the actual system or crash, thanks to dry_run=true
         setup_oh_my_zsh(false, true, false);
         setup_zsh_plugins(false, true, false);
         setup_p10k_config(true, false);
         ensure_custom_config_in_zshrc(true, false);
-        
+
         env::remove_var("HOME");
     }
 }
