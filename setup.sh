@@ -1,28 +1,35 @@
 #!/usr/bin/env bash
+#
+# Dotfiles Setup Script
+# Refactored for robust execution, clear logging, and dynamic path resolution.
+
 set -euo pipefail
+
+# Trap Ctrl+C (SIGINT) for a clean exit
+trap 'echo -e "\n\033[0;31m[ERROR]\033[0m Setup interrupted by user. Exiting..."; exit 1' INT
 
 ###############################################################################
 # Constants & Variables
 ###############################################################################
 
-BREW_INSTALL_URL="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
+readonly SCRIPT_VERSION="2.1.0"
+
+# Dynamically determine script directory for portability
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+readonly OH_MY_ZSH_DIR="$DOTFILES_DIR/oh-my-zsh"
+
+readonly BREW_INSTALL_URL="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
 
 # Repos for plugins/tools
-ZSH_SYNTAX_HIGHLIGHTING_REPO="https://github.com/zsh-users/zsh-syntax-highlighting.git"
-ZSH_COMPLETIONS_REPO="https://github.com/zsh-users/zsh-completions.git"
-ZSH_HISTORY_SEARCH_REPO="https://github.com/zsh-users/zsh-history-substring-search.git"
-OH_MY_ZSH_REPO="https://github.com/robbyrussell/oh-my-zsh.git"
-ZSH_AUTOSUGGESTIONS_REPO="https://github.com/zsh-users/zsh-autosuggestions"
-POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
-TMUX_PLUGIN_MANAGER_REPO="https://github.com/tmux-plugins/tpm"
-LAZYVIM_REPO="https://github.com/LazyVim/starter.git"
-
-# Dotfiles directories
-DOTFILES_DIR="$HOME/.dotfiles"
-OH_MY_ZSH_DIR="$DOTFILES_DIR/oh-my-zsh"
-
-# Script metadata
-readonly SCRIPT_VERSION="2.0.0"
+readonly ZSH_SYNTAX_HIGHLIGHTING_REPO="https://github.com/zsh-users/zsh-syntax-highlighting.git"
+readonly ZSH_COMPLETIONS_REPO="https://github.com/zsh-users/zsh-completions.git"
+readonly ZSH_HISTORY_SEARCH_REPO="https://github.com/zsh-users/zsh-history-substring-search.git"
+readonly OH_MY_ZSH_REPO="https://github.com/robbyrussell/oh-my-zsh.git"
+readonly ZSH_AUTOSUGGESTIONS_REPO="https://github.com/zsh-users/zsh-autosuggestions"
+readonly POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
+readonly TMUX_PLUGIN_MANAGER_REPO="https://github.com/tmux-plugins/tpm"
+readonly LAZYVIM_REPO="https://github.com/LazyVim/starter.git"
 
 # Global flags
 UPGRADE_MODE=false
@@ -30,9 +37,9 @@ DRY_RUN=false
 VERBOSE=false
 FORCE=false
 AUTO_MODE=false
-has_upgrade="non_upgrade"
 
 # Required brew formula packages (must be installed)
+# NOTE: The rust 'dotup' CLI dynamically parses these arrays. Do not alter the syntax of the array declaration.
 required_packages=(
   bash
   fzf
@@ -128,7 +135,6 @@ log_debug() {
     if [[ "$VERBOSE" == true ]]; then
       echo -e "\033[0;36m[DEBUG]\033[0m $1"
     fi
-    return 0
 }
 
 log_success() {
@@ -162,13 +168,12 @@ detect_os() {
   esac
 }
 
-# Show usage information
 show_usage() {
     cat << EOF
 Usage: $0 [OPTIONS]
 
 OPTIONS:
-    -u, --upgrade       Upgrade existing packages
+    -u, --upgrade      Upgrade existing packages
     -d, --dry-run      Show what would be installed without making changes
     -v, --verbose      Enable verbose output
     -f, --force        Force installation even if already present
@@ -186,13 +191,11 @@ EXAMPLES:
 EOF
 }
 
-# Parse command line arguments
 parse_arguments() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
             -u|--upgrade)
                 UPGRADE_MODE=true
-                has_upgrade="upgrade"
                 shift
                 ;;
             -d|--dry-run)
@@ -240,7 +243,7 @@ execute_command() {
     fi
 
     log_debug "Executing: $cmd"
-    if eval "$cmd"; then
+    if bash -c "$cmd"; then
         return 0
     else
         local exit_code=$?
@@ -249,7 +252,6 @@ execute_command() {
         return $exit_code
     fi
 }
-
 
 install_homebrew() {
   if command_exists brew; then
@@ -262,8 +264,6 @@ install_homebrew() {
     execute_command "/bin/bash -c \"\$(curl -fsSL \"$BREW_INSTALL_URL\")\"" "Install Homebrew"
 
     if [[ "$(detect_os)" == "linux" ]]; then
-      # On Linux, Homebrew installs to ~/.linuxbrew or ~/.homebrew
-      # Adjust if your path differs:
       if [[ -d "$HOME/.homebrew/bin" ]]; then
         eval "$("$HOME/.homebrew/bin/brew" shellenv)"
       elif [[ -d "/home/linuxbrew/.linuxbrew/bin" ]]; then
@@ -276,11 +276,10 @@ install_homebrew() {
   fi
 }
 
-# Installs or upgrades a Brew package (formula or cask)
 install_or_upgrade_package() {
   local package="$1"
   local type="$2"   # e.g. "--formula" or "--cask"
-  local is_required="${3:-false}" # "upgrade" or "non_upgrade"
+  local is_required="${3:-false}"
 
   if package_exists "$package" "$type"; then
     log_info "$package is already installed."
@@ -304,12 +303,10 @@ install_or_upgrade_package() {
   log_success "Successfully installed $package"
 }
 
-# Processes multiple packages in an array
 process_packages() {
-  local type="$1"         # e.g. "--formula" or "--cask"
-  local upgrade_flag="$2" # "upgrade" or "non_upgrade"
-  local is_required="${3:-false}"
-  shift 3
+  local type="$1"
+  local is_required="$2"
+  shift 2
   local packages=("$@")
 
   local failed_packages=()
@@ -324,8 +321,9 @@ process_packages() {
     fi
   done
   log_info "Successfully installed $success_count packages"
-  log_info "Failed to install ${#failed_packages[@]} packages"
+  
   if [[ ${#failed_packages[@]} -gt 0 ]]; then
+    log_warn "Failed to install ${#failed_packages[@]} packages"
     if [[ "$is_required" == true ]]; then
       log_error "Failed to install the following required packages: ${failed_packages[*]}"
       exit 1
@@ -335,8 +333,6 @@ process_packages() {
   fi
 }
 
-# Install or upgrade a Zsh-related git plugin or repository
-# Usage: install_or_upgrade_repo <repo_url> <destination_path> <repo_name> <upgrade_flag>
 install_or_upgrade_repo() {
   local repo_url="$1"
   local dest_path="$2"
@@ -367,7 +363,6 @@ install_or_upgrade_repo() {
 setup_oh_my_zsh() {
   log_info "Setting up Oh My Zsh"
 
-  # If oh-my-zsh directory doesn't exist, clone
   if [[ ! -d "$OH_MY_ZSH_DIR" ]]; then
     execute_command "git clone \"$OH_MY_ZSH_REPO\" \"$OH_MY_ZSH_DIR\"" "Install Oh My Zsh"
     execute_command "export ZSH=\"$OH_MY_ZSH_DIR\"" "Set ZSH environment"
@@ -375,68 +370,44 @@ setup_oh_my_zsh() {
   else
     log_info "Oh My Zsh is already installed"
     if [[ "$UPGRADE_MODE" == true ]]; then
-      echo "[ZSH] Upgrading Oh My Zsh..."
+      log_info "[ZSH] Upgrading Oh My Zsh..."
       execute_command "(cd \"$OH_MY_ZSH_DIR\" && git pull --rebase --autostash)" "Upgrade Oh My Zsh"
     fi
   fi
 }
 
-# Ensure a line exists in ~/.zshrc to source a custom config (if desired)
 ensure_custom_config_in_zshrc() {
-  local custom_config_line="source \$HOME/.dotfiles/tool/zsh/config.zsh"
+  local custom_config_line="source \"$SCRIPT_DIR/zsh/config.zsh\""
 
-  # Create .zshrc if it doesn't exist
   if [[ ! -f "$HOME/.zshrc" ]]; then
     log_info "Creating new .zshrc"
     touch "$HOME/.zshrc"
   fi
 
-  if ! grep -qF "source \$HOME/.dotfiles/tool/zsh/config.zsh" "$HOME/.zshrc" 2>/dev/null; then
+  if ! grep -qF "source \"$SCRIPT_DIR/zsh/config.zsh\"" "$HOME/.zshrc" 2>/dev/null; then
     log_info "Adding custom config to ~/.zshrc"
-    echo "" >> "$HOME/.zshrc"
-    echo "# Dotfiles custom configuration" >> "$HOME/.zshrc"
-    echo "$custom_config_line" >> "$HOME/.zshrc"
+    {
+      echo ""
+      echo "# Dotfiles custom configuration"
+      echo "$custom_config_line"
+    } >> "$HOME/.zshrc"
   else
     log_info "Custom config already sourced in ~/.zshrc"
   fi
 }
-# Setup or upgrade Zsh plugins and themes
+
 setup_zsh_plugins() {
   log_info "Setting up Zsh plugins"
-  # zsh-syntax-highlighting
-  install_or_upgrade_repo \
-    "$ZSH_SYNTAX_HIGHLIGHTING_REPO" \
-    "$OH_MY_ZSH_DIR/custom/plugins/zsh-syntax-highlighting" \
-    "zsh-syntax-highlighting"
-
-  # zsh-completions
-  install_or_upgrade_repo \
-    "$ZSH_COMPLETIONS_REPO" \
-    "$OH_MY_ZSH_DIR/custom/plugins/zsh-completions" \
-    "zsh-completions"
-
-  # zsh-history-substring-search
-  install_or_upgrade_repo \
-    "$ZSH_HISTORY_SEARCH_REPO" \
-    "$OH_MY_ZSH_DIR/custom/plugins/zsh-history-substring-search" \
-    "zsh-history-substring-search"
-
-  # zsh-autosuggestions
-  install_or_upgrade_repo \
-    "$ZSH_AUTOSUGGESTIONS_REPO" \
-    "$OH_MY_ZSH_DIR/custom/plugins/zsh-autosuggestions" \
-    "zsh-autosuggestions"
-
-  # powerlevel10k
-  install_or_upgrade_repo \
-    "$POWERLEVEL10K_REPO" \
-    "$OH_MY_ZSH_DIR/custom/themes/powerlevel10k" \
-    "Powerlevel10k"
+  
+  install_or_upgrade_repo "$ZSH_SYNTAX_HIGHLIGHTING_REPO" "$OH_MY_ZSH_DIR/custom/plugins/zsh-syntax-highlighting" "zsh-syntax-highlighting"
+  install_or_upgrade_repo "$ZSH_COMPLETIONS_REPO" "$OH_MY_ZSH_DIR/custom/plugins/zsh-completions" "zsh-completions"
+  install_or_upgrade_repo "$ZSH_HISTORY_SEARCH_REPO" "$OH_MY_ZSH_DIR/custom/plugins/zsh-history-substring-search" "zsh-history-substring-search"
+  install_or_upgrade_repo "$ZSH_AUTOSUGGESTIONS_REPO" "$OH_MY_ZSH_DIR/custom/plugins/zsh-autosuggestions" "zsh-autosuggestions"
+  install_or_upgrade_repo "$POWERLEVEL10K_REPO" "$OH_MY_ZSH_DIR/custom/themes/powerlevel10k" "Powerlevel10k"
 }
 
-# Symlink .p10k.zsh from dotfiles into home directory
 setup_p10k_config() {
-  local src="$DOTFILES_DIR/tool/zsh/.p10k.zsh"
+  local src="$SCRIPT_DIR/zsh/.p10k.zsh"
   local dest="$HOME/.p10k.zsh"
 
   if [[ ! -f "$src" ]]; then
@@ -458,41 +429,31 @@ setup_p10k_config() {
   log_success "Linked .p10k.zsh -> $dest"
 }
 
-# Setup Tmux plugin manager (TPM)
 setup_tmux() {
   log_info "Setting up Tmux plugin manager (TPM)"
-  install_or_upgrade_repo \
-    "$TMUX_PLUGIN_MANAGER_REPO" \
-    "$HOME/.tmux/plugins/tpm" \
-    "tmux-plugin-manager"
+  install_or_upgrade_repo "$TMUX_PLUGIN_MANAGER_REPO" "$HOME/.tmux/plugins/tpm" "tmux-plugin-manager"
 
-  # Backup existing tmux config if it exists and is not a symlink
   if [[ -f "$HOME/.tmux.conf" && ! -L "$HOME/.tmux.conf" ]]; then
     log_info "Backing up existing .tmux.conf"
     execute_command "cp \"$HOME/.tmux.conf\" \"$HOME/.tmux.conf.backup.$(date +%Y%m%d_%H%M%S)\"" "Backup .tmux.conf"
   fi
 
-  # Setup tmux configuration
-  local tmux_config="source $DOTFILES_DIR/tool/tmux/config.tmux"
-  execute_command "echo \"$tmux_config\" > \"$HOME/.tmux.conf\"" "Create .tmux.conf"
+  local tmux_config="source \"$SCRIPT_DIR/tmux/config.tmux\""
+  execute_command "echo '$tmux_config' > \"$HOME/.tmux.conf\"" "Create .tmux.conf"
   log_success "Tmux configuration updated"
 }
 
-# Setup Vim & Neovim
 setup_vim_nvim() {
   log_info "Setting up Vim and Neovim..."
 
-  # Backup existing vim config if it exists
   if [[ -f "$HOME/.vimrc" && ! -L "$HOME/.vimrc" ]]; then
     log_info "Backing up existing .vimrc"
     execute_command "cp \"$HOME/.vimrc\" \"$HOME/.vimrc.backup.$(date +%Y%m%d_%H%M%S)\"" "Backup .vimrc"
   fi
 
-  # Setup Vim
-  local vim_config="source $DOTFILES_DIR/tool/vim/config.vim"
-  execute_command "echo \"$vim_config\" > \"$HOME/.vimrc\"" "Create .vimrc"
+  local vim_config="source \"$SCRIPT_DIR/vim/config.vim\""
+  execute_command "echo '$vim_config' > \"$HOME/.vimrc\"" "Create .vimrc"
 
-  # Ensure Neovim config directory
   local nvim_dir="$HOME/.config/nvim"
   local nvim_data_dir="$HOME/.local/share/nvim"
   local lazyvim_lock_file="$nvim_dir/lazy-lock.json"
@@ -537,12 +498,12 @@ run_packages() {
   log_info "==> Installing Homebrew..."
   install_homebrew
 
-  process_packages "--formula" "$UPGRADE_MODE" true "${required_packages[@]}"
-  process_packages "--formula" "$UPGRADE_MODE" false "${formulae_packages[@]}"
+  process_packages "--formula" true "${required_packages[@]}"
+  process_packages "--formula" false "${formulae_packages[@]}"
 
   if [[ "$os_type" == "macos" ]]; then
-    echo "==> Installing macOS Brew cask packages..."
-    process_packages "--cask" "$UPGRADE_MODE" false "${cask_packages[@]}"
+    log_info "==> Installing macOS Brew cask packages..."
+    process_packages "--cask" false "${cask_packages[@]}"
   fi
 }
 
@@ -597,9 +558,7 @@ install_fonts() {
   done
 
   if [[ ${#pids[@]} -gt 0 ]]; then
-    for pid in "${pids[@]}"; do
-      wait "$pid" || log_warn "A font download failed"
-    done
+    wait "${pids[@]}" || log_warn "A font download failed"
     log_success "Fonts downloaded successfully."
   fi
 
@@ -617,16 +576,18 @@ run_all() {
   setup_vim_nvim
 
   log_info "==> Running final Brew cleanup..."
-  brew cleanup || true
+  if command_exists brew; then
+    brew cleanup || true
+  fi
 
   log_success "==> Dotfiles setup complete!"
   
-  log_info ""
+  echo ""
   log_info "Next steps:"
   log_info "  1. Restart your terminal or run: source ~/.zshrc"
   log_info "  2. Open tmux and press 'prefix + I' to install tmux plugins"
   log_info "  3. Open nvim and run :Lazy sync if plugins are not installed"
-  log_info ""
+  echo ""
   log_info "Configuration files:"
   log_info "  - Zsh:  ~/.zshrc"
   log_info "  - Tmux: ~/.tmux.conf"
@@ -650,7 +611,7 @@ interactive_menu() {
     echo "  7) Upgrade Existing Setup"
     echo "  q) Quit"
     echo -e "\033[1;36m===============================================\033[0m"
-    read -p "Enter your choice [1]: " choice
+    read -r -p "Enter your choice [1]: " choice
     choice=${choice:-1}
     
     case $choice in
@@ -660,27 +621,26 @@ interactive_menu() {
         ;;
       2)
         run_packages
-        read -p "Press Enter to continue..."
+        read -r -p "Press Enter to continue..."
         ;;
       3)
         run_zsh
-        read -p "Press Enter to continue..."
+        read -r -p "Press Enter to continue..."
         ;;
       4)
         setup_tmux
-        read -p "Press Enter to continue..."
+        read -r -p "Press Enter to continue..."
         ;;
       5)
         setup_vim_nvim
-        read -p "Press Enter to continue..."
+        read -r -p "Press Enter to continue..."
         ;;
       6)
         install_fonts
-        read -p "Press Enter to continue..."
+        read -r -p "Press Enter to continue..."
         ;;
       7)
         UPGRADE_MODE=true
-        has_upgrade="upgrade"
         run_all
         break
         ;;
@@ -697,12 +657,9 @@ interactive_menu() {
 }
 
 main() {
-
-  # Parse command line arguments
   parse_arguments "$@"
 
-  # Show script info
-  log_info "Upgrade: $UPGRADE_MODE"
+  log_info "Upgrade Mode: $UPGRADE_MODE"
 
   if [[ "$AUTO_MODE" == true ]]; then
     run_all
