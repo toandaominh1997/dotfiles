@@ -1,0 +1,30 @@
+[profiles.default]
+required_packages = [
+    "bash", "fzf", "git", "neovim", "tmux", "vim", "zsh"
+]
+formulae_packages = [
+    "curl", "htop", "tldr", "wget", "zoxide"
+]
+cask_packages = [
+    "google-chrome", "visual-studio-code", "iterm2"
+]
+
+[profiles.work]
+required_packages = [
+    "bash", "fzf", "git", "neovim", "tmux", "vim", "zsh"
+]
+formulae_packages = [
+    "awscli", "docker", "docker-compose", "go", "k9s", "kubernetes-cli", "node", "rust", "terraform", "curl", "wget", "zoxide", "tldr"
+]
+cask_packages = [
+    "docker", "postman", "slack", "zoom", "google-chrome", "visual-studio-code"
+]
+
+[profiles.minimal]
+required_packages = [
+    "bash", "git", "tmux", "vim", "zsh"
+]
+formulae_packages = [
+    "curl", "htop", "wget"
+]
+cask_packages = []

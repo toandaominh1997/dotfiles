@@ -1,6 +1,4 @@
 use crate::utils::{command_exists, detect_os, execute_command, log_error, log_info, log_success};
-use std::fs::File;
-use std::io::BufReader;
 use std::process::{Command, Stdio};
 
 const BREW_INSTALL_URL: &str = "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh";
@@ -68,43 +66,6 @@ pub const CASK_PACKAGES: &[&str] = &[
     "whatsapp",
     "zoom",
 ];
-
-use serde::Deserialize;
-
-#[derive(Deserialize)]
-struct PackageConfig {
-    required_packages: Option<Vec<String>>,
-    formulae_packages: Option<Vec<String>>,
-    cask_packages: Option<Vec<String>>,
-}
-
-pub fn get_packages_from_json(array_name: &str, default_packages: &[&str]) -> Vec<String> {
-    let home = std::env::var("HOME").unwrap_or_else(|_| "".to_string());
-    let config_path = format!("{}/.dotfiles/tool/config/packages.json", home);
-
-    let file = match File::open(&config_path) {
-        Ok(f) => f,
-        Err(_) => return default_packages.iter().map(|s| s.to_string()).collect(),
-    };
-
-    let reader = BufReader::new(file);
-    let config: PackageConfig = match serde_json::from_reader(reader) {
-        Ok(c) => c,
-        Err(_) => return default_packages.iter().map(|s| s.to_string()).collect(),
-    };
-
-    let pkgs = match array_name {
-        "required_packages" => config.required_packages,
-        "formulae_packages" => config.formulae_packages,
-        "cask_packages" => config.cask_packages,
-        _ => None,
-    };
-
-    match pkgs {
-        Some(p) if !p.is_empty() => p,
-        _ => default_packages.iter().map(|s| s.to_string()).collect(),
-    }
-}
 
 pub fn get_pkg_manager(os_type: &str) -> &'static str {
     match os_type {

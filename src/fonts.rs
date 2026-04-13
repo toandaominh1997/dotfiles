@@ -20,12 +20,13 @@ pub fn install_fonts(dry_run: bool, verbose: bool) {
         std::fs::create_dir_all(&font_dir).unwrap_or_default();
     }
 
-    let base_url = "https://github.com/romkatv/powerlevel10k-media/raw/master";
-    let fonts = vec![
-        "MesloLGS%20NF%20Regular.ttf",
-        "MesloLGS%20NF%20Bold.ttf",
-        "MesloLGS%20NF%20Italic.ttf",
-        "MesloLGS%20NF%20Bold%20Italic.ttf",
+    let font_urls = vec![
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf",
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf",
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf",
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf",
+        "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/DroidSansMNerdFont-Regular.otf",
+        "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Iosevka/IosevkaNerdFontMono-Regular.ttf",
     ];
 
     let m = MultiProgress::new();
@@ -33,9 +34,10 @@ pub fn install_fonts(dry_run: bool, verbose: bool) {
         .unwrap()
         .tick_strings(&["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]);
 
-    let downloaded: usize = fonts
+    let downloaded: usize = font_urls
         .into_par_iter()
-        .map(|font_file| {
+        .map(|url| {
+            let font_file = url.split('/').last().unwrap_or("");
             let decoded_font = font_file.replace("%20", " ");
             let font_path = format!("{}/{}", font_dir, decoded_font);
 
@@ -60,12 +62,7 @@ pub fn install_fonts(dry_run: bool, verbose: bool) {
             };
 
             let output = Command::new("curl")
-                .args([
-                    "-fsSL",
-                    &format!("{}/{}", base_url, font_file),
-                    "-o",
-                    &font_path,
-                ])
+                .args(["-fsSL", url, "-o", &font_path])
                 .output();
 
             if let Some(pb) = pb {

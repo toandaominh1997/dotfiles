@@ -17,18 +17,20 @@ install_fonts() {
     mkdir -p "$font_dir"
   fi
 
-  local base_url="https://github.com/romkatv/powerlevel10k-media/raw/master"
-  local fonts=(
-    "MesloLGS%20NF%20Regular.ttf"
-    "MesloLGS%20NF%20Bold.ttf"
-    "MesloLGS%20NF%20Italic.ttf"
-    "MesloLGS%20NF%20Bold%20Italic.ttf"
+  local font_urls=(
+    "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf"
+    "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf"
+    "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf"
+    "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf"
+    "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DroidSansMono/DroidSansMNerdFont-Regular.otf"
+    "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Iosevka/IosevkaNerdFontMono-Regular.ttf"
   )
 
   local pids=()
   local downloaded=0
 
-  for font_file in "${fonts[@]}"; do
+  for url in "${font_urls[@]}"; do
+    local font_file="${url##*/}"
     local decoded_font="${font_file//%20/ }"
     local font_path="$font_dir/$decoded_font"
 
@@ -38,9 +40,9 @@ install_fonts() {
     fi
 
     log_info "Downloading $decoded_font..."
-    curl -fsSL "$base_url/$font_file" -o "$font_path" &
+    curl -fsSL "$url" -o "$font_path" &
     pids+=($!)
-    ((downloaded++))
+    downloaded=$((downloaded + 1))
   done
 
   if [[ ${#pids[@]} -gt 0 ]]; then
