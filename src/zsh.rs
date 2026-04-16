@@ -1,4 +1,4 @@
-use crate::utils::{execute_command, log_error, log_info, log_success, log_warn};
+use crate::utils::{command_exists, execute_command, log_error, log_info, log_success, log_warn};
 use std::env;
 use std::path::Path;
 
@@ -9,7 +9,6 @@ const ZSH_COMPLETIONS_REPO: &str = "https://github.com/zsh-users/zsh-completions
 const ZSH_HISTORY_SEARCH_REPO: &str =
     "https://github.com/zsh-users/zsh-history-substring-search.git";
 const ZSH_AUTOSUGGESTIONS_REPO: &str = "https://github.com/zsh-users/zsh-autosuggestions";
-const POWERLEVEL10K_REPO: &str = "https://github.com/romkatv/powerlevel10k.git";
 
 pub fn get_home_dir() -> String {
     env::var("HOME").unwrap_or_else(|_| "".to_string())
@@ -133,35 +132,48 @@ pub fn setup_zsh_plugins(upgrade_mode: bool, dry_run: bool, verbose: bool) {
         dry_run,
         verbose,
     );
-    install_or_upgrade_repo(
-        POWERLEVEL10K_REPO,
-        &format!("{}/custom/themes/powerlevel10k", omz_dir),
-        "Powerlevel10k",
-        upgrade_mode,
-        dry_run,
-        verbose,
-    );
 }
 
-pub fn setup_p10k_config(dry_run: bool, verbose: bool) {
-    let src = format!("{}/tool/zsh/.p10k.zsh", get_dotfiles_dir());
-    let dest = format!("{}/.p10k.zsh", get_home_dir());
+pub fn setup_starship_config(dry_run: bool, verbose: bool) {
+    log_info("Setting up Starship");
+
+    if !command_exists("starship") {
+        log_info("Installing starship via brew...");
+        if !execute_command("brew install starship", "Install starship", dry_run, verbose) {
+            log_error("Failed to install starship");
+            return;
+        }
+        log_success("Starship installed");
+    } else {
+        log_info("Starship already installed");
+    }
+
+    let config_dir = format!("{}/.config", get_home_dir());
+    if !Path::new(&config_dir).exists() && !dry_run {
+        std::fs::create_dir_all(&config_dir).unwrap_or_default();
+    }
+
+    let src = format!("{}/tool/starship/starship.toml", get_dotfiles_dir());
+    let dest = format!("{}/.config/starship.toml", get_home_dir());
 
     if !Path::new(&src).exists() {
-        log_warn(&format!(".p10k.zsh not found at {}, skipping symlink", src));
+        log_warn(&format!(
+            "starship.toml not found at {}, skipping symlink",
+            src
+        ));
         return;
     }
 
     if let Ok(metadata) = std::fs::symlink_metadata(&dest) {
         if metadata.file_type().is_symlink() {
-            log_info("~/.p10k.zsh symlink already exists");
+            log_info("~/.config/starship.toml symlink already exists");
             return;
         }
 
-        log_info("Backing up existing ~/.p10k.zsh");
+        log_info("Backing up existing ~/.config/starship.toml");
         execute_command(
             &format!("mv \"{}\" \"{}.backup.$(date +%Y%m%d_%H%M%S)\"", dest, dest),
-            "Backup .p10k.zsh",
+            "Backup starship.toml",
             dry_run,
             verbose,
         );
@@ -169,11 +181,11 @@ pub fn setup_p10k_config(dry_run: bool, verbose: bool) {
 
     execute_command(
         &format!("ln -sf \"{}\" \"{}\"", src, dest),
-        "Symlink .p10k.zsh",
+        "Symlink starship.toml",
         dry_run,
         verbose,
     );
-    log_success(&format!("Linked .p10k.zsh -> {}", dest));
+    log_success(&format!("Linked starship.toml -> {}", dest));
 }
 
 pub fn ensure_custom_config_in_zshrc(dry_run: bool, _verbose: bool) {
@@ -237,7 +249,7 @@ mod tests {
         // These should not modify the actual system or crash, thanks to dry_run=true
         setup_oh_my_zsh(false, true, false);
         setup_zsh_plugins(false, true, false);
-        setup_p10k_config(true, false);
+        setup_starship_config(true, false);
         ensure_custom_config_in_zshrc(true, false);
 
         env::remove_var("HOME");

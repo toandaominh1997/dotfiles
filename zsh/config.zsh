@@ -10,28 +10,12 @@ if [[ "$(uname)" == "Darwin" ]]; then
 fi
 
 # ==============================================================================
-# Powerlevel10k instant prompt — must come before any stdout/stderr output
-# ==============================================================================
-DOTFILES_THEME="${DOTFILES_THEME:-powerlevel10k}"
-
-if [[ "$DOTFILES_THEME" == "powerlevel10k" ]]; then
-  if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-  fi
-fi
-
-# ==============================================================================
 # Oh My Zsh
 # ==============================================================================
 export ZSH="$HOME/.dotfiles/oh-my-zsh"
 
-# Theme
-if [[ "$DOTFILES_THEME" == "starship" ]]; then
-  ZSH_THEME=""
-elif [[ "$DOTFILES_THEME" == "powerlevel10k" ]]; then
-  ZSH_THEME="powerlevel10k/powerlevel10k"
-  POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
-fi
+# Starship handles the prompt; OMZ theme must be blank
+ZSH_THEME=""
 
 # Static user — avoids a subshell on every shell start
 DEFAULT_USER="$USER"
@@ -75,13 +59,11 @@ else
   echo "Warning: Oh-My-Zsh not found at $ZSH"
 fi
 
-# Starship init (after oh-my-zsh so it wins the prompt)
-if [[ "$DOTFILES_THEME" == "starship" ]]; then
-  if command -v starship &>/dev/null; then
-    eval "$(starship init zsh)"
-  else
-    echo "Warning: starship not found"
-  fi
+# Starship prompt (after oh-my-zsh so it wins the prompt)
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+else
+  echo "Warning: starship not found — run dotup to install"
 fi
 
 # ==============================================================================
@@ -118,7 +100,3 @@ elif [[ -f "$HOME/.fzf.zsh" ]]; then
   source "$HOME/.fzf.zsh"
 fi
 
-# ==============================================================================
-# p10k config
-# ==============================================================================
-[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh

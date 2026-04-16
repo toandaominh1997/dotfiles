@@ -104,7 +104,7 @@ fn run_packages(profile_name: &str, upgrade_mode: bool, dry_run: bool, verbose: 
 fn run_zsh(upgrade_mode: bool, dry_run: bool, verbose: bool) {
     zsh::setup_oh_my_zsh(upgrade_mode, dry_run, verbose);
     zsh::setup_zsh_plugins(upgrade_mode, dry_run, verbose);
-    zsh::setup_p10k_config(dry_run, verbose);
+    zsh::setup_starship_config(dry_run, verbose);
     zsh::ensure_custom_config_in_zshrc(dry_run, verbose);
 }
 

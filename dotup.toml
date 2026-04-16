@@ -3,7 +3,7 @@ required_packages = [
     "bash", "fzf", "git", "neovim", "tmux", "vim", "zsh"
 ]
 formulae_packages = [
-    "curl", "htop", "tldr", "wget", "zoxide"
+    "curl", "htop", "starship", "tldr", "wget", "zoxide"
 ]
 cask_packages = [
     "google-chrome", "visual-studio-code", "iterm2"
@@ -14,7 +14,7 @@ required_packages = [
     "bash", "fzf", "git", "neovim", "tmux", "vim", "zsh"
 ]
 formulae_packages = [
-    "awscli", "docker", "docker-compose", "go", "k9s", "kubernetes-cli", "node", "rust", "terraform", "curl", "wget", "zoxide", "tldr"
+    "awscli", "docker", "docker-compose", "go", "k9s", "kubernetes-cli", "node", "rust", "starship", "terraform", "curl", "wget", "zoxide", "tldr"
 ]
 cask_packages = [
     "docker", "postman", "slack", "zoom", "google-chrome", "visual-studio-code"
