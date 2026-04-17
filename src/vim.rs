@@ -81,10 +81,7 @@ pub fn setup_vim_nvim(upgrade_mode: bool, dry_run: bool, verbose: bool) {
             }
         } else {
             log_warn(&format!("Existing Neovim config found at {}. Skipping LazyVim installation to avoid overwriting your config.", nvim_dir));
-            log_warn(&format!(
-                "Remove or back up {} and rerun setup.sh to install LazyVim.",
-                nvim_dir
-            ));
+            log_warn(&lazyvim_existing_config_warning(&nvim_dir));
         }
     } else {
         log_info("Installing LazyVim...");
@@ -122,12 +119,27 @@ pub fn setup_vim_nvim(upgrade_mode: bool, dry_run: bool, verbose: bool) {
     }
 }
 
+fn lazyvim_existing_config_warning(nvim_dir: &str) -> String {
+    format!(
+        "Remove or back up {} and rerun dotup to install LazyVim.",
+        nvim_dir
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use serial_test::serial;
     use std::env;
     use tempfile::tempdir;
+
+    #[test]
+    fn test_lazyvim_existing_config_warning_mentions_dotup() {
+        assert_eq!(
+            lazyvim_existing_config_warning("/tmp/nvim"),
+            "Remove or back up /tmp/nvim and rerun dotup to install LazyVim."
+        );
+    }
 
     #[test]
     #[serial]

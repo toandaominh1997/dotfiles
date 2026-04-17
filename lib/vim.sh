@@ -38,7 +38,7 @@ setup_vim_nvim() {
       fi
     else
       log_warn "Existing Neovim config found at $nvim_dir. Skipping LazyVim installation to avoid overwriting your config."
-      log_warn "Remove or back up $nvim_dir and rerun setup.sh to install LazyVim."
+      log_warn "Remove or back up $nvim_dir and rerun dotup to install LazyVim."
     fi
   else
     log_info "Installing LazyVim..."

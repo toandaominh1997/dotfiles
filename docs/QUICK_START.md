@@ -5,33 +5,34 @@
 ### Fresh Install
 ```bash
 git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/tool
-bash $HOME/.dotfiles/tool/setup.sh
+cd $HOME/.dotfiles/tool
+cargo run -- --auto
 ```
 
 ### Upgrade Existing Installation
 ```bash
 cd $HOME/.dotfiles/tool
 git pull
-bash setup.sh --upgrade
+cargo run -- --auto --upgrade
 ```
 
 ## Setup Options
 
 ```bash
 # Show help
-bash setup.sh --help
+cargo run -- --help
 
 # Dry run (see what would be installed)
-bash setup.sh --dry-run
+cargo run -- --dry-run
 
 # Verbose output
-bash setup.sh --verbose
+cargo run -- --verbose
 
 # Force reinstall
-bash setup.sh --force
+cargo run -- --force
 
 # Upgrade mode
-bash setup.sh --upgrade
+cargo run -- --auto --upgrade
 ```
 
 ## Post-Installation Steps
@@ -123,7 +124,7 @@ Create local config files that won't be tracked by git:
    ```
 2. Reinstall if needed:
    ```bash
-   bash setup.sh --force
+   cargo run -- --force
    ```
 
 ### Homebrew packages failing
@@ -133,12 +134,12 @@ Create local config files that won't be tracked by git:
    ```
 2. Run setup in verbose mode:
    ```bash
-   bash setup.sh --upgrade --verbose
+   cargo run -- --auto --upgrade --verbose
    ```
 
 ## Backup and Restore
 
-The setup script automatically backs up existing configs with timestamps:
+Dotup automatically backs up existing configs with timestamps:
 - `.vimrc.backup.YYYYMMDD_HHMMSS`
 - `.tmux.conf.backup.YYYYMMDD_HHMMSS`
 

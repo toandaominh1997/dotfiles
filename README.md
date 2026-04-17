@@ -23,7 +23,8 @@ A fully automated, cross-platform (macOS + Linux) developer environment — shel
 
 ```bash
 git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/tool
-bash $HOME/.dotfiles/tool/setup.sh
+cd $HOME/.dotfiles/tool
+cargo run -- --auto
 ```
 
 Restart your terminal, then:
@@ -33,27 +34,32 @@ Restart your terminal, then:
 
 ---
 
-## Setup script
+## Dotup CLI
 
 ```
-Usage: setup.sh [OPTIONS]
+Usage: dotup [OPTIONS]
 
 OPTIONS:
-    -u, --upgrade     Upgrade existing packages
-    -d, --dry-run     Preview what would be installed without making changes
-    -v, --verbose     Enable verbose output
-    -f, --force       Force installation even if already present
-    -h, --help        Show this help message
-        --version     Show script version
+    -p, --profile <PROFILE>    Configuration profile to use [default: default]
+    -u, --upgrade              Upgrade existing packages
+    -d, --dry-run              Preview what would be installed without making changes
+    -v, --verbose              Enable verbose output
+    -f, --force                Force installation even if already present
+    -a, --auto                 Run automatically without the interactive menu
+        --dashboard            Show system metrics dashboard
+        --doctor               Check system health
+        --sync                 Sync dotfiles to remote repository
+    -h, --help                 Show help
+    -V, --version              Show version
 
 EXAMPLES:
-    ./setup.sh                  # Fresh install
-    ./setup.sh --upgrade        # Upgrade all packages
-    ./setup.sh --dry-run        # Preview changes
-    ./setup.sh -v --upgrade     # Verbose upgrade
+    cargo run -- --auto
+    cargo run -- --auto --upgrade --verbose
+    cargo run -- --dry-run
+    cargo run -- --doctor
 ```
 
-The script installs in order:
+Dotup installs in order:
 
 1. **Homebrew** (auto-detects Intel vs Apple Silicon)
 2. **Required formulae** — `bash`, `fzf`, `git`, `neovim`, `tmux`, `vim`, `zsh`
@@ -236,7 +242,8 @@ Enabled plugins: `surround`, `easymotion`, `commentary`, `NERDTree`, `quickscope
 
 ```
 .
-├── setup.sh              # Main installer
+├── src/                  # dotup source code
+├── Cargo.toml            # dotup package manifest
 ├── zsh/
 │   └── config.zsh        # Zsh + Oh-My-Zsh config
 ├── tmux/
