@@ -100,3 +100,7 @@ elif [[ -f "$HOME/.fzf.zsh" ]]; then
   source "$HOME/.fzf.zsh"
 fi
 
+if [[ -f "$HOME/.dotfiles/tool/zsh/local.zsh" ]]; then
+  source "$HOME/.dotfiles/tool/zsh/local.zsh"
+fi
+

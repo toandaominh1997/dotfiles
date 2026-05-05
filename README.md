@@ -1,6 +1,6 @@
 # dotfiles
 
-A fully automated, cross-platform (macOS + Linux) developer environment — shell, editor, terminal multiplexer, and prompt — configured as code and installed with a single command.
+A Rust-powered dotfiles bootstrapper for a personal developer environment with first-class support for macOS and Ubuntu.
 
 ![demo](./docs/demo.png)
 
@@ -10,197 +10,85 @@ A fully automated, cross-platform (macOS + Linux) developer environment — shel
 
 | Layer | Tool | Details |
 |---|---|---|
-| **Shell** | Zsh + Oh-My-Zsh | 27 plugins, Powerlevel10k / Starship prompt |
-| **Editor** | Neovim (LazyVim) | LSP, Treesitter, Telescope, completion |
-| **Multiplexer** | Tmux + TPM | Session persistence, vim-tmux navigation |
-| **Terminal** | WezTerm | GPU-accelerated, custom keybindings |
-| **Package manager** | Homebrew | Formulae + casks, macOS & Linux |
-| **IDE integration** | IdeaVim | JetBrains IDEs with vim motions |
+| **Bootstrapper** | `dotup` | Rust CLI for install, dry-run, doctor, and sync workflows |
+| **Shell** | Zsh + Oh-My-Zsh + Starship | Shared shell config with optional local overrides |
+| **Editor** | Neovim (LazyVim) | Bootstrapped when no existing Neovim config is present |
+| **Multiplexer** | Tmux + TPM | Shared defaults with clipboard integrations and local overrides |
+| **Terminal** | WezTerm | Personal defaults with documented font expectations |
+| **Package management** | Homebrew on macOS, APT on Ubuntu | Other Linux package managers remain best-effort |
+| **IDE integration** | IdeaVim | JetBrains Vim motions via `vim/ideavimrc.vim` |
 
 ---
 
 ## Quick start
 
 ```bash
-git clone https://github.com/toandaominh1997/dotfiles.git $HOME/.dotfiles/tool
-cd $HOME/.dotfiles/tool
+git clone https://github.com/toandaominh1997/dotfiles.git "$HOME/.dotfiles/tool"
+cd "$HOME/.dotfiles/tool"
 cargo run -- --auto
 ```
 
 Restart your terminal, then:
 
-1. Open tmux → `prefix + I` to install tmux plugins
-2. Open `nvim` → `:Lazy sync` if plugins are not auto-installed
+1. Open tmux and press `prefix + I` to install tmux plugins
+2. Open `nvim` and let LazyVim finish plugin sync if this is a fresh install
+
+---
+
+## Support model
+
+- **First-class platforms:** macOS and Ubuntu
+- **Best-effort platforms:** other Linux distributions supported through existing package-manager adapters
+- **GUI app installation:** macOS-only
+- **Setup bias:** personal machine defaults first, with explicit local overrides for machine-specific differences
 
 ---
 
 ## Dotup CLI
 
-```
-Usage: dotup [OPTIONS]
-
-OPTIONS:
-    -p, --profile <PROFILE>    Configuration profile to use [default: default]
-    -u, --upgrade              Upgrade existing packages
-    -d, --dry-run              Preview what would be installed without making changes
-    -v, --verbose              Enable verbose output
-    -f, --force                Force installation even if already present
-    -a, --auto                 Run automatically without the interactive menu
-        --dashboard            Show system metrics dashboard
-        --doctor               Check system health
-        --sync                 Sync dotfiles to remote repository
-    -h, --help                 Show help
-    -V, --version              Show version
-
-EXAMPLES:
-    cargo run -- --auto
-    cargo run -- --auto --upgrade --verbose
-    cargo run -- --dry-run
-    cargo run -- --doctor
+```bash
+cargo run -- --auto
+cargo run -- --auto --upgrade --verbose
+cargo run -- --dry-run
+cargo run -- --doctor
+cargo run -- --auto --profile work
 ```
 
-Dotup installs in order:
+### Profiles
 
-1. **Homebrew** (auto-detects Intel vs Apple Silicon)
-2. **Required formulae** — `bash`, `fzf`, `git`, `neovim`, `tmux`, `vim`, `zsh`
-3. **Optional formulae** — `go`, `rust`, `node`, `python`, `awscli`, `kubectl`, `helm`, `terraform`, `lazygit`, `lazydocker`, `k9s`, `bat`, `zoxide`, `thefuck`, and more
-4. **macOS casks** — `iterm2`, `wezterm`, `vscode`, `jetbrains-toolbox`, `docker`, `slack`, `notion`, `obsidian`, and more
-5. **Oh-My-Zsh** + plugins
-6. **Tmux** config + TPM
-7. **Neovim** via LazyVim starter
+Profiles are defined in `dotup.toml`:
+
+- `default` — personal baseline with shell, editor, tmux, and core CLI tools
+- `work` — adds common work tooling such as AWS CLI, Docker, Kubernetes, Node, Rust, and Terraform
+- `minimal` — smaller shell and terminal setup
+
+### Install flow
+
+`dotup` orchestrates setup in this order:
+
+1. Initialize the platform package manager
+2. Install required packages from the selected profile
+3. Install optional packages from the selected profile
+4. Install macOS casks when running on macOS
+5. Install fonts
+6. Configure zsh
+7. Configure tmux and TPM
+8. Configure Vim and Neovim
 
 Existing configs are backed up with a timestamp before being overwritten.
 
 ---
 
-## Neovim
-
-Built on [LazyVim](https://www.lazyvim.org/). Config lives in `~/.config/nvim` after setup.
-
-### Key mappings
-
-**Leader key:** `Space`
-
-| Key | Action |
-|---|---|
-| `<leader>ff` | Find files (Telescope) |
-| `<leader>fg` | Live grep |
-| `<leader>fb` | Buffers |
-| `<leader>fh` | Help tags |
-| `<leader>tt` | Focus file explorer (NvimTree) |
-| `<leader>nf` | Reveal current file in tree |
-| `<leader>U` | Toggle undo tree |
-| `<leader>w` | Save file |
-| `<leader>y / p` | System clipboard yank / paste |
-| `<S-l> / <S-h>` | Next / previous buffer |
-| `jk` or `kj` | Exit insert mode |
-| `;;` | EasyMotion 2-char jump |
-| `;l / ;w` | EasyMotion line / word jump |
-
-**LSP (on attach):**
-
-| Key | Action |
-|---|---|
-| `gd` | Go to definition |
-| `gD` | Go to declaration |
-| `gI` | Go to implementation |
-| `gr` | References |
-| `K` | Hover documentation |
-| `gl` | Diagnostic float |
-| `<leader>la` | Code action |
-| `<leader>lr` | Rename symbol |
-| `<leader>lf` | Format file |
-| `<leader>lj / lk` | Next / previous diagnostic |
-
-### LSP servers (auto-installed via Mason)
-
-`lua_ls`, `tsserver`, `pyright`, `rust_analyzer`, `clangd`, `cssls`
-
-### Formatters & linters (null-ls)
-
-`prettier` (no semicolons, single quotes), `black`, `stylua`, `yapf`, `eslint`
-
-### Treesitter parsers
-
-c, cpp, html, css, dockerfile, lua, python, javascript, typescript, go, java, json, kotlin, rust, scala, sql, yaml, terraform, toml
-
-### Plugin management
-
-```vim
-:Lazy sync       " Install / update all plugins
-:Lazy update     " Update plugins
-:Mason           " Manage LSP servers
-:TSInstall {lang} " Install a Treesitter parser
-:TSUpdate        " Update all parsers
-```
-
----
-
-## Tmux
-
-**Prefix:** `Ctrl+a`
-
-### Panes & windows
-
-| Key | Action |
-|---|---|
-| `prefix -` | Split horizontally |
-| `prefix _` | Split vertically |
-| `prefix h/j/k/l` | Navigate panes |
-| `prefix H/J/K/L` | Resize panes |
-| `prefix Ctrl+h/l` | Previous / next window |
-| `prefix Tab` | Last active window |
-| `prefix r` | Reload config |
-
-### Sessions
-
-| Key | Action |
-|---|---|
-| `prefix Ctrl+c` | New session |
-| `prefix Ctrl+f` | Find session |
-| `prefix S` | Switch / kill sessions (fzf) |
-| `prefix C` | Create session (fzf) |
-
-### Copy mode (vi keys)
-
-| Key | Action |
-|---|---|
-| `prefix [` | Enter copy mode |
-| `v` | Begin selection |
-| `y` | Copy selection |
-| `Ctrl+v` | Rectangle selection |
-
-Clipboard integration is automatic: `pbcopy` (macOS), `xclip`/`xsel` (Linux), `wl-copy` (Wayland).
-
-### Plugins
-
-| Plugin | Purpose |
-|---|---|
-| `tmux-resurrect` | Persist sessions across restarts |
-| `tmux-continuum` | Auto-save every 3 minutes |
-| `tmux-copycat` | Regex search in buffers |
-| `tmux-battery` | Battery indicator in statusline |
-| `vim-tmux-navigator` | Seamless vim ↔ tmux pane navigation |
-
-> **Vim-tmux navigation:** `Ctrl+h/j/k/l` works transparently across vim splits and tmux panes.
-
----
-
 ## Zsh
 
-Config is sourced from `~/.dotfiles/tool/zsh/config.zsh` via `~/.zshrc`.
+The generated `~/.zshrc` sources `~/.dotfiles/tool/zsh/config.zsh`.
 
-**Theme:** Powerlevel10k (default). Set `DOTFILES_THEME=starship` to switch to Starship.
+Highlights:
 
-**Plugin highlights:**
-
-| Category | Plugins |
-|---|---|
-| Completion & UX | `zsh-autosuggestions`, `zsh-syntax-highlighting`, `zsh-completions`, `zsh-history-substring-search` |
-| Navigation | `fzf`, `zoxide`, `extract` |
-| Dev | `git`, `docker`, `kubectl`, `helm`, `terraform`, `python`, `npm` |
-| macOS | `macos`, `brew`, `iterm2` |
-| Misc | `colored-man-pages`, `dotenv`, `thefuck`, `web-search` |
+- Starship prompt
+- Oh-My-Zsh with plugin-based completion and UX improvements
+- macOS Homebrew shellenv bootstrapping
+- optional machine-local additions via `~/.zshrc.local`
 
 Update Oh-My-Zsh:
 
@@ -210,17 +98,48 @@ omz update
 
 ---
 
+## Tmux
+
+**Prefix:** `Ctrl+a`
+
+Highlights:
+
+- TPM-managed plugins
+- vim-tmux pane navigation
+- clipboard integration through `pbcopy`, `xsel`, `xclip`, or `wl-copy`
+- optional machine-local additions via `~/.tmux.conf.local`
+
+Install tmux plugins after first setup:
+
+```bash
+tmux
+# then press prefix + I
+```
+
+---
+
+## Neovim
+
+Neovim is bootstrapped from the [LazyVim](https://www.lazyvim.org/) starter when `~/.config/nvim` is absent or empty. If an existing non-LazyVim config is present, `dotup` skips installation instead of overwriting it.
+
+Use these commands inside Neovim when needed:
+
+```vim
+:Lazy sync
+:Lazy update
+:Mason
+:TSUpdate
+```
+
+---
+
 ## WezTerm
 
-Config at `wezterm/wezterm.lua`. Font: `AestheticIosevka Nerd Font Mono`, size 8. Color scheme: Aesthetic Night.
+Config lives at `wezterm/wezterm.lua`.
 
-| Key | Action |
-|---|---|
-| `Ctrl+\` | Split vertical |
-| `Ctrl+Alt+\` | Split horizontal |
-| `Ctrl+Shift+h/j/k/l` | Navigate panes |
-| `Ctrl+t / w` | New / close tab |
-| `Ctrl+Tab` | Next tab |
+- Preferred font: `AestheticIosevka Nerd Font Mono`
+- color scheme: Aesthetic Night
+- pane and tab bindings are tuned to match tmux and editor navigation where possible
 
 ---
 
@@ -228,63 +147,45 @@ Config at `wezterm/wezterm.lua`. Font: `AestheticIosevka Nerd Font Mono`, size 8
 
 Copy `vim/ideavimrc.vim` to `~/.ideavimrc` for JetBrains IDEs.
 
-Enabled plugins: `surround`, `easymotion`, `commentary`, `NERDTree`, `quickscope`
-
-| Key | Action |
-|---|---|
-| `Ctrl+h/j/k/l` | Navigate splits |
-| `<leader>ff` | Find in path |
-| `Tab / S-Tab` | Next / previous tab |
-
 ---
 
-## Directory structure
+## Repository structure
 
-```
+```text
 .
-├── src/                  # dotup source code
-├── Cargo.toml            # dotup package manifest
-├── zsh/
-│   └── config.zsh        # Zsh + Oh-My-Zsh config
-├── tmux/
-│   ├── config.tmux       # Tmux config
-│   └── statusline.tmux   # Statusline theme
-├── vim/
-│   ├── config.vim        # Shared Vim/Neovim config (vim-plug)
-│   ├── init.lua          # Neovim entry point (Packer)
-│   ├── ideavimrc.vim     # JetBrains IdeaVim config
-│   └── lua/user/         # Neovim Lua modules
-│       ├── plugins.lua
-│       ├── options.lua
-│       ├── keymaps.lua
-│       └── lsp/
-├── starship/
-│   └── starship.toml     # Starship prompt config
-├── wezterm/
-│   └── wezterm.lua       # WezTerm terminal config
-├── fish/
-│   └── config.fish       # Fish shell config
-├── utils/
-│   └── config_parser.sh  # INI-style config parser utility
-├── docs/
-│   ├── QUICK_START.md
-│   └── demo.png
-└── .github/workflows/
-    └── main.yml          # CI: macOS + Ubuntu matrix
+├── src/                  # dotup Rust orchestration
+├── dotup.toml            # package profiles
+├── zsh/                  # shared zsh config
+├── tmux/                 # shared tmux config
+├── vim/                  # vim, ideavim, and neovim bootstrap assets
+├── wezterm/              # terminal config
+├── starship/             # prompt config
+├── fish/                 # fish shell config
+├── tests/                # shell smoke tests
+└── .github/workflows/    # CI workflows
 ```
 
 ---
 
-## CI
+## Verification
 
-GitHub Actions runs on every push against `macos-latest` and `ubuntu-latest`, performing a full install and upgrade, then verifying versions of: `brew`, `tmux`, `vim`, `nvim`, `fzf`, `zsh`, `helm`, `go`.
+Useful commands while iterating on the repo:
+
+```bash
+cargo test
+cargo run -- --auto --dry-run --verbose
+cargo run -- --doctor
+bash tests/integration_test.sh
+```
+
+CI runs on macOS and Ubuntu to keep the documented support model honest.
 
 ---
 
 ## References
 
-- [Vim cheatsheet](https://vim.rtorr.com/)
-- [Tmux cheatsheet](https://tmuxcheatsheet.com/)
 - [LazyVim docs](https://www.lazyvim.org/)
-- [Powerlevel10k](https://github.com/romkatv/powerlevel10k)
 - [Oh-My-Zsh](https://ohmyz.sh/)
+- [Tmux cheatsheet](https://tmuxcheatsheet.com/)
+- [Vim cheatsheet](https://vim.rtorr.com/)
+- [Starship](https://starship.rs/)

@@ -244,6 +244,7 @@ if-shell 'test "$(uname)" = "Darwin"' \
      bind p run-shell "pbpaste | tmux load-buffer - && tmux paste-buffer"'
 
 # local config
+if-shell "[ -f ~/.dotfiles/tool/tmux/local.tmux ]" 'source ~/.dotfiles/tool/tmux/local.tmux'
 if-shell "[ -f ~/.tmux.conf.local ]" 'source ~/.tmux.conf.local'
 
 

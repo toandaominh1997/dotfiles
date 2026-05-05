@@ -1,4 +1,7 @@
-use crate::utils::{command_exists, execute_command, log_error, log_info, log_success, log_warn};
+use crate::packages::get_pkg_manager;
+use crate::utils::{
+    command_exists, detect_os, execute_command, log_error, log_info, log_success, log_warn,
+};
 use std::env;
 use std::path::Path;
 
@@ -138,12 +141,26 @@ pub fn setup_starship_config(dry_run: bool, verbose: bool) {
     log_info("Setting up Starship");
 
     if !command_exists("starship") {
-        log_info("Installing starship via brew...");
-        if !execute_command("brew install starship", "Install starship", dry_run, verbose) {
-            log_error("Failed to install starship");
-            return;
+        let os_type = detect_os();
+        let pkg_manager = get_pkg_manager(&os_type);
+        let install_cmd = match pkg_manager {
+            "brew" => "brew install starship",
+            "apt-get" => "sudo apt-get install -y starship",
+            "dnf" => "sudo dnf install -y starship",
+            "pacman" => "sudo pacman -S --noconfirm starship",
+            _ => "",
+        };
+
+        if install_cmd.is_empty() {
+            log_warn("Skipping Starship installation on this platform");
+        } else {
+            log_info(&format!("Installing starship via {}...", pkg_manager));
+            if !execute_command(install_cmd, "Install starship", dry_run, verbose) {
+                log_error("Failed to install starship");
+                return;
+            }
+            log_success("Starship installed");
         }
-        log_success("Starship installed");
     } else {
         log_info("Starship already installed");
     }
@@ -207,7 +224,7 @@ pub fn ensure_custom_config_in_zshrc(dry_run: bool, _verbose: bool) {
             if let Ok(mut file) = std::fs::OpenOptions::new().append(true).open(&zshrc_path) {
                 writeln!(
                     file,
-                    "\n# Dotfiles custom configuration\n{}",
+                    "\n# Dotfiles custom configuration\n{}\n\n# Optional machine-local additions\nif [ -f \"$HOME/.zshrc.local\" ]; then\n  source \"$HOME/.zshrc.local\"\nfi",
                     custom_config_line
                 )
                 .unwrap();
@@ -246,11 +263,25 @@ mod tests {
         let dir = tempdir().unwrap();
         env::set_var("HOME", dir.path());
 
-        // These should not modify the actual system or crash, thanks to dry_run=true
         setup_oh_my_zsh(false, true, false);
         setup_zsh_plugins(false, true, false);
         setup_starship_config(true, false);
         ensure_custom_config_in_zshrc(true, false);
+
+        env::remove_var("HOME");
+    }
+
+    #[test]
+    #[serial]
+    fn ensure_custom_config_in_zshrc_adds_local_loader() {
+        let dir = tempdir().unwrap();
+        env::set_var("HOME", dir.path());
+
+        ensure_custom_config_in_zshrc(false, false);
+
+        let zshrc = std::fs::read_to_string(dir.path().join(".zshrc")).unwrap();
+        assert!(zshrc.contains("source $HOME/.dotfiles/tool/zsh/config.zsh"));
+        assert!(zshrc.contains(".zshrc.local"));
 
         env::remove_var("HOME");
     }

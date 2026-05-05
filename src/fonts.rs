@@ -5,6 +5,10 @@ use rayon::prelude::*;
 use std::path::Path;
 use std::process::Command;
 
+fn should_refresh_font_cache(os_type: &str) -> bool {
+    matches!(os_type, "debian" | "redhat" | "arch" | "linux")
+}
+
 pub fn install_fonts(dry_run: bool, verbose: bool) {
     log_info("==> Installing Nerd Fonts (MesloLGS NF)...");
 
@@ -17,7 +21,10 @@ pub fn install_fonts(dry_run: bool, verbose: bool) {
     };
 
     if !Path::new(&font_dir).exists() && !dry_run {
-        std::fs::create_dir_all(&font_dir).unwrap_or_default();
+        if let Err(e) = std::fs::create_dir_all(&font_dir) {
+            log_warn(&format!("Failed to create font dir {}: {}", font_dir, e));
+            return;
+        }
     }
 
     let font_urls = vec![
@@ -37,7 +44,7 @@ pub fn install_fonts(dry_run: bool, verbose: bool) {
     let downloaded: usize = font_urls
         .into_par_iter()
         .map(|url| {
-            let font_file = url.split('/').last().unwrap_or("");
+            let font_file = url.rsplit('/').next().unwrap_or("");
             let decoded_font = font_file.replace("%20", " ");
             let font_path = format!("{}/{}", font_dir, decoded_font);
 
@@ -85,7 +92,7 @@ pub fn install_fonts(dry_run: bool, verbose: bool) {
         log_info("All fonts are already installed.");
     }
 
-    if downloaded > 0 && os_type == "linux" && command_exists("fc-cache") {
+    if downloaded > 0 && should_refresh_font_cache(&os_type) && command_exists("fc-cache") {
         log_info("Updating font cache...");
         execute_command(
             "fc-cache -f -v >/dev/null 2>&1",
@@ -102,6 +109,15 @@ mod tests {
     use serial_test::serial;
     use std::env;
     use tempfile::tempdir;
+
+    #[test]
+    fn refresh_font_cache_on_supported_linux_families() {
+        assert!(should_refresh_font_cache("debian"));
+        assert!(should_refresh_font_cache("redhat"));
+        assert!(should_refresh_font_cache("arch"));
+        assert!(should_refresh_font_cache("linux"));
+        assert!(!should_refresh_font_cache("macos"));
+    }
 
     #[test]
     #[serial]

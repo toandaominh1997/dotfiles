@@ -1,4 +1,4 @@
-use crate::utils::{execute_command, log_info, log_success};
+use crate::utils::{execute_command, log_info, log_success, write_file};
 use crate::zsh::{get_dotfiles_dir, get_home_dir, install_or_upgrade_repo};
 use std::path::Path;
 
@@ -36,9 +36,10 @@ pub fn setup_tmux(upgrade_mode: bool, dry_run: bool, verbose: bool) {
         }
     }
 
-    let tmux_config_content = format!("source {}/tool/tmux/config.tmux", get_dotfiles_dir());
-    execute_command(
-        &format!("echo \"{}\" > \"{}\"", tmux_config_content, tmux_conf),
+    let tmux_config_content = format!("source {}/tool/tmux/config.tmux\n", get_dotfiles_dir());
+    write_file(
+        &tmux_conf,
+        &tmux_config_content,
         "Create .tmux.conf",
         dry_run,
         verbose,
@@ -60,6 +61,21 @@ mod tests {
         env::set_var("HOME", dir.path());
 
         setup_tmux(false, true, false);
+
+        env::remove_var("HOME");
+    }
+
+    #[test]
+    #[serial]
+    fn setup_tmux_writes_shared_config_source_line() {
+        let dir = tempdir().unwrap();
+        env::set_var("HOME", dir.path());
+
+        setup_tmux(false, false, false);
+
+        let tmux_conf = std::fs::read_to_string(dir.path().join(".tmux.conf")).unwrap();
+        assert!(tmux_conf.contains("source "));
+        assert!(tmux_conf.contains("tmux/config.tmux"));
 
         env::remove_var("HOME");
     }

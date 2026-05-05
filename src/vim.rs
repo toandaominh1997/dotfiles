@@ -1,4 +1,4 @@
-use crate::utils::{execute_command, log_info, log_success, log_warn};
+use crate::utils::{execute_command, log_info, log_success, log_warn, write_file};
 use crate::zsh::{get_dotfiles_dir, get_home_dir};
 use std::path::Path;
 
@@ -26,9 +26,10 @@ pub fn setup_vim_nvim(upgrade_mode: bool, dry_run: bool, verbose: bool) {
         }
     }
 
-    let vim_config_content = format!("source {}/tool/vim/config.vim", get_dotfiles_dir());
-    execute_command(
-        &format!("echo \"{}\" > \"{}\"", vim_config_content, vimrc_path),
+    let vim_config_content = format!("source {}/tool/vim/config.vim\n", get_dotfiles_dir());
+    write_file(
+        &vimrc_path,
+        &vim_config_content,
         "Create .vimrc",
         dry_run,
         verbose,

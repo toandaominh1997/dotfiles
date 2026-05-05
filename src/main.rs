@@ -14,9 +14,9 @@ use clap::Parser;
 use std::process::Command;
 
 use config::DotupConfig;
-use packages::{process_packages, CASK_PACKAGES, FORMULAE_PACKAGES, REQUIRED_PACKAGES};
+use packages::process_packages;
 use tui::MenuAction;
-use utils::{detect_os, log_error, log_info, log_success};
+use utils::{detect_os, log_error, log_info, log_success, log_warn};
 
 const SCRIPT_VERSION: &str = "2.1.0";
 
@@ -65,29 +65,34 @@ fn run_packages(profile_name: &str, upgrade_mode: bool, dry_run: bool, verbose: 
     packages::init_pkg_manager(upgrade_mode, dry_run, verbose);
 
     let config = DotupConfig::load();
-    let profile = config.get_profile(profile_name);
+    let profile = match config.get_profile(profile_name) {
+        Some(p) => p,
+        None => {
+            log_error(&format!(
+                "Profile '{}' not found in dotup.toml. Edit dotup.toml or pass --profile <name>.",
+                profile_name
+            ));
+            std::process::exit(1);
+        }
+    };
 
-    let required = profile
-        .as_ref()
-        .map(|p| p.required_packages.clone())
-        .filter(|v| !v.is_empty())
-        .unwrap_or_else(|| REQUIRED_PACKAGES.iter().map(|s| s.to_string()).collect());
+    if profile.required_packages.is_empty() {
+        log_warn(&format!(
+            "Profile '{}' has no required_packages; nothing to install in the required step.",
+            profile_name
+        ));
+    }
 
-    let formulae = profile
-        .as_ref()
-        .map(|p| p.formulae_packages.clone())
-        .filter(|v| !v.is_empty())
-        .unwrap_or_else(|| FORMULAE_PACKAGES.iter().map(|s| s.to_string()).collect());
-
-    let casks = profile
-        .as_ref()
-        .map(|p| p.cask_packages.clone())
-        .filter(|v| !v.is_empty())
-        .unwrap_or_else(|| CASK_PACKAGES.iter().map(|s| s.to_string()).collect());
-
-    process_packages(&required, "--formula", true, upgrade_mode, dry_run, verbose);
     process_packages(
-        &formulae,
+        &profile.required_packages,
+        "--formula",
+        true,
+        upgrade_mode,
+        dry_run,
+        verbose,
+    );
+    process_packages(
+        &profile.formulae_packages,
         "--formula",
         false,
         upgrade_mode,
@@ -96,8 +101,15 @@ fn run_packages(profile_name: &str, upgrade_mode: bool, dry_run: bool, verbose: 
     );
 
     if os_type == "macos" {
-        println!("==> Installing macOS Brew cask packages...");
-        process_packages(&casks, "--cask", false, upgrade_mode, dry_run, verbose);
+        log_info("==> Installing macOS Brew cask packages...");
+        process_packages(
+            &profile.cask_packages,
+            "--cask",
+            false,
+            upgrade_mode,
+            dry_run,
+            verbose,
+        );
     }
 }
 
@@ -115,8 +127,10 @@ fn run_all(profile_name: &str, upgrade_mode: bool, dry_run: bool, verbose: bool)
     tmux::setup_tmux(upgrade_mode, dry_run, verbose);
     vim::setup_vim_nvim(upgrade_mode, dry_run, verbose);
 
-    log_info("==> Running final Brew cleanup...");
-    let _ = Command::new("brew").arg("cleanup").status();
+    if !dry_run && detect_os() == "macos" {
+        log_info("==> Running final Brew cleanup...");
+        let _ = Command::new("brew").arg("cleanup").status();
+    }
 
     log_success("==> Dotfiles setup complete!");
 
@@ -180,7 +194,7 @@ fn interactive_menu(profile_name: &str, mut upgrade_mode: bool, dry_run: bool, v
                 break;
             }
             MenuAction::RunDoctor => {
-                doctor::run_doctor();
+                let _ = doctor::run_doctor();
                 wait_for_enter();
             }
             MenuAction::SyncDotfiles => {
@@ -214,8 +228,8 @@ fn main() {
         return;
     }
     if args.doctor {
-        doctor::run_doctor();
-        return;
+        let issues = doctor::run_doctor();
+        std::process::exit(if issues == 0 { 0 } else { 1 });
     }
     if args.sync {
         sync::run_sync(args.dry_run, args.verbose);

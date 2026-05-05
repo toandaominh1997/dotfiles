@@ -28,3 +28,7 @@ formulae_packages = [
     "curl", "htop", "wget"
 ]
 cask_packages = []
+
+# cask_packages are only installed on macOS.
+# On Ubuntu, dotup installs required_packages and formulae_packages via apt.
+# Other Linux package-manager adapters remain best-effort.

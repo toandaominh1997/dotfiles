@@ -1,6 +1,5 @@
-1
-
-
 # Added by cargo
-
 /target
+
+# Built dotup binary (build with `cargo build --release` or `cargo install --path .`)
+/bin/
